@@ -1,8 +1,0 @@
-server:
-  port: 8089
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/edudb?characterEncoding=UTF-8
-    username: jdbctest
-    password: jdbctest
-    driver-class-name: com.mysql.cj.jdbc.Driver
