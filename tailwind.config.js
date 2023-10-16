@@ -23,9 +23,8 @@ module.exports = {
             'cmt-user-div-bg' : '#E3F8FC',
         },
         fontFamily : {
-            custom: ['Super Mario 256', 'brr'],
-//            super256 : ["Super Mario 256"],
-//            brr : ["brr"],
+            super256 : ['"Super Mario 256"'],
+            brr : ["brr"],
         },
     },
   },

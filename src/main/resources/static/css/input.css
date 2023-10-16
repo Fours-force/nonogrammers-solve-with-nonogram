@@ -2,17 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @font-face {
     font-family: "Super Mario 256";
     font-weight: 700;
-    src: url("../fonts/mario.ttf")
+    src: url("../fonts/SuperMario256.ttf")
             format("ttf");
-}
+};
 
 @font-face {
     font-family: "brr";
     font-weight: 700;
     src: url("../fonts/BRR.ttf")
             format("ttf");
-}
+};
