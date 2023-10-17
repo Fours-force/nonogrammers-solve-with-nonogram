@@ -19,8 +19,9 @@ module.exports = {
             'commu-cmt-head' : '#0074E4',
             'mypg-border' : '#9096AB',
             'mypg-left-nav' : '#9096AB',
-            'nono-mypg-item-boder' : '#264E86',
+            'nono-mypg-item-border' : '#264E86',
             'cmt-user-div-bg' : '#E3F8FC',
+            'name-mobile-menu' : '#52647F',
         },
         fontFamily : {
             super256 : ['"Super Mario 256"'],
