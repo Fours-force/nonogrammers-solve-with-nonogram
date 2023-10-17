@@ -274,3 +274,6 @@ node_modules/
 src/main/resources/static/css/dist/
 src/main/resources/application.properties
 # End of https://www.toptal.com/developers/gitignore/api/intellij,java,gradle,dbeaver
+
+
+

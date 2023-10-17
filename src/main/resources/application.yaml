@@ -1,0 +1,8 @@
+server:
+  port: 8089
+spring:
+  datasource:
+    url: jdbc:mysql://3.37.222.161:3306/nonogrammers?characterEncoding=UTF-8
+    username: root
+    password: ssssforce
+    driver-class-name: com.mysql.cj.jdbc.Driver
