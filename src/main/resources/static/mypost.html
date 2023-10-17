@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mypost</title>
+    <link rel="stylesheet" href="./css/dist/output.css">
+</head>
+
+<body>
+    <div class="flex h-full max-w-screen-xl mx-auto justify-stretch sm:px-6 lg:px-8 gap-x-2">
+        <!-- 좌측 nav -->
+        <div class="top-0 mt-3 border-2 border-solid rounded-lg min:w-4/12 border-mypage-left-nav h-fit">
+            <ul class="w-full p-5 space-y-2 font-medium font-brr">
+                <li>
+                    <a href="#" class="flex items-center p-2 text-2xl text-gray-900 rounded-md dark:text-white group">
+                        <span class="ml-3 text-mypg-left-nav">내 활동</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#"
+                        class="flex items-center p-2 text-lg text-gray-900 rounded-md active:bg-main-skyblue active:text-white dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ml-7">
+                        <span class="flex-1 whitespace-nowrap">계정 관리</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#"
+                        class="flex items-center p-2 text-lg text-gray-900 rounded-md active:bg-main-skyblue active:text-white dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ml-7">
+                        <span class="flex-1 whitespace-nowrap">내가 푼 노노들</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#"
+                        class="flex items-center p-2 text-lg text-gray-900 rounded-md active:bg-main-skyblue active:text-white dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ml-7">
+                        <span class="flex-1 whitespace-nowrap">내가 풀고있는 노노들</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#"
+                        class="flex items-center p-2 text-lg text-gray-900 rounded-md active:bg-main-skyblue active:text-white dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ml-7">
+                        <span class="flex-1 whitespace-nowrap">작성한 글</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- 우측 contents -->
+        <div class="w-full mt-2 min:w-8/12 font-brr">
+            <h1 class="pb-5 pl-5 text-3xl border-b-2 mb-7 font-brr text-nav-navy">내가 푼 노노들</h1>
+            <article class="border-t-2 rounded-lg xl:w-12/12 border-x-2">
+                <div class="flex p-3 bg-ma">
+                    <div class="justify-center hidden w-1/6 mr-2 rounded-lg md:flex">
+                        <img src="./images/kang.png" class="w-20 h-20 rounded-full" alt="프로필 이미지">
+                    </div>
+                    <div class="flex items-center w-5/6">
+                        <h1 class="text-2xl"><span>sngdev</span>의 글</h1>
+                    </div>
+                </div>
+
+                <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                    <table class="w-full text-left text-gray-500 text-md dark:text-gray-400">
+                        <thead class="text-main-blue text-md bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">
+                                    카테고리
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    제목
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    본문
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    <span class="sr-only">Edit</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr
+                                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <th scope="row"
+                                    class="px-6 py-4 font-medium text-gray-700 whitespace-nowrap dark:text-white">
+                                    공지사항
+                                </th>
+                                <td class="px-6 py-4 text-gray-800">
+                                    도트리들 긴급 회의 소집합니다!
+                                </td>
+                                <td class="px-6 py-4 text-sm">
+                                    프로젝트 진행도중 중대한 문제가 발생하였습니다.
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <a href="#"
+                                        class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                                </td>
+                            </tr>
+                            <tr
+                                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <th scope="row"
+                                    class="px-6 py-4 font-medium text-gray-700 whitespace-nowrap dark:text-white">
+                                    자유글
+                                </th>
+                                <td class="px-6 py-4 text-gray-800">
+                                    저녁에 쌀국수 한사바리 했습니다.
+                                </td>
+                                <td class="px-6 py-4 text-sm">
+                                    서울시 송파구 가락동의 베트남음식전문점 포메인..
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <a href="#"
+                                        class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                                </td>
+                            </tr>
+                            <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <a href="#">
+                                    <th scope="row"
+                                        class="px-6 py-4 font-medium text-gray-700 whitespace-nowrap dark:text-white">
+                                        질문
+                                    </th>
+                                    <td class="px-6 py-4 text-gray-800">
+                                        알고리즘 공부 어떤사이트로 할까요?
+                                    </td>
+                                    <td class="px-6 py-4 text-sm">
+                                        책도 보고있는데 사이트로도 공부하면 좋을것 같아서요.
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <a href="#"
+                                            class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                                    </td>
+                                </a>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </article>
+        </div>
+
+
+    </div>
+</body>
+
+</html>
