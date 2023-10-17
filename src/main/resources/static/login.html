@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/dist/output.css">
+  </head>
+
+  <body>
+    <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+      <!-- 헤더이미지 -->
+      <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+        <img class="mx-auto h-auto w-auto" src="./images/user.png" alt="NONOgrammers" />
+      </div>
+
+      <!-- 사용자 정보 입력 -->
+      <div class="mt-6 rounded-lg bg-cmt-user-div-bg px-3.5 py-3.5 sm:mx-auto sm:w-full sm:max-w-sm">
+        <form class="space-y-6" action="#" method="POST">
+          <!-- 이메일 입력 -->
+          <div>
+            <label for="email" class="block font-brr text-sm leading-6 text-gray-900">이메일</label>
+            <div class="mt-2">
+              <input
+                name="email"
+                type="email"
+                autocomplete="email"
+                required
+                class="block w-full rounded-sm border border-main-skyblue py-2 text-gray-900 focus:border-main-skyblue focus:outline-none focus:ring-2 focus:ring-main-skyblue sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+
+          <!-- 비밀번호 입력 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label for="password" class="block font-brr text-sm leading-6 text-gray-900">비밀번호</label>
+              <a href="#" class="font-brr text-sm text-main-blue hover:text-user-home-btn">Forgot password?</a>
+            </div>
+            <div class="mt-2">
+              <input
+                name="password"
+                type="password"
+                required
+                class="block w-full rounded-sm border border-main-skyblue py-2 text-gray-900 focus:border-main-skyblue focus:outline-none focus:ring-2 focus:ring-main-skyblue sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+
+          <!-- 로그인 버튼 -->
+          <div>
+            <button
+              type="submit"
+              class="text-md flex w-full justify-center rounded-lg bg-main-blue px-3 py-2 font-brr leading-6 text-white shadow-sm hover:bg-user-home-btn focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              로그인
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- OR -->
+      <div class="mt-4 flex flex-row space-x-4 sm:mx-auto sm:w-full sm:max-w-sm">
+        <div class="border-blue mt-2 flex-1 border-t-2"></div>
+        <span class="mx-5 font-brr text-sm uppercase text-gray-500">or</span>
+        <div class="border-blue mt-2 flex-1 border-t-2"></div>
+      </div>
+
+      <!-- 계정이 없으신가요? 회원가입 -->
+      <p class="mt-3 text-center font-brr text-sm text-gray-500 sm:mx-auto sm:w-full sm:max-w-sm">
+        계정이 없으신가요?
+        <a href="#" class="font-brr leading-6 text-main-blue hover:text-user-home-btn">회원가입</a>
+      </p>
+
+      <!-- footer -->
+      <div class="mt-6 flex flex-row sm:mx-auto sm:w-full sm:max-w-sm">
+        <a href="#" class="mx-auto font-brr text-xs text-gray-700">이용약관</a>
+        <a href="#" class="mx-auto font-brr text-xs text-gray-700">개인정보 처리방침</a>
+        <a href="#" class="mx-auto font-brr text-xs text-gray-700">FAQ/문의</a>
+      </div>
+    </div>
+  </body>
+</html>
