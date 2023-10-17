@@ -1,4 +1,15 @@
 package com.dottree.nonogrammers.domain;
 
-public class NonoDto {
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class NonoDTO {
+    private int levelType;
+    private String nonoImgUrl;
+    private String rowUrl;
 }
+
+
