@@ -1,4 +1,4 @@
 package com.dottree.nonogrammers.dao;
 
-public class userMapper {
+public class UserMapper {
 }
