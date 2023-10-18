@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 
 @Controller
 public class MainController {
@@ -30,7 +31,7 @@ public class MainController {
     }
     @GetMapping("/dot")
     public String dotView() throws IOException {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         int nonoId = 1;
         DotDTO dDTO = new DotDTO();
 
