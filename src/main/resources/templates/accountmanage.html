@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/css/dist/output.css}" rel="stylesheet">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="flex justify-center h-max w-screen px-1 sm:px-6 lg:px-8 mx-auto sm:px-6 lg:px-8 gap-x-2 bg-back">
+        <!-- 좌측 nav -->
+        <div class="top-0 mt-3 bg-white border-2 border-solid rounded-lg min:w-4/12 border-mypage-left-nav h-fit">
+            <ul class="w-full p-5 space-y-2 font-medium font-brr">
+                <li>
+                    <a href="#" class="flex items-center p-2 text-2xl text-gray-900 rounded-md dark:text-white group">
+                        <span class="ml-3 text-mypg-left-nav">내 활동</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#"
+                        class="flex items-center p-2 text-lg text-gray-900 rounded-md active:bg-main-skyblue active:text-white dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ml-7">
+                        <span class="flex-1 whitespace-nowrap">계정 관리</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#"
+                        class="flex items-center p-2 text-lg text-gray-900 rounded-md active:bg-main-skyblue active:text-white dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ml-7">
+                        <span class="flex-1 whitespace-nowrap">내가 푼 노노들</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#"
+                        class="flex items-center p-2 text-lg text-gray-900 rounded-md active:bg-main-skyblue active:text-white dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ml-7">
+                        <span class="flex-1 whitespace-nowrap">내가 풀고있는 노노들</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#"
+                        class="flex items-center p-2 text-lg text-gray-900 rounded-md active:bg-main-skyblue active:text-white dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ml-7">
+                        <span class="flex-1 whitespace-nowrap">작성한 글</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="w-8/12 mt-2 max:w-8/12 font-brr min-w-max">
+            <h1 class="pb-5 pl-5 text-3xl border-b-2 mb-7 font-brr text-nav-navy">계정 관리</h1>
+            <article class="w-12/12">
+                <div class="flex justify-between">
+                    <div class="w-5/12 min-w-fit">
+                        <h2 class="text-2xl text-opacity-80 text-mypg-border">닉네임</h2>
+                        <div class="flex justify-around mt-10 bg-white border-2 rounded-lg border-nono-mypg-item-border py-7">
+                            <div class="flex flex-col px-3">
+                                <div class="text-gray-300">현재 닉네임</div>
+                                <div><span th:text="${userDTO.nickName}"></span></div>
+                            </div>
+                            <button type="button"
+                                class="sm:px-3 px-0 md:px-8 py-2.5 mb-2 mr-2 text-md font-medium text-gray-900 bg-white border border-gray-200 rounded-lg h-fit focus:outline-none hover:bg-gray-100 hover:text-main-blue focus:z-10 focus:ring-4 focus:ring-gray-100 ">닉네임 변경하기</button>
+                        </div>
+                    </div>
+                    <div class="w-6/12 min-w-fit">
+                        <h2 class="text-2xl text-opacity-80 text-mypg-border">프로필 사진 변경</h2>
+                        <div class="flex items-center justify-between p-4">
+                            <div class="mr-3">
+                                <img src="/images/aslan.png" alt=""
+                                     class="w-40 h-40 transition duration-200 border-2 rounded-full border-nono-mypg-item-border hover:scale-110 hover:shadow-xl">
+                            </div>
+                            <button type="button"
+                                class="px-8 py-2.5 mb-2 mr-2 text-md font-medium text-gray-900 bg-white border border-gray-200 rounded-lg h-fit focus:outline-none hover:bg-gray-100 hover:text-main-blue focus:z-10 focus:ring-4 focus:ring-gray-100 ">변경하기</button>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="mt-10">
+                    <h1 class="mb-2 text-2xl text-opacity-80 text-mypg-border">비밀번호</h1>
+                    <div class="flex justify-between w-full bg-white border-2 rounded-lg border-nono-mypg-item-border p-7">
+                        <div class="flex flex-col px-3">
+                            <div class="mb-1 text-gray-300">최근 업데이트</div>
+                            <div><span>[[${userDTO.password}]]</span></div>
+                        </div>
+                        <button type="button"
+                                class="px-5 py-2.5 mb-2 mr-2 text-md font-medium text-gray-900 bg-white border border-gray-200 rounded-lg h-fit focus:outline-none hover:bg-gray-100 hover:text-main-blue focus:z-10 focus:ring-4 focus:ring-gray-100 ">비밀번호 변경</button>
+                    </div>
+                </div>
+                <div class="mt-10">
+                    <h1 class="mb-2 text-2xl text-opacity-80 text-mypg-border">계정삭제</h1>
+                    <div class="flex justify-between w-full bg-white border-2 rounded-lg border-nono-mypg-item-border p-7">
+                        <div class="my-auto text-gray-400">계정 삭제 시 프로필 및 푼 노노 정보가 삭제 됩니다.</div>    
+                        <button type="button"
+                                class="px-9 py-2.5 mb-2 mr-2 text-md font-medium text-white bg-red-700 border border-gray-200 rounded-lg h-fit focus:outline-none hover:bg-opacity-90 hover:text-white focus:z-10 focus:ring-4 focus:ring-red-200">삭제하기</button>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+</body>
+
+</html>
