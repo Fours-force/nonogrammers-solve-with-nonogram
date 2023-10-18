@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>header</title>
+  <link th:href="@{/css/dist/output.css}" rel="stylesheet">
+
+  <th:block th:if="${(response != null)&&(response.title == 'join')}">
+    <script>
+      top.alert("[[${response.message}]]");
+    </script>
+  </th:block>
+</head>
+
+<body class="bg-main-bg">
+<header class="bg-white">
+  <div class="max-w-screen-xl px-1 mx-auto sm:px-6 lg:px-8">
+    <div class="relative flex items-center justify-between h-auto">
+      <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
+        <!-- Mobile menu button-->
+        <button type="button"
+                class="relative inline-flex items-center justify-center p-2 text-gray-400 rounded-md hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                aria-controls="mobile-menu" aria-expanded="false">
+          <span class="absolute -inset-0.5"></span>
+          <span class="sr-only">Open main menu</span>
+          <svg class="block w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+               stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+          <svg class="hidden w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+               stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="flex items-center justify-around w-full">
+        <div class="h-auto lg:w-72 md:w-60 sm:min-w-max">
+          <a href="#">
+            <img class="object-contain mx-auto h-28" src="/images/logo.png" alt="Your Company">
+          </a>
+        </div>
+        <div class="hidden w-8/12 sm:block">
+          <div class="flex items-center justify-end pr-2 h-2/5 sm:static sm:inset-auto sm:pr-0">
+            <span class="relative text-xl font-brr leading-normal text-center text-gray-400 md:w-3/12 sm:w-2/6 sm:min-w-max">babysooLLL님</span>
+            <!-- Profile dropdown -->
+            <div class="relative">
+              <div>
+                <button type="button"
+                        data-dropdown-toggle="dropdown"
+                        class="relative flex text-sm rounded-full sm:w-full focus:outline-none focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                        id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                  <!-- <span class="absolute -inset-1.5"></span> -->
+                  <span class="sr-only">Open user menu</span>
+                  <img class="h-10 rounded-full" src="/images/kang.png"
+                       alt="profile-img">
+                </button>
+                <div id="dropdown" class="z-10 absolute right-0 hidden bg-white divide-y divide-gray-100 rounded-lg shadow md:w-40 dark:bg-gray-700">
+                  <ul class="py-2 text-md text-gray-700 font-super256 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+                    <li>
+                      <a href="#" class="block px-6 py-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">MYPAGE</a>
+                    </li>
+                    <li>
+                      <a href="#" class="block px-6 py-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">LOGOUT</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <!-- <div class="absolute right-0 z-10 w-48 py-1 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                  role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1"
+                      id="user-menu-item-0">Your Profile</a>
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1"
+                      id="user-menu-item-1">Settings</a>
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1"
+                      id="user-menu-item-2">Sign out</a>
+              </div> -->
+            </div>
+          </div>
+          <div class="flex justify-around w-full mt-3 font-super256 h-3/5">
+            <div class="flex justify-center w-auto h-auto p-1 hover:text-nav-navy active:text-main-skyblue active:rounded-md">
+              <a href="#" class="block w-auto h-full text-2xl">
+                NONOBOX
+              </a>
+            </div>
+            <div class="flex justify-center w-auto h-auto p-1 hover:text-nav-navy active:text-main-skyblue active:rounded-md">
+              <a href="#" class="block w-auto h-full text-2xl">
+                <span class="">SOCIAL</span>
+              </a>
+            </div>
+            <div class="flex justify-center w-auto h-auto p-1 hover:text-nav-navy active:text-main-skyblue active:rounded-md">
+              <a href="#" class="block w-auto h-full text-2xl">
+                <span class="">COMMUNITY</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Mobile menu, show/hide based on menu state. -->
+  <div class="sm:hidden font-super256">
+    <div class="px-2 pt-2 pb-3 space-y-1">
+      <!-- Current: "bg-gray-900 text-white", Default: ".name-mobile-menu hover:bg-gray-700 hover:text-white" -->
+      <!-- <a href="#"
+          class="block px-3 py-2 text-base font-medium text-white bg-gray-900 rounded-md text-name-mobile-menu">NONOBOX</a>
+              aria-current="page" -->
+      <a href="#"
+         class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">NONOBOX</a>
+      <a href="#"
+         class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">SOCIAL</a>
+      <a href="#"
+         class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">COMMUNITY</a>
+      <a href="#"
+         class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">MYPAGE</a>
+    </div>
+  </div>
+</header>
+
+<div class="max-w-screen-xl flex h-screen items-center justify-center mx-auto sm:px-6 lg:px-8">
+  <div class="flex flex-col font-brr place-content-center items-center">
+    <p class="text-main-text md:text-5xl">당신만의 pixel 캐릭터</p>
+    <p class="text-main-sm-text text-xl mt-2">지루했던 코딩테스트 문제를 재미있게 풀어봐요</p>
+    <img src="/images/home-logo.png">
+    <div class="mt-2">
+      <button type="button" onlick="location.href='#'" class="text-md w-full rounded-xl bg-user-home-btn px-7 py-2 font-brr text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">색칠하러 가기 →</button>
+    </div>
+  </div>
+  <div class="place-content-center items-center">
+    <img src="/images/home-tuxi.png">
+  </div>
+</div>
+<script type="text/javascript" th:src="@{/js/home.js}"></script>
+</body>
+</html>

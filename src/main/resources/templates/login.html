@@ -22,6 +22,7 @@
             <div class="mt-2">
               <input
                 name="email"
+                id="email"
                 type="email"
                 autocomplete="email"
                 required
@@ -34,11 +35,12 @@
           <div>
             <div class="flex items-center justify-between">
               <label for="password" class="block font-brr text-sm leading-6 text-gray-900">비밀번호</label>
-              <a href="#" class="font-brr text-sm text-main-blue hover:text-user-home-btn">Forgot password?</a>
+              <a href="/forgot-password.html" class="font-brr text-sm text-main-blue hover:text-user-home-btn">Forgot password?</a>
             </div>
             <div class="mt-2">
               <input
                 name="password"
+                id="password"
                 type="password"
                 required
                 class="block w-full rounded-sm border border-main-skyblue py-2 text-gray-900 focus:border-main-skyblue focus:outline-none focus:ring-2 focus:ring-main-skyblue sm:text-sm sm:leading-6"
@@ -50,6 +52,7 @@
           <div>
             <button
               type="submit"
+              id="btnSubmitLogin"
               class="text-md flex w-full justify-center rounded-lg bg-main-blue px-3 py-2 font-brr leading-6 text-white shadow-sm hover:bg-user-home-btn focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               로그인
@@ -68,7 +71,7 @@
       <!-- 계정이 없으신가요? 회원가입 -->
       <p class="mt-3 text-center font-brr text-sm text-gray-500 sm:mx-auto sm:w-full sm:max-w-sm">
         계정이 없으신가요?
-        <a href="#" class="font-brr leading-6 text-main-blue hover:text-user-home-btn">회원가입</a>
+        <a href="/join" class="font-brr leading-6 text-main-blue hover:text-user-home-btn">회원가입</a>
       </p>
 
       <!-- footer -->
