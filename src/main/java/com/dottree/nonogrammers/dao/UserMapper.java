@@ -1,10 +1,14 @@
 package com.dottree.nonogrammers.dao;
 
+import com.dottree.nonogrammers.domain.UserDTO;
 import com.dottree.nonogrammers.domain.JoinDTO;
 import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface UserMapper {
+    @Select("select userId, email, nickName, profileImgUrl from user where userId = #{userId}")
+    public UserDTO selectUserByUserId(int userId);
+
     // 회원가입 - 유저 생성
     @Insert("insert into user (email, password, nickName, profileImgUrl) values (#{email}, #{password}, #{nickName}, #{profileImgUrl})")
     public boolean insertAccount(JoinDTO dto);
