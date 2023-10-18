@@ -1,0 +1,14 @@
+#wapper {
+  height: auto;
+  min-height: 100%;
+  /*padding-bottom: 224px;*/
+}
+
+footer {
+  /*transform: translateY(-100%);*/
+}
+
+.css-14vpx1i > div {
+  flex-direction: row;
+  justify-content: space-between;
+}
