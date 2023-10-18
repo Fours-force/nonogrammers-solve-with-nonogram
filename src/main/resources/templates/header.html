@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <th:block th:fragment="headerFragment">
-    <header class="">
+    <header class="bg-white">
         <div class="max-w-screen-xl px-1 mx-auto sm:px-6 lg:px-8">
             <div class="relative flex items-center justify-between h-auto">
                 <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -31,13 +31,12 @@
                     </div>
                     <div class="hidden w-8/12 sm:block">
                         <div class="flex items-center justify-end pr-2 h-2/5 sm:static sm:inset-auto sm:pr-0">
-                            <button type="button"
-                                class="relative w-1/6 h-10 mr-4 text-xl leading-normal text-center text-gray-400 md:w-3/12 sm:w-2/6 sm:min-w-max hover:text-white focus:outline-none focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                                <span style="color:#52647F" class="font-brr">babysooLLL님</span></button>
+                            <span class="relative text-xl font-brr leading-normal text-center text-gray-400 md:w-3/12 sm:w-2/6 sm:min-w-max">babysooLLL님</span>
                             <!-- Profile dropdown -->
                             <div class="relative">
                                 <div>
                                     <button type="button"
+                                        data-dropdown-toggle="dropdown"
                                         class="relative flex text-sm rounded-full sm:w-full focus:outline-none focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                                         id="user-menu-button" aria-expanded="false" aria-haspopup="true">
                                         <!-- <span class="absolute -inset-1.5"></span> -->
@@ -45,16 +44,17 @@
                                         <img class="h-10 rounded-full" src="/images/kang.png"
                                             alt="profile-img">
                                     </button>
+                                    <div id="dropdown" class="z-10 absolute right-0 hidden bg-white divide-y divide-gray-100 rounded-lg shadow md:w-40 dark:bg-gray-700">
+                                        <ul class="py-2 text-md text-gray-700 font-super256 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+                                            <li>
+                                                <a href="#" class="block px-6 py-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">MYPAGE</a>
+                                            </li>
+                                            <li>
+                                                <a href="#" class="block px-6 py-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">LOGOUT</a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
-                                <!-- <div class="absolute right-0 z-10 w-48 py-1 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-                                    role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
-                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1"
-                                        id="user-menu-item-0">Your Profile</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1"
-                                        id="user-menu-item-1">Settings</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1"
-                                        id="user-menu-item-2">Sign out</a>
-                                </div> -->
                             </div>
                         </div>
                         <div class="flex justify-around w-full mt-3 font-super256 h-3/5">
@@ -76,17 +76,12 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
 
         <!-- Mobile menu, show/hide based on menu state. -->
         <div class="sm:hidden font-super256">
             <div class="px-2 pt-2 pb-3 space-y-1">
-                <!-- Current: "bg-gray-900 text-white", Default: ".name-mobile-menu hover:bg-gray-700 hover:text-white" -->
-                <!-- <a href="#"
-                    class="block px-3 py-2 text-base font-medium text-white bg-gray-900 rounded-md text-name-mobile-menu">NONOBOX</a>
-                        aria-current="page" --> 
                 <a href="#"
                     class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">NONOBOX</a>
                 <a href="#"
@@ -99,6 +94,3 @@
         </div>
     </header>
 </th:block>
-<!--</body>-->
-
-<!--</html>-->
