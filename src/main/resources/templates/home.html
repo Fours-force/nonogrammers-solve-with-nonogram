@@ -1,11 +1,5 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{./defaultLayout.html}">
-
-<th:block th:if="${(response != null)&&(response.title == 'join')}">
-  <script>
-    top.alert("[[${response.message}]]");
-  </script>
-</th:block>
 <!--</head>-->
 <th:block layout:fragment="content">
 <body class="bg-main-bg">

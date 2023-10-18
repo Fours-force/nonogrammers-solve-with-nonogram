@@ -8,7 +8,3 @@ let dropdownElement = document.getElementById("dropdown");
     dropdownElement.classList.add('hidden');
   }
 }
-
-function openAlert(){
-
-}
