@@ -13,3 +13,56 @@
     font-weight: 700;
     src: url("/fonts/BRR.ttf") format("truetype");
 };
+
+
+.css-14vpx1i > div {
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.nonoDot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+}
+
+.rowContainer {
+    height: 10px;
+    display: flex;
+    justify-content: center;
+    min-width: max-content;
+}
+
+.movebtn {
+    display: inline-block;
+    text-align: center;
+    font-family: "Super Mario 256";
+}
+
+.test {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+#nonoBoxBolder {
+    width: 500px;
+    border: solid #264e86 10px;
+    border-radius: 30px;
+    padding: 50px 10px;
+}
+
+#ListbtnContainer {
+    justify-content: end;
+}
+
+.rowContainer {
+    display: flex;
+    justify-content: center;
+    min-width: max-content;
+    /* align-items: start; */
+}
+
+.progressBarContainer {
+    height: 16px;
+}

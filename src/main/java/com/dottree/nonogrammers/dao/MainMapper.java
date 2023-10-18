@@ -1,10 +1,13 @@
 package com.dottree.nonogrammers.dao;
 
 import com.dottree.nonogrammers.domain.DotDTO;
+import com.dottree.nonogrammers.domain.NonoDTO;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 @Mapper
 public interface MainMapper {
@@ -20,9 +23,7 @@ public interface MainMapper {
     @Insert("insert into dot (nonoId, color) values (#{nonoId}, #{color})")
     public void insertDotsInDot(DotDTO dDTO);
 
-//    @Select("select ")
-
-
-
+    @Select("select * from dot where nonoId = #{nonoId}")
+    public List<DotDTO> selectAllDot(@Param("nonoId") int nonoId);
 
 }

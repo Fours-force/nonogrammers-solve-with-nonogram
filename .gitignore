@@ -273,6 +273,8 @@ $RECYCLE.BIN/
 node_modules/
 src/main/resources/static/css/dist/
 src/main/resources/application.properties
+src/main/resources/application.yaml
+
 # End of https://www.toptal.com/developers/gitignore/api/intellij,java,gradle,dbeaver
 
 
