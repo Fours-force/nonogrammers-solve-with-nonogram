@@ -11,6 +11,7 @@ document.getElementById("joinForm").addEventListener("submit", submitEventHandle
 // 공백 체크
 document.getElementById("nickName").addEventListener("input", checkBlank);
 document.getElementById("password").addEventListener("input", checkBlank);
+document.getElementById("baekjoonUserId").addEventListener("input", checkBlank);
 
 
 function checkExists(e, type) {
