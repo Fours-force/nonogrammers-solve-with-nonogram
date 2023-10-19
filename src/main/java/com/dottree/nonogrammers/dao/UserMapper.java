@@ -20,8 +20,8 @@ public interface UserMapper {
     );
 
     // 로그인 - 이메일, 비밀번호 확인
-    @Select("select count(*) from user where email = #{email} and password = #{password}")
-    public int getLogin(@Param("email") String email,
+    @Select("select userId from user where email = #{email} and password = #{password}")
+    public Integer getLogin(@Param("email") String email,
                         @Param("password") String password
     );
 

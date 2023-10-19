@@ -3,22 +3,28 @@ package com.dottree.nonogrammers.controller;
 import com.dottree.nonogrammers.dao.UserMapper;
 import com.dottree.nonogrammers.domain.JoinDTO;
 import com.dottree.nonogrammers.domain.ResponseModel;
+import com.dottree.nonogrammers.domain.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 @Controller
+@SessionAttributes("isLogin")
 @RequestMapping("/api")
 public class UserController {
     private final Map<String, String> emailTokenMap = new HashMap<>();
     @Autowired
     UserMapper dao;
+
+    @ModelAttribute("isLogin")
+    public Map<String, Object> userSession(){
+        return new HashMap<>();
+    }
 
     @RequestMapping(value = "/join", produces = "application/json; charset=utf-8", method = RequestMethod.POST)
     @ResponseBody
@@ -93,17 +99,15 @@ public class UserController {
     }
 
     @GetMapping("/check-reset-password")
-    public ModelAndView showResetPassword(@RequestParam("token") String token){
-        ModelAndView mav = new ModelAndView();
+    public String showResetPassword(@RequestParam("token") String token, Model model){
         String email = emailTokenMap.get(token);
         if (email != null){
             emailTokenMap.remove(token);
-            mav.addObject("email", email);
-            mav.setViewName("reset-password");
+            model.addAttribute("email", email);
+            return "reset-password";
         } else {
-            mav.setViewName("home");
+            return "redirect:/";
         }
-        return mav;
     }
 
     @RequestMapping(value = "/reset-password", produces = "application/json; charset=utf-8", method = RequestMethod.POST)
@@ -127,5 +131,27 @@ public class UserController {
             response.setMessage("! 문제가 발생했습니다. 다시 시도해주세요");
         }
         return response;
+    }
+
+    @PostMapping("/login")
+    public String login(
+            JoinDTO dto,
+            @ModelAttribute("isLogin") HashMap<String, Object> isLoginModel
+            ){
+        Integer userId = dao.getLogin(dto.getEmail(), dto.getPassword());
+        if (userId != null){
+            UserDTO userInform = dao.selectUserByUserId(userId);
+            isLoginModel.put("userId", userInform.getUserId());
+            isLoginModel.put("email", userInform.getEmail());
+            isLoginModel.put("nickName", userInform.getNickName());
+            isLoginModel.put("profileImgUrl", userInform.getProfileImgUrl());
+            return "redirect:/";
+        } else{
+            ResponseModel response = new ResponseModel();
+            response.setTitle("Login");
+            response.setStatusCode(404);
+            response.setMessage("이메일 주소나 비밀번호가 틀립니다");
+            return "login";
+        }
     }
 }
