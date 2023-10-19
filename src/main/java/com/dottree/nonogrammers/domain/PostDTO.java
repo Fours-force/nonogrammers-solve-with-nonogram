@@ -16,3 +16,4 @@ public class PostDTO {
     private LocalDate createdAt;
     private LocalDate updatedAt;
 }
+
