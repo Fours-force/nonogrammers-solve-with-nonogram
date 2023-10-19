@@ -30,10 +30,8 @@ public interface UserMapper {
     public int getEmail(@Param("email") String email);
 
     // 비밀번호 리셋
-    @Update("update user set password = #{password} where email = #{email}")
-    public boolean resetPassword(@Param("email") String email,
-                                 @Param("password") String password
-    );
+    @Update("update user set password = #{password}, changedAt= now()  where email = #{email}")
+    public boolean updatePassword(JoinDTO dto);
 
     // 회원 탈퇴
     @Delete("delete from user where email = #{email}")
