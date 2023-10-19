@@ -5,16 +5,15 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.sql.Timestamp;
+
 @ToString
 @Getter
 @Setter
-public class PostDTO {
+public class CommentDTO {
+    private int commentId;
     private int postId;
-    private int boardType;
     private int userId;
-    private String title;
     private String content;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 }
-
