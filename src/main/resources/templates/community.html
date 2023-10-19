@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -7,8 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- <script src="https://cdn.tailwindcss.com"></script> -->
     <title>Community</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
-    >
+    <link rel="stylesheet" th:href="@{/css/dist/output.css}">
+
 </head>
 
 <body>
@@ -18,93 +18,132 @@
                 <div class="flex justify-around mb-10">
                     <div>
                         <div class="relative w-full h-10">
-                            <label for="">
-                                <select name="" id="" class="w-full h-10 pl-2 pr-2 bg-white border border-black rounded-md text-nav-navy">
-                                    <option value="" class="text-main-skyblue">공지사항</option>
-                                    <option value="" class="text-main-skyblue">자유게시판</option>
-                                    <option value="" class="text-main-skyblue">질문/답변</option></select>
-                            </label>
+                        <label for="filterSelect">
+                            <select name="filterSelect" id="filterSelect" class="w-full h-10 pl-2 pr-2 bg-white border border-black rounded-md text-nav-navy">
+                                <option value="all" class="text-main-skyblue">전체</option>
+                                <option value="notice" class="text-main-skyblue">공지사항</option>
+                                <option value="free" class="text-main-skyblue">자유게시판</option>
+                                <option value="qa" class="text-main-skyblue">질문/답변</option>
+                            </select>
+                        </label>
 
                         </div>
                     </div>
                     <div>
                         <label for="search" class="relative flex w-full h-10">
                             <!-- 이미지를 검색 필드 안에 넣음 -->
-                            <img src="../static/images/icon_magnifying glass_.png" alt="Search Icon" class="absolute inset-y-0 left-0 w-6 h-6 my-auto ml-2">
+                            <img src="/images/icon_magnifying glass_.png" alt="Search Icon" class="absolute inset-y-0 left-0 w-6 h-6 my-auto ml-2">
                     
                             <!-- 검색 필드 -->
                             <input type="text" class="w-full h-10 pl-10 pr-2 bg-white border border-black rounded-md font-bold"
-                                name="search" id="search" size="40" placeholder="검색...">
+                                name="search" id="search" size="40" placeholder="검색..." onkeydown="searchOnEnter(event)">
                         </label>
                     </div>
                     <div>
                         <div class="relative w-full h-10">
-                            <button class="w-full h-10 text-center text-white duration-300 ease-in-out border rounded-sm bg-main-blue pl-7 pr-7 hover:bg-main-skyblue" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-                            onclick="location.href='#'">
-                                글 작성
-                            </button>
+                            <form action="/comment" method="post">
+                                <input type="text" name="comm" />
+                                <button type="submit">작성</button>
+                            </form>
+
                         </div>
                     </div>
                 </div>
                 <h2 class="sr-only">Products</h2>
                 <div class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-                    <a th:each="vo : ${list}">
-                        <a href="#" class="group ">
-                            <div class="w-full h-40 overflow-hidden transition-transform duration-300 ease-in-out transform bg-white rounded-lg shadow-lg aspect-h-1 aspect-w-1 xl:aspect-h-8 xl:aspect-w-7 group-hover:scale-110 group-hover:opacity-85">
-                                <div class="object-cover object-center w-full h-full">
-                                    <h3 class="pl-6 mt-4 text-sm font-bold text-main-blue" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[[${vo.boardType}]]</h3>
-                                    <div class="flex">
-                                        <img src="/static/images/new_post_1.png" class="w-3 mt-1.5 ml-3 h-fit" alt="">
-                                        <p class="pl-2 pr-4 mt-1 text-sm font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[[${vo.title}]]</p>
-                                    </div>
-                                    <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[[${vo.content}]]</p>
-                                    <div class="flex items-center">
-                                        <img src="../static/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
-                                        <div>
-                                            <span class="text-xs">[[${vo.userId}]]</span>
-                                            <p class="text-xs text-gray-500">[[${vo.createdAt}]]</p>
+                    <div th:each="vo : ${list}">
+<!--                        <div th:if="${#dates.createNow().minusDays(1).isBefore(vo.formattedCreatedAt)}">-->
+                        <a th:href="@{'/detail?postId=' + ${vo.postId}}" class="group">
+                                <div class="w-full h-40 overflow-hidden transition-transform duration-300 ease-in-out transform bg-white rounded-lg shadow-lg aspect-h-1 aspect-w-1 xl:aspect-h-8 xl:aspect-w-7 group-hover:scale-110 group-hover:opacity-85">
+                                    <div class="object-cover object-center w-full h-full">
+                                        <h3 class="pl-6 mt-4 text-sm font-bold text-main-blue" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                            <span th:if="${vo.boardType == 1}">공지사항</span>
+                                            <span th:if="${vo.boardType == 2}">자유게시판</span>
+                                            <span th:if="${vo.boardType == 3}">질문/답변</span>
+                                            <span th:if="${vo.boardType == 4}">전국노노자랑</span>
+                                        </h3>
+                                        <div class="flex">
+                                            <img src="/images/new_post_1.png" class="w-3 mt-1.5 ml-3 h-fit" alt="">
+                                            <p class="pl-2 pr-4 mt-1 text-sm font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[[${vo.title}]]</p>
                                         </div>
+                                        <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[[${vo.content}]]</p>
+                                        <div class="flex items-center">
+                                            <img src="/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
+                                            <div>
+                                                <span class="text-xs">[[${vo.userId}]]</span>
+                                                <p class="text-xs text-gray-500">[[${vo.createdAt}]]</p>
+                                            </div>
 
-                                    </div>
-                                    <div class="flex">
-                                        <img src="../static/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
-                                        <p class="pl-1 mt-1 text-xs">10</p>
-                                        <img src="../static/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
-                                        <p class="pl-2 mt-1 text-xs">10</p>
-                                        <div class="ml-auto"> <!-- ml-auto class 추가 -->
-                                            <img src="../static/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
                                         </div>
-                                        <span class="pr-4 mt-1 text-xs">10</span>
+                                        <div class="flex">
+                                            <img src="/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
+                                            <p class="pl-1 mt-1 text-xs">10</p>
+                                            <img src="/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
+                                            <p class="pl-2 mt-1 text-xs">10</p>
+                                            <div class="ml-auto"> <!-- ml-auto class 추가 -->
+                                                <img src="/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
+                                            </div>
+                                            <span class="pr-4 mt-1 text-xs">10</span>
+                                        </div>
                                     </div>
+
                                 </div>
+                            </a>
+                        </div>
+<!--                        <div th:unless="${#dates.createNow().minusDays(1).isBefore(vo.formattedCreatedAt)}">-->
+<!--                        <a href="#" class="group ">-->
+<!--                                <div class="w-full h-40 overflow-hidden transition-transform duration-300 ease-in-out transform bg-white rounded-lg shadow-lg aspect-h-1 aspect-w-1 xl:aspect-h-8 xl:aspect-w-7 group-hover:scale-110 group-hover:opacity-85">-->
+<!--                                    <div class="object-cover object-center w-full h-full">-->
+<!--                                        <h3 class="pl-6 mt-4 text-sm font-bold text-main-blue" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">공지사항</h3>-->
+<!--                                        <p class="pl-5 pr-4 mt-1 text-sm font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">송성승승 긴급회의 소집합니다.</p>-->
+<!--                                        <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">프로젝트 진행도중 중대한 문제가 발생하여 다음과 같이 회의를 소집합니다. 시간이 되시는 분들은 다음과 같은 장소에 모여주시기 바랍니다. 준비물: 노트북</p>-->
+<!--                                        <div class="flex items-center">-->
+<!--                                            <img src="/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">-->
+<!--                                            <div>-->
+<!--                                                <span class="text-xs">dev</span>-->
+<!--                                                <p class="text-xs text-gray-500">약 1시간전</p>-->
+<!--                                            </div>-->
 
-                            </div>
-                        </a>
-                    </a>
+<!--                                        </div>-->
+<!--                                        <div class="flex">-->
+<!--                                            <img src="/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">-->
+<!--                                            <p class="pl-1 mt-1 text-xs">10</p>-->
+<!--                                            <img src="/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">-->
+<!--                                            <p class="pl-2 mt-1 text-xs">10</p>-->
+<!--                                            <div class="ml-auto"> &lt;!&ndash; ml-auto class 추가 &ndash;&gt;-->
+<!--                                                <img src="/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">-->
+<!--                                            </div>-->
+<!--                                            <span class="pr-4 mt-1 text-xs">10</span>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </a>-->
+<!--                        </div>-->
+<!--                    </div>-->
                     <a href="#" class="group ">
                         <div class="w-full h-40 overflow-hidden transition-transform duration-300 ease-in-out transform bg-white rounded-lg shadow-lg aspect-h-1 aspect-w-1 xl:aspect-h-8 xl:aspect-w-7 group-hover:scale-110 group-hover:opacity-85">
                             <div class="object-cover object-center w-full h-full">
                                 <h3 class="pl-6 mt-4 text-sm font-bold text-main-blue" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">공지사항</h3>
                                 <div class="flex">
-                                    <img src="../static/images/new_post_1.png" class="w-3 mt-1.5 ml-3 h-fit" alt="">
+                                    <img src="/images/new_post_1.png" class="w-3 mt-1.5 ml-3 h-fit" alt="">
                                     <p class="pl-2 pr-4 mt-1 text-sm font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">송성승승 긴급회의 소집합니다.</p>
                                 </div>
                                 <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">프로젝트 진행도중 중대한 문제가 발생하여 다음과 같이 회의를 소집합니다. 시간이 되시는 분들은 다음과 같은 장소에 모여주시기 바랍니다. 준비물: 노트북</p>
                                 <div class="flex items-center">
-                                    <img src="../static/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
+                                    <img src="/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
                                     <div>
                                         <span class="text-xs">dev</span>
                                         <p class="text-xs text-gray-500">약 1시간전</p>
                                     </div>
-                                    
+
                                 </div>
                                 <div class="flex">
-                                    <img src="../static/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
+                                    <img src="/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
                                     <p class="pl-1 mt-1 text-xs">10</p>
-                                    <img src="../static/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
+                                    <img src="/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
                                     <p class="pl-2 mt-1 text-xs">10</p>
                                     <div class="ml-auto"> <!-- ml-auto class 추가 -->
-                                        <img src="../static/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
+                                        <img src="/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
                                     </div>
                                     <span class="pr-4 mt-1 text-xs">10</span>
                                 </div>
@@ -119,7 +158,7 @@
                                 <p class="pl-5 pr-4 mt-1 text-sm font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">송성승승 긴급회의 소집합니다.</p>
                                 <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">프로젝트 진행도중 중대한 문제가 발생하여 다음과 같이 회의를 소집합니다. 시간이 되시는 분들은 다음과 같은 장소에 모여주시기 바랍니다. 준비물: 노트북</p>
                                 <div class="flex items-center">
-                                    <img src="../static/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
+                                    <img src="/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
                                     <div>
                                         <span class="text-xs">dev</span>
                                         <p class="text-xs text-gray-500">약 1시간전</p>
@@ -127,12 +166,12 @@
 
                                 </div>
                                 <div class="flex">
-                                    <img src="../static/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
+                                    <img src="/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
                                     <p class="pl-1 mt-1 text-xs">10</p>
-                                    <img src="../static/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
+                                    <img src="/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
                                     <p class="pl-2 mt-1 text-xs">10</p>
                                     <div class="ml-auto"> <!-- ml-auto class 추가 -->
-                                        <img src="../static/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
+                                        <img src="/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
                                     </div>
                                     <span class="pr-4 mt-1 text-xs">10</span>
                                 </div>
@@ -146,7 +185,7 @@
                                 <p class="pl-5 pr-4 mt-1 text-sm font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">송성승승 긴급회의 소집합니다.</p>
                                 <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">프로젝트 진행도중 중대한 문제가 발생하여 다음과 같이 회의를 소집합니다. 시간이 되시는 분들은 다음과 같은 장소에 모여주시기 바랍니다. 준비물: 노트북</p>
                                 <div class="flex items-center">
-                                    <img src="../static/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
+                                    <img src="/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
                                     <div>
                                         <span class="text-xs">dev</span>
                                         <p class="text-xs text-gray-500">약 1시간전</p>
@@ -154,12 +193,12 @@
 
                                 </div>
                                 <div class="flex">
-                                    <img src="../static/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
+                                    <img src="/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
                                     <p class="pl-1 mt-1 text-xs">10</p>
-                                    <img src="../static/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
+                                    <img src="/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
                                     <p class="pl-2 mt-1 text-xs">10</p>
                                     <div class="ml-auto"> <!-- ml-auto class 추가 -->
-                                        <img src="../static/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
+                                        <img src="/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
                                     </div>
                                     <span class="pr-4 mt-1 text-xs">10</span>
                                 </div>
@@ -173,7 +212,7 @@
                                 <p class="pl-5 pr-4 mt-1 text-sm font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">송성승승 긴급회의 소집합니다.</p>
                                 <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">프로젝트 진행도중 중대한 문제가 발생하여 다음과 같이 회의를 소집합니다. 시간이 되시는 분들은 다음과 같은 장소에 모여주시기 바랍니다. 준비물: 노트북</p>
                                 <div class="flex items-center">
-                                    <img src="../static/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
+                                    <img src="/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
                                     <div>
                                         <span class="text-xs">dev</span>
                                         <p class="text-xs text-gray-500">약 1시간전</p>
@@ -181,12 +220,12 @@
 
                                 </div>
                                 <div class="flex">
-                                    <img src="../static/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
+                                    <img src="/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
                                     <p class="pl-1 mt-1 text-xs">10</p>
-                                    <img src="../static/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
+                                    <img src="/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
                                     <p class="pl-2 mt-1 text-xs">10</p>
                                     <div class="ml-auto"> <!-- ml-auto class 추가 -->
-                                        <img src="../static/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
+                                        <img src="/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
                                     </div>
                                     <span class="pr-4 mt-1 text-xs">10</span>
                                 </div>
@@ -200,7 +239,7 @@
                                 <p class="pl-5 pr-4 mt-1 text-sm font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">송성승승 긴급회의 소집합니다.</p>
                                 <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">프로젝트 진행도중 중대한 문제가 발생하여 다음과 같이 회의를 소집합니다. 시간이 되시는 분들은 다음과 같은 장소에 모여주시기 바랍니다. 준비물: 노트북</p>
                                 <div class="flex items-center">
-                                    <img src="../static/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
+                                    <img src="/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
                                     <div>
                                         <span class="text-xs">dev</span>
                                         <p class="text-xs text-gray-500">약 1시간전</p>
@@ -208,12 +247,12 @@
 
                                 </div>
                                 <div class="flex">
-                                    <img src="../static/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
+                                    <img src="/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
                                     <p class="pl-1 mt-1 text-xs">10</p>
-                                    <img src="../static/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
+                                    <img src="/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
                                     <p class="pl-2 mt-1 text-xs">10</p>
                                     <div class="ml-auto"> <!-- ml-auto class 추가 -->
-                                        <img src="../static/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
+                                        <img src="/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
                                     </div>
                                     <span class="pr-4 mt-1 text-xs">10</span>
                                 </div>
@@ -227,7 +266,7 @@
                                 <p class="pl-5 pr-4 mt-1 text-sm font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">송성승승 긴급회의 소집합니다.</p>
                                 <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">프로젝트 진행도중 중대한 문제가 발생하여 다음과 같이 회의를 소집합니다. 시간이 되시는 분들은 다음과 같은 장소에 모여주시기 바랍니다. 준비물: 노트북</p>
                                 <div class="flex items-center">
-                                    <img src="../static/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
+                                    <img src="/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
                                     <div>
                                         <span class="text-xs">dev</span>
                                         <p class="text-xs text-gray-500">약 1시간전</p>
@@ -235,12 +274,12 @@
 
                                 </div>
                                 <div class="flex">
-                                    <img src="../static/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
+                                    <img src="/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
                                     <p class="pl-1 mt-1 text-xs">10</p>
-                                    <img src="../static/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
+                                    <img src="/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
                                     <p class="pl-2 mt-1 text-xs">10</p>
                                     <div class="ml-auto"> <!-- ml-auto class 추가 -->
-                                        <img src="../static/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
+                                        <img src="/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
                                     </div>
                                     <span class="pr-4 mt-1 text-xs">10</span>
                                 </div>
@@ -254,7 +293,7 @@
                                 <p class="pl-5 pr-4 mt-1 text-sm font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">송성승승 긴급회의 소집합니다.</p>
                                 <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">프로젝트 진행도중 중대한 문제가 발생하여 다음과 같이 회의를 소집합니다. 시간이 되시는 분들은 다음과 같은 장소에 모여주시기 바랍니다. 준비물: 노트북</p>
                                 <div class="flex items-center">
-                                    <img src="../static/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
+                                    <img src="/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
                                     <div>
                                         <span class="text-xs">dev</span>
                                         <p class="text-xs text-gray-500">약 1시간전</p>
@@ -262,12 +301,12 @@
 
                                 </div>
                                 <div class="flex">
-                                    <img src="../static/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
+                                    <img src="/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
                                     <p class="pl-1 mt-1 text-xs">10</p>
-                                    <img src="../static/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
+                                    <img src="/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
                                     <p class="pl-2 mt-1 text-xs">10</p>
                                     <div class="ml-auto"> <!-- ml-auto class 추가 -->
-                                        <img src="../static/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
+                                        <img src="/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
                                     </div>
                                     <span class="pr-4 mt-1 text-xs">10</span>
                                 </div>
@@ -281,7 +320,7 @@
                                 <p class="pl-5 pr-4 mt-1 text-sm font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">송성승승 긴급회의 소집합니다.</p>
                                 <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">프로젝트 진행도중 중대한 문제가 발생하여 다음과 같이 회의를 소집합니다. 시간이 되시는 분들은 다음과 같은 장소에 모여주시기 바랍니다. 준비물: 노트북</p>
                                 <div class="flex items-center">
-                                    <img src="../static/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
+                                    <img src="/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
                                     <div>
                                         <span class="text-xs">dev</span>
                                         <p class="text-xs text-gray-500">약 1시간전</p>
@@ -289,12 +328,12 @@
 
                                 </div>
                                 <div class="flex">
-                                    <img src="../static/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
+                                    <img src="/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
                                     <p class="pl-1 mt-1 text-xs">10</p>
-                                    <img src="../static/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
+                                    <img src="/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
                                     <p class="pl-2 mt-1 text-xs">10</p>
                                     <div class="ml-auto"> <!-- ml-auto class 추가 -->
-                                        <img src="../static/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
+                                        <img src="/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
                                     </div>
                                     <span class="pr-4 mt-1 text-xs">10</span>
                                 </div>
@@ -308,7 +347,7 @@
                                 <p class="pl-5 pr-4 mt-1 text-sm font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">송성승승 긴급회의 소집합니다.</p>
                                 <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">프로젝트 진행도중 중대한 문제가 발생하여 다음과 같이 회의를 소집합니다. 시간이 되시는 분들은 다음과 같은 장소에 모여주시기 바랍니다. 준비물: 노트북</p>
                                 <div class="flex items-center">
-                                    <img src="../static/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
+                                    <img src="/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
                                     <div>
                                         <span class="text-xs">dev</span>
                                         <p class="text-xs text-gray-500">약 1시간전</p>
@@ -316,12 +355,12 @@
 
                                 </div>
                                 <div class="flex">
-                                    <img src="../static/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
+                                    <img src="/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
                                     <p class="pl-1 mt-1 text-xs">10</p>
-                                    <img src="../static/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
+                                    <img src="/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
                                     <p class="pl-2 mt-1 text-xs">10</p>
                                     <div class="ml-auto"> <!-- ml-auto class 추가 -->
-                                        <img src="../static/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
+                                        <img src="/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
                                     </div>
                                     <span class="pr-4 mt-1 text-xs">10</span>
                                 </div>
@@ -335,7 +374,7 @@
                                 <p class="pl-5 pr-4 mt-1 text-sm font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">송성승승 긴급회의 소집합니다.</p>
                                 <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">프로젝트 진행도중 중대한 문제가 발생하여 다음과 같이 회의를 소집합니다. 시간이 되시는 분들은 다음과 같은 장소에 모여주시기 바랍니다. 준비물: 노트북</p>
                                 <div class="flex items-center">
-                                    <img src="../static/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
+                                    <img src="/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
                                     <div>
                                         <span class="text-xs">dev</span>
                                         <p class="text-xs text-gray-500">약 1시간전</p>
@@ -343,12 +382,12 @@
 
                                 </div>
                                 <div class="flex">
-                                    <img src="../static/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
+                                    <img src="/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
                                     <p class="pl-1 mt-1 text-xs">10</p>
-                                    <img src="../static/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
+                                    <img src="/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
                                     <p class="pl-2 mt-1 text-xs">10</p>
                                     <div class="ml-auto"> <!-- ml-auto class 추가 -->
-                                        <img src="../static/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
+                                        <img src="/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
                                     </div>
                                     <span class="pr-4 mt-1 text-xs">10</span>
                                 </div>
@@ -362,7 +401,7 @@
                                 <p class="pl-5 pr-4 mt-1 text-sm font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">송성승승 긴급회의 소집합니다.</p>
                                 <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">프로젝트 진행도중 중대한 문제가 발생하여 다음과 같이 회의를 소집합니다. 시간이 되시는 분들은 다음과 같은 장소에 모여주시기 바랍니다. 준비물: 노트북</p>
                                 <div class="flex items-center">
-                                    <img src="../static/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
+                                    <img src="/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
                                     <div>
                                         <span class="text-xs">dev</span>
                                         <p class="text-xs text-gray-500">약 1시간전</p>
@@ -370,12 +409,12 @@
 
                                 </div>
                                 <div class="flex">
-                                    <img src="../static/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
+                                    <img src="/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
                                     <p class="pl-1 mt-1 text-xs">10</p>
-                                    <img src="../static/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
+                                    <img src="/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
                                     <p class="pl-2 mt-1 text-xs">10</p>
                                     <div class="ml-auto"> <!-- ml-auto class 추가 -->
-                                        <img src="../static/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
+                                        <img src="/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
                                     </div>
                                     <span class="pr-4 mt-1 text-xs">10</span>
                                 </div>
@@ -389,7 +428,7 @@
                                 <p class="pl-5 pr-4 mt-1 text-sm font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">송성승승 긴급회의 소집합니다.</p>
                                 <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">프로젝트 진행도중 중대한 문제가 발생하여 다음과 같이 회의를 소집합니다. 시간이 되시는 분들은 다음과 같은 장소에 모여주시기 바랍니다. 준비물: 노트북</p>
                                 <div class="flex items-center">
-                                    <img src="../static/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
+                                    <img src="/images/Ellipse%201.png" class="object-cover object-center pl-3 mt-1" alt="">
                                     <div>
                                         <span class="text-xs">dev</span>
                                         <p class="text-xs text-gray-500">약 1시간전</p>
@@ -397,12 +436,12 @@
 
                                 </div>
                                 <div class="flex">
-                                    <img src="../static/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
+                                    <img src="./images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
                                     <p class="pl-1 mt-1 text-xs">10</p>
-                                    <img src="../static/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
+                                    <img src="./images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
                                     <p class="pl-2 mt-1 text-xs">10</p>
                                     <div class="ml-auto"> <!-- ml-auto class 추가 -->
-                                        <img src="../static/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
+                                        <img src="./images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
                                     </div>
                                     <span class="pr-4 mt-1 text-xs">10</span>
                                 </div>
@@ -423,7 +462,7 @@
             <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
               <div>
                 <p class="text-sm text-gray-700">
-                  
+
                 </p>
               </div>
               <div>
@@ -451,11 +490,35 @@
                 </nav>
               </div>
               <p class="text-sm text-gray-700">
-                
+
               </p>
             </div>
           </div>
     </section>
+    <script>
+        document.getElementById("filterSelect").addEventListener("change", function () {
+            var selectedOption = this.options[this.selectedIndex];
+            var optionValue = selectedOption.value;
+
+            if (optionValue === "notice") {
+                document.getElementById("filterSelect").value = "notice";
+                window.location.href = "/post/notice"; // 원하는 경로로 이동=
+            } else if (optionValue === "free") {
+                document.getElementById("filterSelect").value = "free";
+                window.location.href = "/post/free"; // 다른 경로로 이동
+            } else if (optionValue === "qa") {
+                document.getElementById("filterSelect").value = "qa";
+                window.location.href = "/post/qa"; // 또 다른 경로로 이동
+            }
+        });
+        function searchOnEnter(event) {
+        if (event.key === 'Enter') {
+                const searchValue = document.getElementById("search").value;
+                const searchUrl = `/search?keyword=${encodeURIComponent(searchValue)}`;
+                window.location.href = searchUrl;
+            }
+        }
+    </script>
 </body>
 
 </html>
