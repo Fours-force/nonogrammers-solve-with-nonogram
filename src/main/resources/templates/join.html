@@ -15,7 +15,7 @@
 
       <!-- 사용자 정보 입력 -->
       <div class="mt-6 rounded-lg bg-cmt-user-div-bg px-3.5 py-3.5 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form class="space-y-6" action="/api/join" method="POST">
+        <form id="joinForm" class="space-y-6" action="#" method="POST">
           <!-- 이메일 입력 -->
           <div>
             <label for="email" class="block font-brr text-sm leading-6 text-gray-900">이메일</label>
@@ -68,6 +68,7 @@
                 required
                 class="block w-full rounded-sm border border-main-skyblue py-2 text-gray-900 focus:border-main-skyblue focus:outline-none focus:ring-2 focus:ring-main-skyblue sm:text-sm sm:leading-6"
               />
+              <span id="passwordStatus" class="text-xs text-red-500"></span>
             </div>
 
             <!-- 비밀번호 확인 -->
