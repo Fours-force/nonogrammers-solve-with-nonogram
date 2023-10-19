@@ -3,11 +3,13 @@ package com.dottree.nonogrammers.controller;
 import com.dottree.nonogrammers.dao.UserMapper;
 import com.dottree.nonogrammers.domain.JoinDTO;
 import com.dottree.nonogrammers.domain.ResponseModel;
+import com.dottree.nonogrammers.domain.UserDTO;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,6 +59,7 @@ public class UserController {
             @PathVariable("checkValue") String checkValue,
             @RequestParam("value") String value
     ){
+
         ResponseModel response = new ResponseModel();
         response.setTitle(String.format("%s", checkValue));
 
@@ -93,17 +96,15 @@ public class UserController {
     }
 
     @GetMapping("/check-reset-password")
-    public ModelAndView showResetPassword(@RequestParam("token") String token){
-        ModelAndView mav = new ModelAndView();
+    public String showResetPassword(@RequestParam("token") String token, Model model){
         String email = emailTokenMap.get(token);
         if (email != null){
             emailTokenMap.remove(token);
-            mav.addObject("email", email);
-            mav.setViewName("reset-password");
+            model.addAttribute("email", email);
+            return "reset-password";
         } else {
-            mav.setViewName("home");
+            return "redirect:/";
         }
-        return mav;
     }
 
     @RequestMapping(value = "/reset-password", produces = "application/json; charset=utf-8", method = RequestMethod.POST)
@@ -127,5 +128,44 @@ public class UserController {
             response.setMessage("! 문제가 발생했습니다. 다시 시도해주세요");
         }
         return response;
+    }
+
+    @PostMapping("/login")
+    public String login(
+            JoinDTO dto,
+            HttpServletRequest httpServletRequest
+            ){
+        Integer userId = dao.getLogin(dto.getEmail(), dto.getPassword());
+        if (userId != null){
+            UserDTO userInform = dao.selectUserByUserId(userId);
+            Map<String, Object> sessionValue = new HashMap<>();
+            sessionValue.put("userId", userInform.getUserId());
+            sessionValue.put("email", userInform.getEmail());
+            sessionValue.put("nickName", userInform.getNickName());
+            sessionValue.put("profileImgUrl", userInform.getProfileImgUrl());
+
+            HttpSession session = httpServletRequest.getSession(false);  // 이미 있는 세션을 가져옴
+            if (session != null) {
+                session.invalidate();  // 이미 있는 세션을 무효화
+            }
+            session = httpServletRequest.getSession(true);  // 새로운 세션을 생성
+            session.setAttribute("value", sessionValue);
+            return "redirect:/";
+        } else{
+            HttpSession session = httpServletRequest.getSession(false);
+            if (session != null) {
+                session.invalidate();
+            }
+            ResponseModel response = new ResponseModel();
+            response.setTitle("Login");
+            response.setStatusCode(404);
+            response.setMessage("이메일 주소나 비밀번호가 틀립니다");
+            return "login";
+        }
+    }
+    @GetMapping("/logout")
+    public String logout(HttpSession session){
+        session.invalidate();
+        return "redirect:/";
     }
 }

@@ -10,7 +10,7 @@ public interface UserMapper {
     public UserDTO selectUserByUserId(int userId);
 
     // 회원가입 - 유저 생성
-    @Insert("insert into user (email, password, nickName, profileImgUrl) values (#{email}, #{password}, #{nickName}, #{profileImgUrl})")
+    @Insert("insert into user (email, password, nickName, profileImgUrl, baekjoonUserId) values (#{email}, #{password}, #{nickName}, #{profileImgUrl}, #{baekjoonUserId})")
     public boolean insertAccount(JoinDTO dto);
 
     // 이메일, 닉네임 중복 체크
@@ -20,8 +20,8 @@ public interface UserMapper {
     );
 
     // 로그인 - 이메일, 비밀번호 확인
-    @Select("select count(*) from user where email = #{email} and password = #{password}")
-    public int getLogin(@Param("email") String email,
+    @Select("select userId from user where email = #{email} and password = #{password}")
+    public Integer getLogin(@Param("email") String email,
                         @Param("password") String password
     );
 
