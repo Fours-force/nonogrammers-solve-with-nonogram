@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -15,16 +15,16 @@
                     <div>
                         <div class="flex">
                             <button class="flex w-8 h-8 ml-2 duration-300 ease-in-out rounded-md hover:bg-commu-pagination-hover" onclick="location.href='#'">
-                                <img src="./images/icon_chevronleft_.png" class="object-cover object-center h-5 mt-1.5 ml-2 w-fit" alt="">
+                                <img src="/images/icon_chevronleft_.png" class="object-cover object-center h-5 mt-1.5 ml-2 w-fit" alt="">
                             </button>
                             <p class="mt-0.5 ml-2 text-base font-semibold leading-7 text-main-blue">공지사항</p>
                         </div>
                         <div class="flex">
-                            <img src="./images/new_post_1.png" class="w-3.5 mt-3.5 ml-3 mr-3 h-fit" alt="">
+                            <img src="/images/new_post_1.png" class="w-3.5 mt-3.5 ml-3 mr-3 h-fit" alt="">
                             <h1 class="mt-2 text-2xl font-bold tracking-tight text-nav-navy sm:text-2xl">송성승승 긴급회의 소집합니다</h1>
                         </div>
                         <div class="flex items-center mt-3">
-                            <img src="./images/Ellipse 1.png" class="object-cover object-center h-8 mt-1 mr-1.5 w-fit" alt="">
+                            <img src="/images/Ellipse 1.png" class="object-cover object-center h-8 mt-1 mr-1.5 w-fit" alt="">
                             <div>
                                 <span class="text-sm text-nav-navy">dev</span>
                                 <p class="text-xs text-commu-time-info">약 1시간전</p>
@@ -32,12 +32,12 @@
                         </div>
                         <p class="px-6 mt-6 text-lg leading-8 text-nav-navy">프로젝트 진행중 중요한 문제가 발생하여 긴급회의를 소집합니다. <br>시간이 되시는 분들은 1시간 후까지 집합하여 주시길 바랍니다. <br>장소 : 서울특별시 송파구 중대로 135 <br>준비물: 개인 노트북 <br>문이 잠겨있을 시에는 당황하지 마시고 팀장에게 연락 바랍니다.</p>
                         <div class="flex mt-5">
-                            <img src="./images/icon_eye_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
+                            <img src="/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
                             <span class="pl-1.5 pr-3 mt-1 text-xs">10</span>
-                            <img src="./images/image 12.png" class="h-4 mt-1" alt="">
+                            <img src="/images/image 12.png" class="h-4 mt-1" alt="">
                             <p class="pl-1 mt-1 text-xs">3</p>
                             <button class="flex w-10 h-6 ml-2 duration-300 ease-in-out rounded-md hover:bg-commu-pagination-hover" onclick="location.href='#'">
-                                <img src="./images/icon_thumbup_.png" class="object-cover object-center h-3 pl-2 mt-1" alt="">
+                                <img src="/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-2 mt-1" alt="">
                                 <p class="pl-1 mt-1 text-xs">4</p>
                             </button>
                         </div>
@@ -48,7 +48,7 @@
                         </div>
                         <div class="mb-5">
                             <div class="flex mt-2 ml-5">
-                                <img src="./images/Rectangle 28.png" class="object-cover object-center h-8 pl-3 mt-3 w-fit" alt="">
+                                <img src="/images/Rectangle 28.png" class="object-cover object-center h-8 pl-3 mt-3 w-fit" alt="">
                                 <div class="mt-2 ml-3">
                                     <span class="text-sm">tuxi</span>
                                     <p class="text-xs text-commu-time-info">약 1시간전</p>
@@ -58,7 +58,7 @@
                                 <div class="flex ml-5">
                                     <button class="flex h-5 mt-2 duration-300 ease-in-out rounded-md w-9 ml-14 bg-main-skyblue hover:bg-main-blue"
                                     onclick="location.href='#'">
-                                        <img src="./images/icon_thumbup_(1).png" class="object-cover object-center mt-1 ml-1.5" alt="">
+                                        <img src="/images/icon_thumbup_(1).png" class="object-cover object-center mt-1 ml-1.5" alt="">
                                         <div class="mt-1 ml-1 text-xs text-white">6</div>
                                     </button>
                                     <button class="h-5 mt-2 ml-2 duration-300 ease-in-out rounded-md w-9 bg-main-skyblue hover:bg-main-blue"
@@ -74,7 +74,7 @@
                         </div>
                         <div class="mb-5">
                             <div class="flex mt-2 ml-5">
-                                <img src="./images/Rectangle 28.png" class="object-cover object-center h-8 pl-3 mt-3 w-fit" alt="">
+                                <img src="/images/Rectangle 28.png" class="object-cover object-center h-8 pl-3 mt-3 w-fit" alt="">
                                 <div class="mt-2 ml-3">
                                     <span class="text-sm">doori</span>
                                     <p class="text-xs text-commu-time-info">약 1시간전</p>
@@ -85,14 +85,14 @@
                             <div class="flex ml-5">
                                 <button class="flex h-5 mt-2 duration-300 ease-in-out rounded-md w-9 ml-14 bg-main-skyblue hover:bg-main-blue"
                                 onclick="location.href='#'">
-                                    <img src="./images/icon_thumbup_(1).png" class="object-cover object-center mt-1 ml-1.5" alt="">
+                                    <img src="/images/icon_thumbup_(1).png" class="object-cover object-center mt-1 ml-1.5" alt="">
                                     <div class="mt-1 ml-1 text-xs text-white">3</div>
                                 </button>
                             </div>
                         </div>
                         <div class="mb-5">
                             <div class="flex mt-2 ml-5">
-                                <img src="./images/Rectangle 28.png" class="object-cover object-center h-8 pl-3 mt-3 w-fit" alt="">
+                                <img src="/images/Rectangle 28.png" class="object-cover object-center h-8 pl-3 mt-3 w-fit" alt="">
                                 <div class="mt-2 ml-3">
                                     <span class="text-sm">hi_ruu</span>
                                     <p class="text-xs text-commu-time-info">약 1시간전</p>
@@ -103,7 +103,7 @@
                             <div class="flex ml-5">
                                 <button class="flex h-5 mt-2 duration-300 ease-in-out rounded-md w-9 ml-14 bg-main-skyblue hover:bg-main-blue"
                                 onclick="location.href='#'">
-                                    <img src="./images/icon_thumbup_(1).png" class="object-cover object-center mt-1 ml-1.5" alt="">
+                                    <img src="/images/icon_thumbup_(1).png" class="object-cover object-center mt-1 ml-1.5" alt="">
                                     <div class="mt-1 ml-1 text-xs text-white">2</div>
                                 </button>
                             </div>
