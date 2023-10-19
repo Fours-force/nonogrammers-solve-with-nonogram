@@ -4,6 +4,8 @@ import com.dottree.nonogrammers.dao.UserMapper;
 import com.dottree.nonogrammers.domain.JoinDTO;
 import com.dottree.nonogrammers.domain.ResponseModel;
 import com.dottree.nonogrammers.domain.UserDTO;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,17 +16,11 @@ import java.util.Map;
 import java.util.UUID;
 
 @Controller
-@SessionAttributes("isLogin")
 @RequestMapping("/api")
 public class UserController {
     private final Map<String, String> emailTokenMap = new HashMap<>();
     @Autowired
     UserMapper dao;
-
-    @ModelAttribute("isLogin")
-    public Map<String, Object> userSession(){
-        return new HashMap<>();
-    }
 
     @RequestMapping(value = "/join", produces = "application/json; charset=utf-8", method = RequestMethod.POST)
     @ResponseBody
@@ -63,6 +59,7 @@ public class UserController {
             @PathVariable("checkValue") String checkValue,
             @RequestParam("value") String value
     ){
+
         ResponseModel response = new ResponseModel();
         response.setTitle(String.format("%s", checkValue));
 
@@ -136,22 +133,39 @@ public class UserController {
     @PostMapping("/login")
     public String login(
             JoinDTO dto,
-            @ModelAttribute("isLogin") HashMap<String, Object> isLoginModel
+            HttpServletRequest httpServletRequest
             ){
         Integer userId = dao.getLogin(dto.getEmail(), dto.getPassword());
         if (userId != null){
             UserDTO userInform = dao.selectUserByUserId(userId);
-            isLoginModel.put("userId", userInform.getUserId());
-            isLoginModel.put("email", userInform.getEmail());
-            isLoginModel.put("nickName", userInform.getNickName());
-            isLoginModel.put("profileImgUrl", userInform.getProfileImgUrl());
+            Map<String, Object> sessionValue = new HashMap<>();
+            sessionValue.put("userId", userInform.getUserId());
+            sessionValue.put("email", userInform.getEmail());
+            sessionValue.put("nickName", userInform.getNickName());
+            sessionValue.put("profileImgUrl", userInform.getProfileImgUrl());
+
+            HttpSession session = httpServletRequest.getSession(false);  // 이미 있는 세션을 가져옴
+            if (session != null) {
+                session.invalidate();  // 이미 있는 세션을 무효화
+            }
+            session = httpServletRequest.getSession(true);  // 새로운 세션을 생성
+            session.setAttribute("value", sessionValue);
             return "redirect:/";
         } else{
+            HttpSession session = httpServletRequest.getSession(false);
+            if (session != null) {
+                session.invalidate();
+            }
             ResponseModel response = new ResponseModel();
             response.setTitle("Login");
             response.setStatusCode(404);
             response.setMessage("이메일 주소나 비밀번호가 틀립니다");
             return "login";
         }
+    }
+    @GetMapping("/logout")
+    public String logout(HttpSession session){
+        session.invalidate();
+        return "redirect:/";
     }
 }

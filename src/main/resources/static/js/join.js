@@ -3,7 +3,7 @@ document.getElementById("btnEmailCheck").addEventListener("click", function (e) 
 document.getElementById("btnNicknameCheck").addEventListener("click", function (e) { checkExists(e, "nickName") });
 
 // 개인정보 동의 체크 여부
-document.getElementById("checkboxAgree").addEventListener("click", checkAgree)
+document.getElementById("checkboxAgree").addEventListener("click", checkAgree);
 
 //회원가입 버튼 클릭 시 (POST Request)
 document.getElementById("joinForm").addEventListener("submit", submitEventHandler);
@@ -59,7 +59,7 @@ function submitEventHandler(e) {
         var response = JSON.parse(xhr.responseText);
         window.alert(response['message'])
         if (response['statusCode'] == 201){
-            window.location.href = "/";
+            window.location.href = "/login";
         }
     } else {
         window.alert("문제가 생겼어요! 회원가입이 진행되지 못했습니다.");

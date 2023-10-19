@@ -18,6 +18,9 @@
   </div>
 </div>
 <script type="text/javascript" th:src="@{/js/home.js}"></script>
+<script th:inline="javascript" th:if="${session.value}">
+  document.getElementById('user-menu-button').addEventListener("click", toggleDropdown);
+</script>
 </body>
 </th:block>
 </html>

@@ -30,15 +30,9 @@
                         </a>
                     </div>
                     <div class="hidden w-8/12 sm:block">
-                        <div th:unless="${session.isLogin}">
-                            <div class="flex items-center font-brr justify-end space-x-4 pr-2 h-2/5 sm:static sm:inset-auto sm:pr-0">
-                                <a href="/login">로그인</a>
-                                <a href="/join">회원가입</a>
-                            </div>
-                        </div>
-                        <div th:if="${session.isLogin}">
+                        <div th:if="${session.value}">
                             <div class="flex items-center justify-end pr-2 h-2/5 sm:static sm:inset-auto sm:pr-0">
-                                <span class="relative text-xl font-brr leading-normal text-center text-gray-400 md:w-3/12 sm:w-2/6 sm:min-w-max">[[${session.isLogin.nickName}]]님</span>
+                                <span class="relative text-xl font-brr leading-normal text-center text-gray-400 md:w-3/12 sm:w-2/6 sm:min-w-max">[[${session.value.nickName}]]님</span>
                                 <!-- Profile dropdown -->
                                 <div class="relative">
                                     <div>
@@ -48,7 +42,7 @@
                                             id="user-menu-button" aria-expanded="false" aria-haspopup="true">
                                             <!-- <span class="absolute -inset-1.5"></span> -->
                                             <span class="sr-only">Open user menu</span>
-                                            <img class="h-10 rounded-full" th:src="${session.isLogin.profileImgUrl}"
+                                            <img class="h-10 rounded-full" th:src="${session.value.profileImgUrl}"
                                                 alt="profile-img">
                                         </button>
                                         <div id="dropdown" class="z-10 absolute right-0 hidden bg-white divide-y divide-gray-100 rounded-lg shadow md:w-40 dark:bg-gray-700">
@@ -57,12 +51,18 @@
                                                     <a href="#" class="block px-6 py-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">MYPAGE</a>
                                                 </li>
                                                 <li>
-                                                    <a href="#" class="block px-6 py-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">LOGOUT</a>
+                                                    <a href="/api/logout" class="block px-6 py-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">LOGOUT</a>
                                                 </li>
                                             </ul>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div th:unless="${session.value}">
+                            <div class="flex items-center font-brr justify-end space-x-4 pr-2 h-2/5 sm:static sm:inset-auto sm:pr-0">
+                                <a href="/login">로그인</a>
+                                <a href="/join">회원가입</a>
                             </div>
                         </div>
                         <div class="flex justify-around w-full mt-3 font-super256 h-3/5">
