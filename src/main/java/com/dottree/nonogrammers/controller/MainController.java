@@ -82,10 +82,14 @@ public class MainController {
             log.info("nonoId : " + nonoId);
             int cnt = 0;
             String aaad = "212352";
-            List<List<DotDTO>> totalRowList = new ArrayList<>();
+            List<List<DotDTO>> totalRowList = new ArrayList<>(); // 모든 도트의 정보를 담을 이중ArrayList. 행,열로 나뉘어 있음.
             ModelAndView mav = new ModelAndView();
             mav.setViewName("nonodots");
-            List<DotDTO> nList = mdao.selectAllDot(nonoId);
+            List<DotDTO> nList = mdao.selectAllDot(nonoId); //
+//            NonoDTO allUrls = mdao.selectAllRowUrl(nonoId);
+//            String [] urlAry = allUrls.getRowUrl().split(",");
+
+
             int row = nList.size()/32;
             log.info("row : "+row);
 
@@ -102,6 +106,7 @@ public class MainController {
                 totalRowList.add(singleRowList);
             }
             mav.addObject("dotList", totalRowList);
+//            mav.addObject("urlList", urlList);
             mav.addObject("testcolor", aaad);
             mav.addObject("testcode", "와웅우우아아");
 
@@ -113,5 +118,21 @@ public class MainController {
                 }
             }
         return mav;
+    }
+
+
+
+
+
+    // 문제링크 가져오기.
+    @RequestMapping("/geturls")
+    @ResponseBody
+    public void geturls(@RequestParam("nonoId")int nonoId){
+        NonoDTO allUrls = mdao.selectAllRowUrl(nonoId);
+        String [] urlAry = allUrls.getRowUrl().split(",");
+
+        for (int i=0; i< urlAry.length; i++){
+            System.out.println(urlAry[i]);
+        }
     }
 }

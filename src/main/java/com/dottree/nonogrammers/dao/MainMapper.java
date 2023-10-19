@@ -26,4 +26,6 @@ public interface MainMapper {
     @Select("select * from dot where nonoId = #{nonoId}")
     public List<DotDTO> selectAllDot(@Param("nonoId") int nonoId);
 
+    @Select("select rowUrl from nono where nonoId = #{nonoId}")
+    public NonoDTO selectAllRowUrl(@Param("nonoId") int nonoId);
 }

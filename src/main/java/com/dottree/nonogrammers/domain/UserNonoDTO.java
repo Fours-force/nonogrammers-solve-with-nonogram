@@ -9,4 +9,5 @@ public class UserNonoDTO {
     private int userId;
     private int nonoId;
     private int isSolved;
+    private String createdAt;
 }
