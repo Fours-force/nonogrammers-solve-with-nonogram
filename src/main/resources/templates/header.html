@@ -78,7 +78,7 @@
                             </div>
                             <div class="flex justify-center w-auto h-auto p-1 hover:text-nav-navy active:text-main-skyblue active:rounded-md">
                                 <a href="/post" class="block w-auto h-full text-2xl">
-                                    <span class="">COMMUNITY</span>
+                                    <span id="community" class="">COMMUNITY</span>
                                 </a>
                             </div>
                         </div>
@@ -101,4 +101,10 @@
             </div>
         </div>
     </header>
+
+    <script th:inline="javascript">
+        if ([[${nav}]]){
+            document.getElementById([[${nav}]]).classList.add("text-main-skyblue");
+        }
+    </script>
 </th:block>

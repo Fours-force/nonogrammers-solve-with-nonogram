@@ -26,6 +26,7 @@ public class PostController {
         List<PostDTO> list= dao.listm();
         ModelAndView mav=new ModelAndView();
         mav.addObject("list",list);
+        mav.addObject("nav", "community" );
         mav.setViewName("community");
         return mav;
     }
