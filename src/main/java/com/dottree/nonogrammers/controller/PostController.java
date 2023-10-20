@@ -78,7 +78,11 @@ public class PostController {
         return mav;
     }
 
-
-
-
+    @PostMapping("/post/write")
+    public String writePost(PostDTO dto,
+                            @RequestParam("category") String category){
+        dto.setBoardType(dao.getBoardType(category));
+        dao.insertPost(dto);
+        return "redirect:/community";
+    }
 }
