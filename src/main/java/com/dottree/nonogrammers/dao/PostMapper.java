@@ -31,4 +31,12 @@ public interface PostMapper {
     @Select("SELECT postId, boardType, userId, title, content, createdAt, updatedAt  FROM post WHERE userId = #{userId}")
     public List<PostDTO> selectPostList(int userId);
 
+    // boardName 으로 boardType 반환
+    @Select("select boardType from board where boardName = #{category}")
+    public int getBoardType(String category);
+
+    // 게시글 작성
+    @Insert("insert into post(boardType, userId, title, content) values (#{boardType}, #{userId}, #{title}, #{content})")
+    public boolean insertPost(PostDTO dto);
+
 }

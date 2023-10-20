@@ -81,4 +81,13 @@ public class PostController {
         System.out.println(cd.getPostId());
         return "redirect:/detail?postId=" + cd.getPostId();
     }
+
+    @PostMapping("/post/write")
+    public String writePost(PostDTO dto,
+                            @RequestParam("category") String category){
+        dto.setBoardType(dao.getBoardType(category));
+        dao.insertPost(dto);
+        return "redirect:/community";
+    }
+
 }

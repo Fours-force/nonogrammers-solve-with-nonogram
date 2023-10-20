@@ -4,12 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Map;
+
 @Setter
 @Getter
 @ToString
 public class ResponseModel {
     private Integer statusCode;
     private String title;
-    private boolean content;
+    private String data;
     private String message;
 }
