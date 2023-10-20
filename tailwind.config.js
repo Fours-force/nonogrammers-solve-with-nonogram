@@ -25,6 +25,7 @@ module.exports = {
             'nono-mypg-item-border' : '#264E86',
             'cmt-user-div-bg' : '#E3F8FC',
             'name-mobile-menu' : '#52647F',
+            'write-border': '#E2E0E0',
         },
         fontFamily : {
             super256 : ['"Super Mario 256"'],

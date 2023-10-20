@@ -19,5 +19,10 @@ public class UrlController {
     @RequestMapping("/reset-password")
     public String resetPassword(){return "reset-password";}
 
+    @RequestMapping("/write")
+    public String writePost(){return "write";}
+
+    @RequestMapping("/community")
+    public String getCommunity(){return "community";}
 }
 
