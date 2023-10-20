@@ -1,9 +1,8 @@
 package com.dottree.nonogrammers.dao;
-
 import com.dottree.nonogrammers.domain.CommentDTO;
+import com.dottree.nonogrammers.domain.FileDTO;
 import com.dottree.nonogrammers.domain.PostDTO;
 import org.apache.ibatis.annotations.*;
-
 import java.util.List;
 
 @Mapper
@@ -37,6 +36,11 @@ public interface PostMapper {
 
     // 게시글 작성
     @Insert("insert into post(boardType, userId, title, content) values (#{boardType}, #{userId}, #{title}, #{content})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     public boolean insertPost(PostDTO dto);
+
+    // 업로드된 이미지 정보 작성
+    @Insert("insert into file(postId, filename, fileExtension, fileUrl) values(#{postId}, #{filename}, #{fileExtension}, #{fileUrl})")
+    public boolean insertUploadImage(FileDTO dto);
 
 }
