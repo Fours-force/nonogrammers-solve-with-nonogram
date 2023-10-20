@@ -5,9 +5,7 @@ import com.dottree.nonogrammers.domain.CommentDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import com.dottree.nonogrammers.domain.PostDTO;
 
@@ -51,13 +49,16 @@ public class PostController {
         mav.setViewName("community");
         return mav;
     }
-    @GetMapping("/detail")
-    public ModelAndView detail(@RequestParam("postId") String postId){
+    @RequestMapping("/detail")
+    public ModelAndView detail(String postId){
         ModelAndView mav=new ModelAndView();
         PostDTO pos= dao.detailss(postId);
+        dao.incrementViewCount(postId);
         List<CommentDTO> list= dao.commList(postId);
+        List<Integer> counts = dao.counting(postId);
         mav.addObject("pos", pos);
         mav.addObject("comm",list);
+        mav.addObject("counts",counts);
         mav.setViewName("detail");
         return mav;
     }
@@ -69,13 +70,16 @@ public class PostController {
         mav.setViewName("community");
         return mav;
     }
-    @PostMapping("/comment")
-    public ModelAndView comment(CommentDTO cd) {
-        boolean result =dao.insertComm(cd);
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("comm",dao.commList(String.valueOf(cd.getPostId())));
-        mav.setViewName("detail");
-        return mav;
+    @PostMapping("/detailComment")
+        public String detailComment(CommentDTO cd) {
+        boolean result= dao.insertComm(cd);
+        ModelAndView mav=new ModelAndView();
+        PostDTO pos= dao.detailss(String.valueOf(cd.getPostId()));
+        List<CommentDTO> list=dao.commList(String.valueOf(cd.getPostId()));
+        mav.addObject("pos", pos);
+        mav.addObject("comm",list);
+        System.out.println(cd.getPostId());
+        return "redirect:/detail?postId=" + cd.getPostId();
     }
 
     @PostMapping("/post/write")
@@ -85,4 +89,5 @@ public class PostController {
         dao.insertPost(dto);
         return "redirect:/community";
     }
+
 }
