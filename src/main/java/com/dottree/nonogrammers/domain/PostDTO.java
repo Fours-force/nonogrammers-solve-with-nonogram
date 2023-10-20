@@ -8,6 +8,7 @@ import java.time.LocalDate;
 
 @Data
 public class PostDTO {
+    private int id;
     private int postId;
     private int boardType;
     private int userId;
