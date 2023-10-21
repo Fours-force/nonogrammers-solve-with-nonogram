@@ -10,7 +10,7 @@
             <h1 class="pb-5 pl-5 text-3xl border-b-2 mb-7 font-brr text-nav-navy">내가 푼 노노들</h1>
             <article
                 class="grid grid-cols-1 gap-y-3 gap-x-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-1 xl:gap-y-1">
-                <th:block th:if="${isSolved == 0}" th:each="nono : ${nonoList}">
+                <th:block th:if="${isSolved eq 0}" th:each="nono : ${nonoList}">
                     <div class="w-full h-full">
                         <a th:href="@{|/ingnono/detail/${userId}/${nono.getNonoId()}|}"
                             class="block h-full max-w-md p-6 mx-auto bg-white border-4 rounded-lg shadow w-12/12 border-nono-mypg-item-border dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
@@ -22,7 +22,7 @@
                         </a>
                     </div>
                 </th:block>
-                <th:block th:unless="${isSolved == 1}" th:each="nono : ${nonoList}">
+                <th:block th:if="${isSolved eq 1}" th:each="nono : ${nonoList}">
                     <div class="w-full h-full">
                         <a th:href="@{|/solvednono/detail/${userId}/${nono.getNonoId()}|}"
                            class="block h-full max-w-md p-6 mx-auto bg-white border-4 rounded-lg shadow w-12/12 border-nono-mypg-item-border dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
