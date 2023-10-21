@@ -1,100 +1,211 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link th:href="@{/css/dist/output.css}" rel="stylesheet">
-    <title>Document</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{./defaultLayout.html}">
 
 <body>
-    <div class="flex justify-center w-screen px-1 mx-auto h-max sm:px-6 lg:px-8 gap-x-2 bg-back">
-        <!-- 좌측 nav -->
-        <div class="top-0 mt-3 bg-white border-2 border-solid rounded-lg min:w-4/12 border-mypage-left-nav h-fit">
-            <ul class="w-full p-5 space-y-2 font-medium font-brr">
-                <li>
-                    <a href="#" class="flex items-center p-2 text-2xl text-gray-900 rounded-md dark:text-white group">
-                        <span class="ml-3 text-mypg-left-nav">내 활동</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#"
-                        class="flex items-center p-2 text-lg text-gray-900 rounded-md active:bg-main-skyblue active:text-white dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ml-7">
-                        <span class="flex-1 whitespace-nowrap">계정 관리</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#"
-                        class="flex items-center p-2 text-lg text-gray-900 rounded-md active:bg-main-skyblue active:text-white dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ml-7">
-                        <span class="flex-1 whitespace-nowrap">내가 푼 노노들</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#"
-                        class="flex items-center p-2 text-lg text-gray-900 rounded-md active:bg-main-skyblue active:text-white dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ml-7">
-                        <span class="flex-1 whitespace-nowrap">내가 풀고있는 노노들</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#"
-                        class="flex items-center p-2 text-lg text-gray-900 rounded-md active:bg-main-skyblue active:text-white dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ml-7">
-                        <span class="flex-1 whitespace-nowrap">작성한 글</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <div class="w-8/12 mt-2 max:w-8/12 font-brr min-w-max">
-            <h1 class="pb-5 pl-5 text-3xl border-b-2 mb-7 font-brr text-nav-navy">계정 관리</h1>
-            <article class="w-12/12">
-                <div class="flex justify-between">
-                    <div class="w-5/12 min-w-fit">
-                        <h2 class="text-2xl text-opacity-80 text-mypg-border">닉네임</h2>
-                        <div class="flex justify-around mt-10 bg-white border-2 rounded-lg border-nono-mypg-item-border py-7">
-                            <div class="flex flex-col px-3">
-                                <div class="text-gray-300">현재 닉네임</div>
-                                <div><span th:text="${userDTO.nickName}"></span></div>
-                            </div>
-                            <button type="button"
-                                class="sm:px-3 px-0 md:px-8 py-2.5 mb-2 mr-2 text-md font-medium text-gray-900 bg-white border border-gray-200 rounded-lg h-fit focus:outline-none hover:bg-gray-100 hover:text-main-blue focus:z-10 focus:ring-4 focus:ring-gray-100 ">닉네임 변경하기</button>
-                        </div>
-                    </div>
-                    <div class="w-6/12 min-w-fit">
-                        <h2 class="text-2xl text-opacity-80 text-mypg-border">프로필 사진 변경</h2>
-                        <div class="flex items-center justify-between p-4">
-                            <div class="mr-3">
-                                <img src="/images/aslan.png" alt=""
-                                    class="w-40 h-40 transition duration-200 border-2 rounded-full border-nono-mypg-item-border hover:scale-110 hover:shadow-xl">
-                            </div>
-                            <button type="button"
-                                class="px-8 py-2.5 mb-2 mr-2 text-md font-medium text-gray-900 bg-white border border-gray-200 rounded-lg h-fit focus:outline-none hover:bg-gray-100 hover:text-main-blue focus:z-10 focus:ring-4 focus:ring-gray-100 ">변경하기</button>
-                        </div>
+<<<<<<< HEAD
+    <th:block layout:fragment="content" th:with="userId=${session.userId}"> <!-- session 타임리프 변수에 저장 -->
+        <div class="flex justify-center h-max w-screen px-1 sm:px-6 lg:px-8 mx-auto sm:px-6 lg:px-8 gap-x-2 bg-back">
+            <!-- 좌측 nav -->
+            <th:block th:replace="~{./my-activity-nav.html :: myactivitynavFragment}"></th:block>
+            <div class="w-8/12 mt-2 max:w-8/12 font-brr min-w-max">
+                <h1 class="pb-5 pl-5 text-3xl border-b-2 mb-7 font-brr text-nav-navy">계정 관리</h1>
+                <article class="w-12/12">
+                    <div class="flex justify-between">
+                        <div class="w-5/12 min-w-fit">
+                            <h2 class="text-2xl text-opacity-80 text-mypg-border">닉네임</h2>
+                            <div class="flex justify-around mt-10 bg-white border-2 rounded-lg border-nono-mypg-item-border py-7">
+                                <div class="flex flex-col px-3">
+                                    <div class="text-gray-300">현재 닉네임</div>
+                                    <div><span id="showNickName" th:text="${userDTO.nickName}"></span></div>
+                                </div>
+                                <button type="button" data-modal-target="reset-nickname-modal" data-modal-toggle="reset-nickname-modal"
+                                        class="sm:px-3 px-0 md:px-8 py-2.5 mb-2 mr-2 text-md font-medium text-gray-900 bg-white border border-gray-200 rounded-lg h-fit focus:outline-none hover:bg-gray-100 hover:text-main-blue focus:z-10 focus:ring-4 focus:ring-gray-100 ">닉네임 변경하기</button>
+                                <!-- Main modal -->
+                                <div id="reset-nickname-modal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                                    <div class="relative w-full max-w-md max-h-full">
+                                        <!-- Modal content -->
+                                        <div class="relative bg-white rounded-lg shadow"><!---->
+                                            <button type="button" id="offModalBtn" class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center" data-modal-hide="reset-nickname-modal">
+                                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                                                </svg>
+                                                <span class="sr-only">Close modal</span>
+                                            </button>
+                                            <div class="px-6 py-6 lg:px-8">
+                                                <h3 class="mb-4 text-xl font-medium text-gray-900">닉네임 변경하기</h3>
+                                                <div class="space-y-6">
+                                                    <!--  th:action="|/api/reset-nickname/${userId}|" th:method="put" -->
+                                                    <label for="nickName" class="block mb-2 text-sm font-medium text-gray-900">변경하실 닉네임을 작성해주세요.</label>
+                                                    <div class="flex justify-stretch">
+                                                        <input type="text" name="nickName" id="nickName" class="w-4/6 mr-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="닉네임을 입력해주세요." required/>
+                                                        <button id="nickNameDupBtn" type="button" value="0" class="w-2/6 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">중복확인</button>
+                                                    </div>
+                                                    <button id="nickNameChgBtn" data-modal-hide="reset-nickname-modal" disabled="disabled" type="button" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">변경하기</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-                    </div>
-                </div>
-                <div class="mt-10">
-                    <h1 class="mb-2 text-2xl text-opacity-80 text-mypg-border">비밀번호</h1>
-                    <div class="flex justify-between w-full bg-white border-2 rounded-lg border-nono-mypg-item-border p-7">
-                        <div class="flex flex-col px-3">
-                            <div class="mb-1 text-gray-300">최근 업데이트</div>
-                            <div><span>[[${userDTO.password}]]</span></div>
+                            </div>
                         </div>
-                        <button type="button"
-                                class="px-5 py-2.5 mb-2 mr-2 text-md font-medium text-gray-900 bg-white border border-gray-200 rounded-lg h-fit focus:outline-none hover:bg-gray-100 hover:text-main-blue focus:z-10 focus:ring-4 focus:ring-gray-100 ">비밀번호 변경</button>
+                        <div class="w-6/12 min-w-fit">
+                            <h2 class="text-2xl text-opacity-80 text-mypg-border">프로필 사진 변경</h2>
+                            <div class="flex items-center justify-between p-4">
+                                <div class="mr-3">
+                                    <img th:src="@{${userDTO.profileImgUrl}}" alt="" id="profileImgPreView"
+                                         class="w-40 h-40 transition duration-200 border-2 rounded-full border-nono-mypg-item-border hover:scale-110 hover:shadow-xl">
+                                </div>
+                                <form enctype="multipart/form-data" id="profileImgFile" class="flex flex-col justify-between items-center">
+<!--                                    th:action="|/api/change-profileimgurl/${userId}|" method="post"-->
+<!--                                    <input type="file" name="profileImg" multiple class="block rounded-md px-5 py-2.5 text-md font-medium"/>-->
+                                    <input name="profileImg" class="block w-full mb-5 text-xs text-gray-900 rounded-lg cursor-pointer bg-white focus:outline-none" id="profileImgForm" type="file" accept=".jpg, .png, .jpeg">
+                                    <button type="button" id="profileImgChgBtn"
+                                        class="w-40 px-3 py-2.5 mt-2 mb-2 text-md font-medium text-gray-900 bg-white border border-gray-200 rounded-lg h-fit focus:outline-none hover:bg-gray-100 hover:text-main-blue focus:z-10 focus:ring-4 focus:ring-gray-100 ">
+                                    변경하기</button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="mt-10">
-                    <h1 class="mb-2 text-2xl text-opacity-80 text-mypg-border">계정삭제</h1>
-                    <div class="flex justify-between w-full bg-white border-2 rounded-lg border-nono-mypg-item-border p-7">
-                        <div class="my-auto text-gray-400">계정 삭제 시 프로필 및 푼 노노 정보가 삭제 됩니다.</div>    
-                        <button type="button"
-                                class="px-9 py-2.5 mb-2 mr-2 text-md font-medium text-white bg-red-700 border border-gray-200 rounded-lg h-fit focus:outline-none hover:bg-opacity-90 hover:text-white focus:z-10 focus:ring-4 focus:ring-red-200">삭제하기</button>
+                    <div class="mt-10">
+                        <h1 class="mb-2 text-2xl text-opacity-80 text-mypg-border">비밀번호</h1>
+                        <div class="flex justify-between w-full bg-white border-2 rounded-lg border-nono-mypg-item-border p-7">
+                            <div class="flex flex-col px-3">
+                                <div class="mb-1 text-gray-300">최근 업데이트</div>
+                                <div><span>[[${userDTO.changedAt}]]</span></div>
+                            </div>
+                            <button type="button"
+                                    class="px-5 py-2.5 mb-2 mr-2 text-md font-medium text-gray-900 bg-white border border-gray-200 rounded-lg h-fit focus:outline-none hover:bg-gray-100 hover:text-main-blue focus:z-10 focus:ring-4 focus:ring-gray-100 ">비밀번호 변경</button>
+                        </div>
                     </div>
-                </div>
-            </article>
+                    <div class="mt-10">
+                        <h1 class="mb-2 text-2xl text-opacity-80 text-mypg-border">계정탈퇴</h1>
+                        <div class="flex justify-between w-full bg-white border-2 rounded-lg border-nono-mypg-item-border p-7">
+                            <div class="my-auto text-gray-400">계정 탈퇴 시 프로필 및 푼 노노 정보가 삭제 됩니다.</div>
+                            <button type="button" data-modal-target="withdraw-user-modal" data-modal-toggle="withdraw-user-modal"
+                                    class="px-9 py-2.5 mb-2 mr-2 text-md font-medium text-white bg-red-700 border border-gray-200 rounded-lg h-fit focus:outline-none hover:bg-opacity-90 hover:text-white focus:z-10 focus:ring-4 focus:ring-red-200">탈퇴하기</button>
+
+                            <div id="withdraw-user-modal" tabindex="-1" class="fixed top-0 left-0 right-0 z-50 hidden p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                                <div class="relative w-full max-w-md max-h-full">
+                                    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                                        <button type="button" class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center" data-modal-hide="withdraw-user-modal">
+                                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                                            </svg>
+                                            <span class="sr-only">Close modal</span>
+                                        </button>
+                                        <div class="p-6 text-center">
+                                            <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                                            </svg>
+                                            <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">정말로 탈퇴하시겠습니까?</h3>
+                                            <button data-modal-hide="withdraw-user-modal" id="withdraw-user-btn" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
+                                                네, 탈퇴하겠습니다.
+                                            </button>
+                                            <button data-modal-hide="withdraw-user-modal" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">취소하기</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </article>
+            </div>
         </div>
-    </div>
+        <script th:inline="javascript">
+            //alert([[${userDTO.profileImgUrl}]]);
+            const nickNameDupBtn = document.querySelector('#nickNameDupBtn');
+            const nickNameDupData = function() {
+                let afterNickName = document.getElementById('nickName').value;
+
+
+
+                fetch("/api/isduplicated-nickname/"+[[${afterNickName}]], {
+                    method: 'post',
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body : JSON.stringify({
+                        nickName : afterNickName
+                    })
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        // disable -> able
+                        alert(data.msg);
+                        if(data.result == 200) {
+                            document.getElementById("nickNameChgBtn").disabled = false;
+                        } else {
+                            document.getElementById("nickNameChgBtn").disabled = true;
+                        }
+
+                    });
+            };
+            nickNameDupBtn.addEventListener("click", nickNameDupData);
+
+            const nickNameChgBtn = document.getElementById("nickNameChgBtn");
+            const nickNameChgPutData = function() {
+                let afterNickName = document.getElementById('nickName').value;
+
+                fetch("/api/reset-nickname/"+[[${userId}]], {
+                    method: 'put',
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body : JSON.stringify({
+                        nickName : afterNickName
+                    })
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if(data.result == 200) {
+                            document.getElementById("showNickName").textContent = `${data.obj.nickName}`;
+                        } else {
+                            alert(data.msg);
+                        }
+                    });
+            };
+            nickNameChgBtn.addEventListener("click", nickNameChgPutData);
+
+            const profileImgChgBtn = document.getElementById("profileImgChgBtn");
+            const profileImgUrlPutData = function() {
+                //var formData = new FormData();
+
+                const profileImgForm = document.querySelector('#profileImgFile');
+                const formData = new FormData();
+                // formData.append("userId", [[${userId}]]);
+                formData.append("profileImg", profileImgForm[0].files[0]);
+                fetch("/api/change-profileimgurl/"+[[${userId}]], {
+                    method: 'post',
+                    body : formData
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        alert(`${data.msg}`);
+                        //alert(data);
+                        if(data.result == 200) {
+                            location.reload();
+                            // alert(data.profileImg);
+                        } else {
+
+                        }
+
+                    });
+            };
+            profileImgChgBtn.addEventListener("click", profileImgUrlPutData);
+
+            // img 미리보기 구현
+            const imgInput = document.querySelector('#profileImgForm');
+            imgInput.addEventListener('change', () => {
+                const reader = new FileReader();
+                reader.onload = ({ target }) => {
+                    document.querySelector('#profileImgPreView').src = target.result;
+                };
+                reader.readAsDataURL(imgInput.files[0]);
+            });
+        </script>
+    </th:block>
 </body>
 
 </html>

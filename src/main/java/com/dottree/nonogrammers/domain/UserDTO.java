@@ -13,4 +13,5 @@ public class UserDTO {
     private String profileImgUrl;
     private LocalDate createdAt;
     private LocalDate updatedAt;
+    private LocalDate changedAt;
 }

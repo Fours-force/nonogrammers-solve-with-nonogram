@@ -25,10 +25,28 @@ public interface PostMapper {
     public List<Integer> counting(String postId);
     @Insert("insert into comment (postId,userId,content) values (#{postId},#{userId},#{content})")
     public boolean insertComm(CommentDTO cd);
-    @Update("UPDATE post SET viewCount = viewCount + 1 WHERE postId = #{postId}")
-    public void incrementViewCount(String postId);
+
+    /**
+     * 유저의 게시글 목록 보여주기
+     * @param userId
+     * @return List<PostDTO>
+     */
     @Select("SELECT postId, boardType, userId, title, content, createdAt, updatedAt  FROM post WHERE userId = #{userId}")
     public List<PostDTO> selectPostList(int userId);
+
+    /**
+     * 유저의 게시글 수정하기
+     * @param title
+     * @param content
+     * @param postId
+     * @param userId
+     * @return boolean
+     */
+    @Update("update post set title = #{title}, content = #{content}, updatedAt = now() where postId = #{postId} and userId = #{userId}")
+    public boolean updatePostByPostIdAndUserId(@Param("title") String title, @Param("content") String content, @Param("postId") int postId, @Param("userId") int userId);
+
+    @Update("UPDATE post SET viewCount = viewCount + 1 WHERE postId = #{postId}")
+    public void incrementViewCount(String postId);
 
     // boardName 으로 boardType 반환
     @Select("select boardType from board where boardName = #{category}")
