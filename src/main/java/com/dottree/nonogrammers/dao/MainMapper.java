@@ -13,8 +13,8 @@ public interface MainMapper {
     public int selectUserFromUserNono(UserNonoDTO unDTO);
 
     //노노 개방. usernono에 누가 어떤 노노 풀고있는지 삽입. // 중복 삽입되는 문제 발생.
-    @Insert("insert into usernono (userId, nonoId) values (#{userId}, #{nonoId})")
-    public void insertUserNono(UserNonoDTO unDTO);
+    @Insert("insert into usernono (userId, nonoId, isSolved) values (#{userId}, #{nonoId}, #{solvedStat})")
+    public void insertUserNono(UserNonoDTO unDTO, @Param("solvedStat")int solvedStat);
 
     //usernono에 isSolved 갱신 / 노노 개방시, 문제 다 풀었을 때 상태 갱신.
     @Update("update usernono set isSolved = #{solvedStat} where userId = #{userId} and nonoId = #{nonoId}")

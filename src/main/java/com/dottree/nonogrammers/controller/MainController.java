@@ -38,16 +38,16 @@ public class MainController {
     }
 
     //사용자 아이디, 노노아이디로 노노 개방
-    @RequestMapping("/api/nono/{userId}/{nonoId}")
+  /*  @RequestMapping("/api/nono/{userId}/{nonoId}")
     public ModelAndView showNono(UserNonoDTO unDTO){
         log.info("showNono start !!!!!!!");
         ModelAndView mav = new ModelAndView();
         if(mdao.selectUserFromUserNono(unDTO) == 0){
-            mdao.insertUserNono(unDTO);
+            mdao.insertUserNono(unDTO,1);
             mdao.insertUserSolvedCount(unDTO);
         }
         return mav;
-    }
+    }*/
 
     //엑셀파일 픽셀마다 데이터 뽑기
     @GetMapping("/api/dot")
@@ -90,9 +90,11 @@ public class MainController {
     @RequestMapping("/nonodots/{userId}/{nonoId}")
     public ModelAndView nonodots(UserNonoDTO unDTO){
         log.info("nonodots start!!!!!!!!");
+        //노노개방
         if(mdao.selectUserFromUserNono(unDTO) == 0){
             log.info("insert UserNono start!!!!!!!!!");
-            mdao.insertUserNono(unDTO);
+            mdao.insertUserNono(unDTO,1);
+            mdao.insertUserSolvedCount(unDTO);
         }
 
         log.info("nonoId : " + unDTO.getNonoId());
