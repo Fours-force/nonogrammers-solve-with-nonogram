@@ -65,6 +65,7 @@ public class PostController {
         mav.addObject("pos", pos);
         mav.addObject("comm",list);
         mav.addObject("counts",counts);
+        mav.addObject("nav", "community" );
         mav.setViewName("detail");
         return mav;
     }
