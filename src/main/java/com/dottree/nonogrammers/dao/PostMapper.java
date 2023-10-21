@@ -1,6 +1,7 @@
 package com.dottree.nonogrammers.dao;
 import com.dottree.nonogrammers.domain.CommentDTO;
 import com.dottree.nonogrammers.domain.FileDTO;
+import com.dottree.nonogrammers.domain.LikeDTO;
 import com.dottree.nonogrammers.domain.PostDTO;
 import org.apache.ibatis.annotations.*;
 import java.util.List;
@@ -25,10 +26,28 @@ public interface PostMapper {
     public List<Integer> counting(String postId);
     @Insert("insert into comment (postId,userId,content) values (#{postId},#{userId},#{content})")
     public boolean insertComm(CommentDTO cd);
-    @Update("UPDATE post SET viewCount = viewCount + 1 WHERE postId = #{postId}")
-    public void incrementViewCount(String postId);
+
+    /**
+     * 유저의 게시글 목록 보여주기
+     * @param userId
+     * @return List<PostDTO>
+     */
     @Select("SELECT postId, boardType, userId, title, content, createdAt, updatedAt  FROM post WHERE userId = #{userId}")
     public List<PostDTO> selectPostList(int userId);
+
+    /**
+     * 유저의 게시글 수정하기
+     * @param title
+     * @param content
+     * @param postId
+     * @param userId
+     * @return boolean
+     */
+    @Update("update post set title = #{title}, content = #{content}, updatedAt = now() where postId = #{postId} and userId = #{userId}")
+    public boolean updatePostByPostIdAndUserId(@Param("title") String title, @Param("content") String content, @Param("postId") int postId, @Param("userId") int userId);
+
+    @Update("UPDATE post SET viewCount = viewCount + 1 WHERE postId = #{postId}")
+    public void incrementViewCount(String postId);
 
     // boardName 으로 boardType 반환
     @Select("select boardType from board where boardName = #{category}")
@@ -43,4 +62,19 @@ public interface PostMapper {
     @Insert("insert into file(postId, filename, fileExtension, fileUrl) values(#{postId}, #{filename}, #{fileExtension}, #{fileUrl})")
     public boolean insertUploadImage(FileDTO dto);
 
+    // 해당 게시글의 좋아요 개수
+    @Select("select count(*) from likes where postId=#{postId}")
+    public int getPostLike(int postId);
+
+    // 게시글 좋아요 여부 조회
+    @Select("select count(*) from likes where userId=#{userId} and postId=#{postId}")
+    public int getUserPostLike(LikeDTO dto);
+
+    // 게시글 좋아요 정보 추가
+    @Insert("insert into likes(userId, postId) values(#{userId}, #{postId})")
+    public boolean addPostLike(LikeDTO dto);
+
+    // 게시글 좋아요 정보 삭제
+    @Delete("delete from likes where userId=#{userId} and postId=#{postId}")
+    public boolean delPostLike(LikeDTO dto);
 }

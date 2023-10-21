@@ -1,18 +1,16 @@
 package com.dottree.nonogrammers.controller;
 import com.dottree.nonogrammers.dao.PostMapper;
-import com.dottree.nonogrammers.domain.CommentDTO;
-import com.dottree.nonogrammers.domain.FileDTO;
-import com.dottree.nonogrammers.domain.UploadImageVO;
+import com.dottree.nonogrammers.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import com.dottree.nonogrammers.domain.PostDTO;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,6 +24,7 @@ public class PostController {
         List<PostDTO> list= dao.listm();
         ModelAndView mav=new ModelAndView();
         mav.addObject("list",list);
+        mav.addObject("nav", "community" );
         mav.setViewName("community");
         return mav;
     }
@@ -64,6 +63,7 @@ public class PostController {
         mav.addObject("pos", pos);
         mav.addObject("comm",list);
         mav.addObject("counts",counts);
+        mav.addObject("nav", "community" );
         mav.setViewName("detail");
         return mav;
     }
@@ -100,12 +100,15 @@ public class PostController {
         try{
             postDTO.setBoardType(dao.getBoardType(category));
             boolean insertResult = dao.insertPost(postDTO);
+            MultipartFile[] uploadImageFiles = vo.getUploadImageFiles();
 
-            if (insertResult && (vo.getUploadImageFiles() != null)) {
+            if (insertResult && (!uploadImageFiles[0].isEmpty())) {
                 String path = System.getProperty("user.dir") + "/src/main/resources/static/images/post/";
                 fileDTO.setPostId(postDTO.getId());
-                for (MultipartFile mfile : vo.getUploadImageFiles()) {
+
+                for (MultipartFile mfile : uploadImageFiles) {
                     String filename = UUID.randomUUID().toString();
+                    System.out.println(mfile);
                     try {
                         // 파일 정보
                         String originalFilename = mfile.getOriginalFilename();
@@ -121,6 +124,7 @@ public class PostController {
                         fileDTO.setFileExtension(fileExtension);
                         fileDTO.setFileUrl("/images/post/" + filename + fileExtension);
                         boolean uploadResult = dao.insertUploadImage(fileDTO);
+
                     } catch (IOException ioe) {
                         ioe.printStackTrace();
                     }
@@ -132,4 +136,38 @@ public class PostController {
         return "redirect:/post";
     }
 
+    @RequestMapping(value = "/post/like", produces = "application/json; charset=utf-8", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseModel postLike(LikeDTO dto){
+
+        ResponseModel response = new ResponseModel();
+        int isLike = dao.getUserPostLike(dto); // 해당 유저가 해당 게시글을 좋아요 했는지 여부 조회
+
+        if (isLike == 0){ // 0이면, 이제 좋아요를 누른 것이므로 좋아요 등록
+            boolean result = dao.addPostLike(dto);
+            if (result){
+                response.setStatusCode(201);
+            }
+            else {
+                response.setStatusCode(500);
+            }
+        }
+        else { // 1이면, 이미 좋아요를 누른 것이므로 좋아요 취소
+            boolean result = dao.delPostLike(dto);
+            if (result){
+                response.setStatusCode(204);
+            }
+            else {
+                response.setStatusCode(500);
+            }
+        }
+        // 해당 게시글의 좋아요 수
+        int getPostLike = dao.getPostLike(dto.getPostId());
+        HashMap<String, Object> mapData = new HashMap<>();
+        mapData.put("data", getPostLike);
+
+        response.setTitle("Like");
+        response.setMapData(mapData);
+        return response;
+    }
 }

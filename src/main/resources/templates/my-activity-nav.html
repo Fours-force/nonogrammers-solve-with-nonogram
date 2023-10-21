@@ -1,0 +1,36 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="myactivitynavFragment">
+    <div class="sticky top-0 hidden sm:block top-0 mt-3 bg-white border-2 border-solid rounded-lg min:w-4/12 border-mypage-left-nav h-fit">
+        <ul class="w-full p-5 space-y-2 font-medium font-brr">
+            <li>
+                <p class="flex items-center p-2 text-2xl text-gray-900 rounded-md group">
+                    <span class="ml-3 text-mypg-left-nav">내 활동</span>
+                </p>
+            </li>
+            <li>
+                <a th:href="@{|/user/${userId}|}"
+                   class="flex items-center p-2 text-lg text-gray-900 rounded-md active:bg-main-skyblue active:text-white dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ml-7">
+                    <span class="flex-1 whitespace-nowrap">계정 관리</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{|/solvednono/${userId}|}"
+                   class="flex items-center p-2 text-lg text-gray-900 rounded-md active:bg-main-skyblue active:text-white dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ml-7">
+                    <span class="flex-1 whitespace-nowrap">내가 푼 노노들</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{|/ingnono/${userId}|}"
+                   class="flex items-center p-2 text-lg text-gray-900 rounded-md active:bg-main-skyblue active:text-white dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ml-7">
+                    <span class="flex-1 whitespace-nowrap">내가 풀고있는 노노들</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{|/mypost/${userId}|}"
+                   class="flex items-center p-2 text-lg text-gray-900 rounded-md active:bg-main-skyblue active:text-white dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ml-7">
+                    <span class="flex-1 whitespace-nowrap">작성한 글</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</th:block>

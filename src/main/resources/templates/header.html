@@ -32,7 +32,7 @@
                     <div class="hidden w-8/12 sm:block">
                         <div th:if="${session.value}">
                             <div class="flex items-center justify-end pr-2 h-2/5 sm:static sm:inset-auto sm:pr-0">
-                                <span class="relative text-xl font-brr leading-normal text-center text-gray-400 md:w-3/12 sm:w-2/6 sm:min-w-max">[[${session.value.nickName}]]님</span>
+                                <span class="relative text-xl leading-normal text-center text-gray-400 font-brr md:w-3/12 sm:w-2/6 sm:min-w-max">[[${session.value.nickName}]]님</span>
                                 <!-- Profile dropdown -->
                                 <div class="relative">
                                     <div>
@@ -45,10 +45,10 @@
                                             <img class="h-10 rounded-full" th:src="${session.value.profileImgUrl}"
                                                 alt="profile-img">
                                         </button>
-                                        <div id="dropdown" class="z-10 absolute right-0 hidden bg-white divide-y divide-gray-100 rounded-lg shadow md:w-40 dark:bg-gray-700">
-                                            <ul class="py-2 text-md text-gray-700 font-super256 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+                                        <div id="dropdown" class="absolute right-0 z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow md:w-40 dark:bg-gray-700">
+                                            <ul class="py-2 text-gray-700 text-md font-super256 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
                                                 <li>
-                                                    <a href="#" class="block px-6 py-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">MYPAGE</a>
+                                                    <a th:href="@{/user/{id}(id = ${session.value.userId})}" class="block px-6 py-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">MYPAGE</a>
                                                 </li>
                                                 <li>
                                                     <a href="/api/logout" class="block px-6 py-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">LOGOUT</a>
@@ -60,7 +60,7 @@
                             </div>
                         </div>
                         <div th:unless="${session.value}">
-                            <div class="flex items-center font-brr justify-end space-x-4 pr-2 h-2/5 sm:static sm:inset-auto sm:pr-0">
+                            <div class="flex items-center justify-end pr-2 space-x-4 font-brr h-2/5 sm:static sm:inset-auto sm:pr-0">
                                 <a href="/login">로그인</a>
                                 <a href="/join">회원가입</a>
                             </div>
@@ -77,28 +77,32 @@
                                 </a>
                             </div>
                             <div class="flex justify-center w-auto h-auto p-1 hover:text-nav-navy active:text-main-skyblue active:rounded-md">
-                                <a href="#" class="block w-auto h-full text-2xl">
-                                    <span class="">COMMUNITY</span>
+                                <a href="/post" class="block w-auto h-full text-2xl">
+                                    <span id="community" class="">COMMUNITY</span>
                                 </a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Mobile menu, show/hide based on menu state. -->
-        <div class="sm:hidden font-super256">
-            <div class="px-2 pt-2 pb-3 space-y-1">
-                <a href="#"
-                    class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">NONOBOX</a>
-                <a href="#"
-                    class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">SOCIAL</a>
-                <a href="#"
-                    class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">COMMUNITY</a>
-                <a href="#"
-                    class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">MYPAGE</a>
+            <!-- Mobile menu, show/hide based on menu state. -->
+            <div class="sm:hidden font-super256">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a href="#"
+                        class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">NONOBOX</a>
+                    <a href="#"
+                        class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">SOCIAL</a>
+                    <a href="#"
+                        class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">COMMUNITY</a>
+                    <a href="#"
+                        class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">MYPAGE</a>
+                </div>
             </div>
         </div>
     </header>
+
+    <script th:inline="javascript" th:if="${nav}">
+        document.getElementById([[${nav}]]).classList.add("text-main-skyblue");
+    </script>
 </th:block>

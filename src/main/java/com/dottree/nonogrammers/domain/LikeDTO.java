@@ -5,9 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserNonoDTO {
+public class LikeDTO {
     private int userId;
-    private int nonoId;
-    private int isSolved;
-    private String createdAt;
+    private int postId;
 }

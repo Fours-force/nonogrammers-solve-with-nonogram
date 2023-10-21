@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{./defaultLayout.html}">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,6 +7,7 @@
     <title>Community page</title>
     <link rel="stylesheet" th:href="@{/css/dist/output.css}">
 </head>
+<th:block layout:fragment="content">
 <body>
     <section>
         <div class="bg-back font-brr">
@@ -37,9 +38,9 @@
                             <span class="pl-1.5 pr-3 mt-1 text-xs" th:text="${pos.viewCount}"></span>
                             <img src="/images/image 12.png" class="h-4 mt-1" alt="">
                             <p class="pl-1 mt-1 text-xs" th:text="${pos.commentCount}"></p>
-                            <button class="flex w-10 h-6 ml-2 duration-300 ease-in-out rounded-md hover:bg-commu-pagination-hover" onclick="location.href='#'">
+                            <button id="btnLikeCount" class="flex w-10 h-6 ml-2 duration-300 ease-in-out rounded-md" disabled>
                                 <img src="/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-2 mt-1" alt="">
-                                <p class="pl-1 mt-1 text-xs" th:text="${pos.likeCount}"></p>
+                                <p id="likeCount" class="pl-1 mt-1 text-xs" th:text="${pos.likeCount}"></p>
                             </button>
                         </div>
                     </div>
@@ -107,10 +108,35 @@
             </div>
         </div>
     </section>
-<script>
+    <script th:inline="javascript" th:if="${session.value}">
 
+        const btnLikeCount = document.getElementById("btnLikeCount");
+        btnLikeCount.disabled = false;
+        btnLikeCount.classList.add("hover:bg-commu-pagination-hover");
+        btnLikeCount.addEventListener("click", likeItPost);
 
+        function likeItPost(){
+            let formData = new FormData();
+            formData.append('userId', [[${session.value.userId}]]);
+            formData.append('postId', [[${pos.postId}]]);
 
-</script>
+            xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+            if (xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                document.getElementById("likeCount").innerText = response['mapData']['data']
+            } else {
+                window.alert("문제가 생겼어요! 좋아요 기능이 진행되지 못했습니다.");
+                console.error("API response is false or unexpected", xhr.status)
+                }
+            }
+            xhr.onerror = function () {
+                console.error("Request failed");
+            }
+            xhr.open("POST", "/post/like", true);
+            xhr.send(formData);
+        }
+    </script>
 </body>
+</th:block>
 </html>
