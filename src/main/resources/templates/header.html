@@ -102,9 +102,7 @@
         </div>
     </header>
 
-    <script th:inline="javascript">
-        if ([[${nav}]]){
-            document.getElementById([[${nav}]]).classList.add("text-main-skyblue");
-        }
+    <script th:inline="javascript" th:if="${nav}">
+        document.getElementById([[${nav}]]).classList.add("text-main-skyblue");
     </script>
 </th:block>
