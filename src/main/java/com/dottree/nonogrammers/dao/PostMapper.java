@@ -1,6 +1,7 @@
 package com.dottree.nonogrammers.dao;
 import com.dottree.nonogrammers.domain.CommentDTO;
 import com.dottree.nonogrammers.domain.FileDTO;
+import com.dottree.nonogrammers.domain.LikeDTO;
 import com.dottree.nonogrammers.domain.PostDTO;
 import org.apache.ibatis.annotations.*;
 import java.util.List;
@@ -43,4 +44,19 @@ public interface PostMapper {
     @Insert("insert into file(postId, filename, fileExtension, fileUrl) values(#{postId}, #{filename}, #{fileExtension}, #{fileUrl})")
     public boolean insertUploadImage(FileDTO dto);
 
+    // 해당 게시글의 좋아요 개수
+    @Select("select count(*) from likes where postId=#{postId}")
+    public int getPostLike(int postId);
+
+    // 게시글 좋아요 여부 조회
+    @Select("select count(*) from likes where userId=#{userId} and postId=#{postId}")
+    public int getUserPostLike(LikeDTO dto);
+
+    // 게시글 좋아요 정보 추가
+    @Insert("insert into likes(userId, postId) values(#{userId}, #{postId})")
+    public boolean addPostLike(LikeDTO dto);
+
+    // 게시글 좋아요 정보 삭제
+    @Delete("delete from likes where userId=#{userId} and postId=#{postId}")
+    public boolean delPostLike(LikeDTO dto);
 }
