@@ -2,9 +2,8 @@ package com.dottree.nonogrammers.dao;
 
 import com.dottree.nonogrammers.domain.CommentDTO;
 import com.dottree.nonogrammers.domain.PostDTO;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
+
 import java.util.List;
 
 @Mapper
@@ -25,8 +24,24 @@ public interface PostMapper {
     public List<CommentDTO> commList(String postId);
     @Insert("insert into comment (content) values (#{content})")
     public boolean insertComm(CommentDTO cd);
-  
+
+    /**
+     * 유저의 게시글 목록 보여주기
+     * @param userId
+     * @return List<PostDTO>
+     */
     @Select("SELECT postId, boardType, userId, title, content, createdAt, updatedAt  FROM post WHERE userId = #{userId}")
     public List<PostDTO> selectPostList(int userId);
+
+    /**
+     * 유저의 게시글 수정하기
+     * @param title
+     * @param content
+     * @param postId
+     * @param userId
+     * @return boolean
+     */
+    @Update("update post set title = #{title}, content = #{content}, updatedAt = now() where postId = #{postId} and userId = #{userId}")
+    public boolean updatePostByPostIdAndUserId(@Param("title") String title, @Param("content") String content, @Param("postId") int postId, @Param("userId") int userId);
 
 }
