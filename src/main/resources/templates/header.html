@@ -2,95 +2,97 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <th:block th:fragment="headerFragment">
-    <header class="bg-white">
-        <div class="max-w-screen-xl px-1 mx-auto sm:px-6 lg:px-8">
-            <div class="relative flex items-center justify-between h-auto">
-                <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                    <!-- Mobile menu button-->
-                    <button type="button"
-                        class="relative inline-flex items-center justify-center p-2 text-gray-400 rounded-md hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-                        aria-controls="mobile-menu" aria-expanded="false">
-                        <span class="absolute -inset-0.5"></span>
-                        <span class="sr-only">Open main menu</span>
-                        <svg class="block w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                        </svg>
-                        <svg class="hidden w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-                <div class="flex items-center justify-around w-full">
-                    <div class="h-auto lg:w-72 md:w-60 sm:min-w-max">
-                        <a href="#">
-                            <img class="object-contain mx-auto h-28" src="/images/logo.png" alt="Your Company">
-                        </a>
+    <th:block th:with="userId=${session.userId}">
+        <header class="bg-white">
+            <div class="max-w-screen-xl px-1 mx-auto sm:px-6 lg:px-8">
+                <div class="relative flex items-center justify-between h-auto">
+                    <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
+                        <!-- Mobile menu button-->
+                        <button type="button"
+                            class="relative inline-flex items-center justify-center p-2 text-gray-400 rounded-md hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                            aria-controls="mobile-menu" aria-expanded="false">
+                            <span class="absolute -inset-0.5"></span>
+                            <span class="sr-only">Open main menu</span>
+                            <svg class="block w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                            </svg>
+                            <svg class="hidden w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
                     </div>
-                    <div class="hidden w-8/12 sm:block">
-                        <div class="flex items-center justify-end pr-2 h-2/5 sm:static sm:inset-auto sm:pr-0">
-                            <span class="relative text-xl font-brr leading-normal text-center text-gray-400 md:w-3/12 sm:w-2/6 sm:min-w-max">babysooLLL님</span>
-                            <!-- Profile dropdown -->
-                            <div class="relative">
-                                <div>
-                                    <button type="button"
-                                        data-dropdown-toggle="dropdown"
-                                        class="relative flex text-sm rounded-full sm:w-full focus:outline-none focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                                        id="user-menu-button" aria-expanded="false" aria-haspopup="true">
-                                        <!-- <span class="absolute -inset-1.5"></span> -->
-                                        <span class="sr-only">Open user menu</span>
-                                        <img class="h-10 rounded-full" src="/images/kang.png"
-                                            alt="profile-img">
-                                    </button>
-                                    <div id="dropdown" class="z-10 absolute right-0 hidden bg-white divide-y divide-gray-100 rounded-lg shadow md:w-40 dark:bg-gray-700">
-                                        <ul class="py-2 text-md text-gray-700 font-super256 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
-                                            <li>
-                                                <a href="#" class="block px-6 py-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">MYPAGE</a>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="block px-6 py-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">LOGOUT</a>
-                                            </li>
-                                        </ul>
+                    <div class="flex items-center justify-around w-full">
+                        <div class="h-auto lg:w-72 md:w-60 sm:min-w-max">
+                            <a href="/">
+                                <img class="object-contain mx-auto h-28" src="/images/logo.png" alt="Your Company">
+                            </a>
+                        </div>
+                        <div class="hidden w-8/12 sm:block">
+                            <div class="flex items-center justify-end pr-2 h-2/5 sm:static sm:inset-auto sm:pr-0">
+                                <span class="relative text-xl font-brr leading-normal text-center text-gray-400 md:w-3/12 sm:w-2/6 sm:min-w-max">babysooLLL님</span>
+                                <!-- Profile dropdown -->
+                                <div class="relative">
+                                    <div>
+                                        <button type="button"
+                                            data-dropdown-toggle="dropdown"
+                                            class="relative flex text-sm rounded-full sm:w-full focus:outline-none focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                                            id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                                            <!-- <span class="absolute -inset-1.5"></span> -->
+                                            <span class="sr-only">Open user menu</span>
+                                            <img class="h-10 rounded-full" src="/images/kang.png"
+                                                alt="profile-img">
+                                        </button>
+                                        <div id="dropdown" class="z-10 absolute right-0 hidden bg-white divide-y divide-gray-100 rounded-lg shadow md:w-40 dark:bg-gray-700">
+                                            <ul class="py-2 text-md text-gray-700 font-super256 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+                                                <li>
+                                                    <a th:href="@{|/user/${userId}|}" class="block px-6 py-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">MYPAGE</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="block px-6 py-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">LOGOUT</a>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="flex justify-around w-full mt-3 font-super256 h-3/5">
-                            <div class="flex justify-center w-auto h-auto p-1 hover:text-nav-navy active:text-main-skyblue active:rounded-md">
-                                <a href="#" class="block w-auto h-full text-2xl">
-                                    NONOBOX
-                                </a>
-                            </div>
-                            <div class="flex justify-center w-auto h-auto p-1 hover:text-nav-navy active:text-main-skyblue active:rounded-md">
-                                <a href="#" class="block w-auto h-full text-2xl">
-                                    <span class="">SOCIAL</span>
-                                </a>
-                            </div>
-                            <div class="flex justify-center w-auto h-auto p-1 hover:text-nav-navy active:text-main-skyblue active:rounded-md">
-                                <a href="#" class="block w-auto h-full text-2xl">
-                                    <span class="">COMMUNITY</span>
-                                </a>
+                            <div class="flex justify-around w-full mt-3 font-super256 h-3/5">
+                                <div class="flex justify-center w-auto h-auto p-1 hover:text-nav-navy active:text-main-skyblue active:rounded-md">
+                                    <a href="/nono" class="block w-auto h-full text-2xl">
+                                        NONOBOX
+                                    </a>
+                                </div>
+                                <div class="flex justify-center w-auto h-auto p-1 hover:text-nav-navy active:text-main-skyblue active:rounded-md">
+                                    <a href="https://github.com/Fours-force/nonogrammers-solve-with-nonogram" class="block w-auto h-full text-2xl">
+                                        <span class="">SOCIAL</span>
+                                    </a>
+                                </div>
+                                <div class="flex justify-center w-auto h-auto p-1 hover:text-nav-navy active:text-main-skyblue active:rounded-md">
+                                    <a href="/post" class="block w-auto h-full text-2xl">
+                                        <span class="">COMMUNITY</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Mobile menu, show/hide based on menu state. -->
-        <div class="sm:hidden font-super256">
-            <div class="px-2 pt-2 pb-3 space-y-1">
-                <a href="#"
-                    class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">NONOBOX</a>
-                <a href="#"
-                    class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">SOCIAL</a>
-                <a href="#"
-                    class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">COMMUNITY</a>
-                <a href="#"
-                    class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">MYPAGE</a>
+            <!-- Mobile menu, show/hide based on menu state. -->
+            <div class="sm:hidden font-super256">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a href="#"
+                        class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">NONOBOX</a>
+                    <a href="#"
+                        class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">SOCIAL</a>
+                    <a href="#"
+                        class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">COMMUNITY</a>
+                    <a href="#"
+                        class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">MYPAGE</a>
+                </div>
             </div>
-        </div>
-    </header>
+        </header>
+    </th:block>
 </th:block>
