@@ -1,10 +1,14 @@
 package com.dottree.nonogrammers.dao;
 
 import com.dottree.nonogrammers.domain.DotDTO;
+import com.dottree.nonogrammers.domain.UserNonoDTO;
+import groovy.util.logging.Slf4j;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 @Mapper
 public interface MainMapper {
@@ -21,7 +25,6 @@ public interface MainMapper {
     public void insertDotsInDot(DotDTO dDTO);
 
 //    @Select("select ")
-
 
 
 
