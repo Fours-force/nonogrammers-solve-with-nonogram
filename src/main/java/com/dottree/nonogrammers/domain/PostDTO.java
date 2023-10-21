@@ -22,6 +22,7 @@ public class PostDTO {
     private String boardTypeStr;
     private String nickName;
     private String imgSrc;
+    private String fileUrl;
 }
 
 

@@ -56,8 +56,8 @@ public class PostController {
     @RequestMapping("/detail")
     public ModelAndView detail(String postId){
         ModelAndView mav=new ModelAndView();
-        PostDTO pos= dao.detailss(postId);
         dao.incrementViewCount(postId);
+        PostDTO pos= dao.detailss(postId);
         List<CommentDTO> list= dao.commList(postId);
         List<Integer> counts = dao.counting(postId);
         mav.addObject("pos", pos);
@@ -76,7 +76,7 @@ public class PostController {
         return mav;
     }
     @PostMapping("/detailComment")
-        public String detailComment(CommentDTO cd) {
+    public String detailComment(CommentDTO cd) {
         boolean result= dao.insertComm(cd);
         ModelAndView mav=new ModelAndView();
         PostDTO pos= dao.detailss(String.valueOf(cd.getPostId()));
@@ -86,7 +86,10 @@ public class PostController {
         System.out.println(cd.getPostId());
         return "redirect:/detail?postId=" + cd.getPostId();
     }
-
+    @RequestMapping("/posting")
+    public String posting(){
+        return "write";
+    }
     @PostMapping("/post/write")
     public String writePost(PostDTO postDTO,
                             UploadImageVO vo,

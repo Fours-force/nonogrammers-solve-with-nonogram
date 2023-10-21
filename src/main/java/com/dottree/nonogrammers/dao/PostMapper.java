@@ -8,7 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface PostMapper {
-    @Select("SELECT p.postId, p.boardType, p.title, p.content, p.userId, p.createdAt, (SELECT COUNT(*) FROM comment AS c WHERE c.postId = p.postId) AS commentCount,(SELECT COUNT(*) FROM likes AS l WHERE l.postId = p.postId) AS likeCount, p.viewCount, u.nickName as nickName, u.profileImgUrl as imgSrc FROM post AS p INNER JOIN user AS u ON p.userId = u.userId ORDER BY p.createdAt DESC")
+    @Select("SELECT p.postId, p.boardType, p.title, p.content, p.userId, p.createdAt, (SELECT COUNT(*) FROM comment AS c WHERE c.postId = p.postId) AS commentCount,(SELECT COUNT(*) FROM likes AS l WHERE l.postId = p.postId) AS likeCount, p.viewCount, u.nickName as nickName, u.profileImgUrl as imgSrc, f.fileUrl as fileUrl FROM post AS p INNER JOIN user AS u ON p.userId = u.userId LEFT JOIN file AS f ON p.postId = f.postId ORDER BY p.createdAt DESC")
     public List<PostDTO> listm();
     @Select("SELECT p.postId, p.boardType, p.title, p.content, p.userId, p.createdAt, (SELECT COUNT(*) FROM comment AS c WHERE c.postId = p.postId) AS commentCount,(SELECT COUNT(*) FROM likes AS l WHERE l.postId = p.postId) AS likeCount, p.viewCount, u.nickName FROM post AS p JOIN user AS u ON p.userId = u.userId where p.title like concat('%',#{keyword},'%') ORDER BY p.createdAt DESC")
     public List<PostDTO> search(String keyword);
