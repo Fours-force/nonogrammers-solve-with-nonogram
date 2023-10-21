@@ -6,8 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link th:href="@{./css/dist/output.css}" rel="stylesheet"/>
-    <link th:href="@{./css/nonomove.css}" rel="stylesheet"/>
+    <link th:href="@{/css/dist/output.css}" rel="stylesheet"/>
+    <link th:href="@{/css/nonomove.css}" rel="stylesheet"/>
     <!-- <script src="https://code.jquery.com/jquery-3.6.2.js"
         integrity="sha256-pkn2CUZmheSeyssYw3vMp1+xyub4m+e+QK4sQskvuo4=" crossorigin="anonymous">
         </script>
@@ -39,6 +39,8 @@
                 </div>
                 <br>
                 <div id="ListbtnContainer" class="flex">
+                    <div class="font-super256 min-w-max movebtn eightbit-btn" onclick="check()">CHECK
+                    </div>
                     <div class="font-super256 min-w-max movebtn eightbit-btn" onclick="location.href='https://www.naver.com/'">LIST
                     </div>
                 </div>
@@ -55,74 +57,204 @@
         let bar = 45;
         var dotcntt = 0;
         var dotList = [[${dotList}]];
-        var urlList = [[${urlList}]];
+        var urlAry = [[${urlAry}]];
+        let userId = 1;
+        let nonoId = 1;
+        let baekjoonId = "tjdtndlwkd";
+        let solvingRow = 0;
+        let allDotsInRow;
         progressBar.style.transition = "width 1.5s";
         progressBar.style.width = bar + "%";
         progressBar.innerHTML = `${bar}`;
         progressBar.style.fontSize = "20px";
 
-
-        for (let i=0; i<dotList.length; i++){
-            allRowDivs[i].addEventListener("click", function (){location.href=`https://www.acmicpc.net/problem/${1000 + i}`;});
-            for(let j=0; j<32; j++){
-                allDots[dotcntt].style.background="#" + dotList[i][j].color;
-                dotcntt++;
-                console.log(dotList[i][j].color);
-                console.log(dotcntt);
+        window.onload= function () {
+            for (let i = 0; i < dotList.length; i++) {
+                //문제 링크 설정
+                allRowDivs[i].addEventListener("click", function () {
+                    solvingRow = i+1;
+                    window.alert(solvingRow);
+                    updateSolvingRow();
+                    location.href = `https://www.acmicpc.net/problem/${urlAry[i]}`;
+                });
+                //mouseover 이벤트 설정
+                allRowDivs[i].addEventListener("mouseover", (f) => {
+                    if (f.target !== f.currentTarget) {
+                        return;
+                    }
+                    console.log("변수 f : " + f);
+                    console.log("변수 f의 target : " + f.target);
+                    console.log("mouseover이벤트 발생!!~");
+                    let temp = f.target;
+                    temp.style.borderBottom = "10px solid blue";
+                    console.log("이벤트 발생 방지!!!");
+                }, false);
+                //mouseout 이벤트 설정
+                allRowDivs[i].addEventListener("mouseout", (f) => {
+                    if (f.target !== f.currentTarget) {
+                        return;
+                    }
+                    console.log("변수 f : " + f);
+                    console.log("변수 f의 target : " + f.target);
+                    console.log("mousedown이벤트 발생!!~");
+                    let temp = f.target;
+                    temp.style.borderBottom = "none";
+                }, false);
+                //행마다 id 값 설정
+                allRowDivs[i].id = `rowContainer${i + 1}`;
+                for (let j = 0; j < 32; j++) {
+                    allDots[dotcntt].style.background = "#" + dotList[i][j].color;
+                    allDots[dotcntt].style.opacity = "0.2";
+                    allDots[dotcntt].id = `dot${dotcntt}`;
+                    dotcntt++;
+                    // console.log(dotList[i][j].color);
+                    // console.log(dotcntt);
+                }
             }
+            selectSolvingRow();
+            selectUserSolvedDots();
         }
-        // window.onload = function createPicture() {
-        //     console.log([[${testcode}]]);
-        //     let cnt = 0;
-        //     let nonoId = 0;
-        //     let NonoboxContainer = document.querySelector("#NonoboxContainer");
-        //     console.log("NonoboxContainer Dom객체 생성!!! : "+ NonoboxContainer);
-        //     for (let i = 0; i < 32; i++) {
-        //         console.log("노노 생성 시작!!")
-        //         var divRow = document.createElement("div");
-        //         console.log("divROw 생성 : " + divRow);
-        //         divRow.className = 'rowContainer';
-        //         divRow.id = `rowContainer${i + 1}`;
-        //         divRow.onclick = function (){location.href=`https://www.acmicpc.net/problem/${1000 + cnt}`;}; // 바꿔야함
-        //         divRow.addEventListener("mouseover", (f) => {
-        //             if(f.target !== f.currentTarget) {return;}
-        //             console.log("변수 f : " + f);
-        //             console.log("변수 f의 target : " + f.target);
-        //             console.log("mouseover이벤트 발생!!~");
-        //             let temp = f.target;
-        //             temp.style.borderBottom = "10px solid blue";
-        //             console.log("이벤트 발생 방지!!!");
-        //         }, false);
-        //         divRow.addEventListener("mouseout", (f) => {
-        //             if(f.target !== f.currentTarget) {return;}
-        //             console.log("변수 f : " + f);
-        //             console.log("변수 f의 target : " + f.target);
-        //             console.log("mousedown이벤트 발생!!~");
-        //             let temp = f.target;
-        //             temp.style.borderBottom = "none";
-        //         }, false);
-        //         cnt += 1;
-        //         for (let j = 0; j < 32; j++) {
-        //             let nonodot = document.createElement("a");
-        //             console.log("도트하나 생성! : " + nonodot);
-        //             nonodot.className = 'nonoDot';
-        //             nonodot.style.background = "#" + (parseInt(Math.random() * 0xffffff)).toString(16);
-        //
-        //
-        //             divRow.appendChild(nonodot);
-        //         }
-        //         NonoboxContainer.appendChild(divRow);
-        //     }
-        //
-        // }
 
-        // let eachrow = document.querySelectorAll(".rowContainer");
-        // console.log("eachrow DOM객체 생성!!!");
-        // eachrow.forEach(function (e) {
-        //     console.log("each row의 Dom객체 : " + e.target);
-        //     console.log("eachrow ForEach 시작~~");
-        //     e
-        // });
+        function check(){
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                if (xhr.status == 200) {
+                    console.log("int로 반환한 값의 Type : " + typeof (xhr.responseText));
+                    console.log(xhr.responseText);
+                    if(xhr.responseText === "1"){
+                        window.alert("문제 추가하러 갑시다");
+                        insertDots();
+                    }else{
+                        window.alert("새로 푼 문제가 없습니다.");
+
+                    }
+                }
+            }
+            xhr.open('GET', `/api/updateCheck/${baekjoonId}/${userId}/${nonoId}`);
+            xhr.send();
+        }
+
+        function updateSolvingRow(){
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                if (xhr.status == 200) {
+                    window.prompt("풀고있는 행 확인하세요.");
+                }
+            }
+            xhr.open('GET', `/api/updateSolvingRow/${userId}/${nonoId}/${solvingRow}`);
+            xhr.send();
+        }
+
+        function selectSolvingRow(){
+            const xhr = new XMLHttpRequest();
+            xhr.onload = () => {
+                if(xhr.status == 200){
+                    if(xhr.responseText != 0){
+                        solvingRow = xhr.responseText;
+                    }
+                }
+            }
+            xhr.open('GET', `/api/selectSolvingRow/${userId}/${nonoId}`);
+            xhr.send();
+        }
+
+
+        function insertDots(){
+            window.alert("문제 추가 시작~~");
+            var missionList = new Array();
+            allDotsInRow = allRowDivs[solvingRow].querySelectorAll(".nonoDot");
+            for(let element of allDotsInRow){
+                var data = new Object();
+                data.dotId = element.id.substring(3);
+
+                missionList.push(data);
+            }
+            var jsonData = JSON.stringify(missionList);
+            console.log(jsonData);
+
+            let xhr = new XMLHttpRequest();
+            xhr.onload = function() {
+                if (xhr.status == 200) {
+
+                    location.reload();
+                }
+            };
+            xhr.open('POST', `/api/updateUserDot/${userId}/${nonoId}`, true);
+            xhr.setRequestHeader("content-type",
+                "application/x-json");
+            xhr.send(jsonData);
+        }
+
+        function selectUserSolvedDots(){
+            let xhr = new XMLHttpRequest();
+            xhr.onload = () => {
+                if(xhr.status == 200) {
+                    let jsonData = JSON.parse(xhr.responseText);
+                    //console.log("받아온 jsonData : "+jsonData);
+                    for (let data of jsonData){
+                        //console.log("받아온 jsonData의 객체" + data.dotId);
+                        allDots[Number(data.dotId)].style.opacity = "1";
+                        // allDots[dotcntt].style.opacity = "0.2";
+                    }
+                }
+
+            }
+            xhr.open('GET',`/api/selectSolvedDotId/${userId}/${nonoId}`);
+            xhr.send();
+        }
+
+       /* window.onload = function createPicture() {
+            console.log([[${testcode}]]);
+            let cnt = 0;
+            let nonoId = 0;
+            let NonoboxContainer = document.querySelector("#NonoboxContainer");
+            console.log("NonoboxContainer Dom객체 생성!!! : "+ NonoboxContainer);
+            for (let i = 0; i < 32; i++) {
+                console.log("노노 생성 시작!!")
+                var divRow = document.createElement("div");
+                console.log("divROw 생성 : " + divRow);
+                divRow.className = 'rowContainer';
+                divRow.id = `rowContainer${i + 1}`;
+                divRow.onclick = function (){location.href=`https://www.acmicpc.net/problem/${1000 + cnt}`;}; // 바꿔야함
+                divRow.addEventListener("mouseover", (f) => {
+                    if(f.target !== f.currentTarget) {return;}
+                    console.log("변수 f : " + f);
+                    console.log("변수 f의 target : " + f.target);
+                    console.log("mouseover이벤트 발생!!~");
+                    let temp = f.target;
+                    temp.style.borderBottom = "10px solid blue";
+                    console.log("이벤트 발생 방지!!!");
+                }, false);
+                divRow.addEventListener("mouseout", (f) => {
+                    if(f.target !== f.currentTarget) {return;}
+                    console.log("변수 f : " + f);
+                    console.log("변수 f의 target : " + f.target);
+                    console.log("mousedown이벤트 발생!!~");
+                    let temp = f.target;
+                    temp.style.borderBottom = "none";
+                }, false);
+                cnt += 1;
+                for (let j = 0; j < 32; j++) {
+                    let nonodot = document.createElement("a");
+                    console.log("도트하나 생성! : " + nonodot);
+                    nonodot.className = 'nonoDot';
+                    nonodot.style.background = "#" + (parseInt(Math.random() * 0xffffff)).toString(16);
+
+
+                    divRow.appendChild(nonodot);
+                }
+                NonoboxContainer.appendChild(divRow);
+            }
+
+        }
+
+        let eachrow = document.querySelectorAll(".rowContainer");
+        console.log("eachrow DOM객체 생성!!!");
+        eachrow.forEach(function (e) {
+            console.log("each row의 Dom객체 : " + e.target);
+            console.log("eachrow ForEach 시작~~");
+            e
+        });*/
     </script>
 </body>
 
