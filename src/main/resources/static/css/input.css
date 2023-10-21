@@ -6,13 +6,13 @@
     font-family: "Super Mario 256";
     font-weight: 700;
     src: url("/fonts/SuperMario256.ttf") format("truetype");
-};
+}
 
 @font-face {
     font-family: "brr";
     font-weight: 700;
     src: url("/fonts/BRR.ttf") format("truetype");
-};
+}
 
 
 .css-14vpx1i > div {
