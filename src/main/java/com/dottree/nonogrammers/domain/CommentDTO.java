@@ -16,4 +16,5 @@ public class CommentDTO {
     private String content;
     private Timestamp createdAt;
     private Timestamp updatedAt;
+    private String nickName;
 }

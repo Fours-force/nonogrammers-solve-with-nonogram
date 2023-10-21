@@ -8,6 +8,7 @@ import java.time.LocalDate;
 
 @Data
 public class PostDTO {
+    private int id;
     private int postId;
     private int boardType;
     private int userId;
@@ -15,5 +16,12 @@ public class PostDTO {
     private String content;
     private LocalDate createdAt;
     private LocalDate updatedAt;
+    private int commentCount;
+    private int likeCount;
+    private int viewCount;
+    private String boardTypeStr;
+    private String nickName;
+    private String imgSrc;
 }
+
 
