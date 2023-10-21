@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{./defaultLayout.html}">
 
 <head>
     <meta charset="UTF-8">
@@ -11,6 +11,7 @@
 
 </head>
 
+<th:block layout:fragment="content">
 <body>
     <section>
         <div class="bg-back font-brr">
@@ -42,7 +43,7 @@
                     <div>
                         <div class="relative w-full h-10">
                             <button class="w-full h-10 text-center text-white duration-300 ease-in-out border rounded-sm bg-main-blue pl-7 pr-7 hover:bg-main-skyblue" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-                            onclick="location.href='#'">
+                            onclick="location.href='/write'">
                                 글 작성
                             </button>
                         </div>
@@ -163,5 +164,5 @@
         }
     </script>
 </body>
-
+</th:block>
 </html>

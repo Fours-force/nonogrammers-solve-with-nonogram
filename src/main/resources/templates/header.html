@@ -48,7 +48,7 @@
                                         <div id="dropdown" class="z-10 absolute right-0 hidden bg-white divide-y divide-gray-100 rounded-lg shadow md:w-40 dark:bg-gray-700">
                                             <ul class="py-2 text-md text-gray-700 font-super256 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
                                                 <li>
-                                                    <a href="#" class="block px-6 py-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">MYPAGE</a>
+                                                    <a th:href="@{/user/{id}(id = ${session.value.userId})}" class="block px-6 py-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">MYPAGE</a>
                                                 </li>
                                                 <li>
                                                     <a href="/api/logout" class="block px-6 py-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">LOGOUT</a>
@@ -77,8 +77,8 @@
                                 </a>
                             </div>
                             <div class="flex justify-center w-auto h-auto p-1 hover:text-nav-navy active:text-main-skyblue active:rounded-md">
-                                <a href="#" class="block w-auto h-full text-2xl">
-                                    <span class="">COMMUNITY</span>
+                                <a href="/post" class="block w-auto h-full text-2xl">
+                                    <span id="community" class="">COMMUNITY</span>
                                 </a>
                             </div>
                         </div>
@@ -101,4 +101,10 @@
             </div>
         </div>
     </header>
+
+    <script th:inline="javascript">
+        if ([[${nav}]]){
+            document.getElementById([[${nav}]]).classList.add("text-main-skyblue");
+        }
+    </script>
 </th:block>

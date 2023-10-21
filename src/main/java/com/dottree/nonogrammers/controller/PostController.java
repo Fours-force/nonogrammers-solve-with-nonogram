@@ -26,6 +26,7 @@ public class PostController {
         List<PostDTO> list= dao.listm();
         ModelAndView mav=new ModelAndView();
         mav.addObject("list",list);
+        mav.addObject("nav", "community" );
         mav.setViewName("community");
         return mav;
     }
@@ -97,12 +98,15 @@ public class PostController {
         try{
             postDTO.setBoardType(dao.getBoardType(category));
             boolean insertResult = dao.insertPost(postDTO);
+            MultipartFile[] uploadImageFiles = vo.getUploadImageFiles();
 
-            if (insertResult && (vo.getUploadImageFiles() != null)) {
+            if (insertResult && (!uploadImageFiles[0].isEmpty())) {
                 String path = System.getProperty("user.dir") + "/src/main/resources/static/images/post/";
                 fileDTO.setPostId(postDTO.getId());
-                for (MultipartFile mfile : vo.getUploadImageFiles()) {
+
+                for (MultipartFile mfile : uploadImageFiles) {
                     String filename = UUID.randomUUID().toString();
+                    System.out.println(mfile);
                     try {
                         // 파일 정보
                         String originalFilename = mfile.getOriginalFilename();
@@ -118,6 +122,7 @@ public class PostController {
                         fileDTO.setFileExtension(fileExtension);
                         fileDTO.setFileUrl("/images/post/" + filename + fileExtension);
                         boolean uploadResult = dao.insertUploadImage(fileDTO);
+
                     } catch (IOException ioe) {
                         ioe.printStackTrace();
                     }
@@ -126,7 +131,7 @@ public class PostController {
         } catch(Exception e){
             e.printStackTrace();
         }
-        return "redirect:/community";
+        return "redirect:/post";
     }
 
 }
