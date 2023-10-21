@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Setter
@@ -14,4 +15,5 @@ public class ResponseModel {
     private String title;
     private String data;
     private String message;
+    private HashMap<String, Object> mapData;
 }
