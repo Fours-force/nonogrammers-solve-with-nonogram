@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserDotDTO {
-    private int userDotId;
+    private int dotId;
     private int nonoId;
     private int userId;
 }

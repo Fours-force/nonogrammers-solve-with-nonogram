@@ -2,13 +2,11 @@ package com.dottree.nonogrammers.domain;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
-@ToString
 @Getter
 @Setter
-public class DotDTO {
-    private int dotId;
+public class UserSolvingRowDTO {
+    private int userId;
     private int nonoId;
-    private String color;
+    private int solvingRow;
 }
