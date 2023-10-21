@@ -11,4 +11,6 @@ public class NonoDTO {
     private int levelType;
     private String nonoImgUrl;
     private String allProblemToStr;
+
 }
+

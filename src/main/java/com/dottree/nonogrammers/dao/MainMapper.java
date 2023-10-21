@@ -2,6 +2,7 @@ package com.dottree.nonogrammers.dao;
 
 import com.dottree.nonogrammers.domain.*;
 import org.apache.ibatis.annotations.*;
+import groovy.util.logging.Slf4j;
 
 import java.util.List;
 

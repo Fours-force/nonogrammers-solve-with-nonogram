@@ -1,6 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/main/resources/**/*.html"],
+  content: [
+    "./src/main/resources/**/*.html",
+    "./node_modules/flowbite/**/*.js"
+  ],
   theme: {
     extend: {
         colors: {
@@ -22,6 +25,7 @@ module.exports = {
             'nono-mypg-item-border' : '#264E86',
             'cmt-user-div-bg' : '#E3F8FC',
             'name-mobile-menu' : '#52647F',
+            'write-border': '#E2E0E0',
         },
         fontFamily : {
             super256 : ['"Super Mario 256"'],
@@ -29,6 +33,8 @@ module.exports = {
         },
     },
   },
-  plugins: [],
+  plugins: [
+    require('flowbite/plugin'),
+  ],
 }
 
