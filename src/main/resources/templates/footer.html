@@ -6,8 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link th:href="@{./css/dist/output.css}" rel="stylesheet"/>
-    <link th:href="@{./css/footer.css}" rel="stylesheet">
+    <link th:href="@{../static/css/dist/output.css}" rel="stylesheet"/>
+    <link th:href="@{../static/css/footer.css}" rel="stylesheet">
 </head>
 
 <body>
@@ -15,12 +15,12 @@
         <!--여기에 본문 내용-->
     </div>
     <th:block th:fragment="fragment-footer">
-        <footer class="w-full h-auto pt-5 pb-8 mt-auto overflow-hidden text-sm font-brr mypg-left-nav css-14vpx1i eh7swou2">
-            <hr>
+        <hr>
+        <footer class="mx-auto sm:px-6 lg:px-8 max-w-screen-xl h-auto pt-5 mt-auto overflow-hidden text-sm font-brr mypg-left-nav css-14vpx1i eh7swou2">
             <br>
-            <div class="container flex space-x-4 lg:flex-row md:flex-col bg-gray-50">
-                <div class="">
-                    <img src="./images/logo.png" alt="NoNoGramers" width="150" />
+            <div class="container flex space-x-4 lg:flex-row md:flex-col sm-flex-col">
+                <div class="min-w-max">
+                    <img src="/images/logo.png" alt="NoNoGramers" width="150" />
                     <address>
                         서울특별시 서울특별시 송파구 가락동 78 IT벤처타워 12층
                     </address>
@@ -73,9 +73,9 @@
                 </div>
                 <!-- 깃 허브와 노션 로고 클릭하면 이동 -->
                 <nav class="flex space-x-4 lg:mt-0 md:mt-3 min-w-max">
-                    <a target="_blank" href=""><img src="./images/iconmonstr-github-1.svg" alt="github" /></a>
+                    <a target="_blank" href=""><img src="/images/iconmonstr-github-1.svg" alt="github" /></a>
                     <a target="_blank" href="https://www.notion.so/90171fdf1e9f41359f0b59e868d7c08a"><img
-                            src="./images/Notion-logo.svg" alt="notion" /></a>
+                            src="/images/Notion-logo.svg" alt="notion" /></a>
                 </nav>
             </div>
         </footer>

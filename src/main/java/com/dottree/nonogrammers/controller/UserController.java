@@ -143,6 +143,7 @@ public class UserController {
             sessionValue.put("email", userInform.getEmail());
             sessionValue.put("nickName", userInform.getNickName());
             sessionValue.put("profileImgUrl", userInform.getProfileImgUrl());
+            sessionValue.put("baekjoonUserId", userInform.getBaekjoonUserId());
 
             HttpSession session = httpServletRequest.getSession(false);  // 이미 있는 세션을 가져옴
             if (session != null) {
@@ -150,6 +151,8 @@ public class UserController {
             }
             session = httpServletRequest.getSession(true);  // 새로운 세션을 생성
             session.setAttribute("value", sessionValue);
+
+
             return "redirect:/";
         } else{
             HttpSession session = httpServletRequest.getSession(false);
