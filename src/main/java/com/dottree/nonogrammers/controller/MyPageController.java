@@ -36,20 +36,23 @@ public class MyPageController {
     /**
      * 유저의 작성한 글 페이지를 보여줍니다.
      * @param userPostVO
-     * @param session
      * @param userId
      * @return mypostView
      */
     @GetMapping("/mypost/{userId}")
     public String userPostView(@ModelAttribute("userPostVO") UserPostVO userPostVO,
-                               HttpSession session,
-                               @PathVariable("userId") int userId) {
-        List<PostDTO> postDtoList = postMapper.selectPostList(1);
-        userPostVO.setUserId(1);
+                               @PathVariable("userId") Integer userId,
+                               HttpSession session) {
+        UserDTO userDTO = userMapper.selectUserByUserId(userId);
+        String redirectLogin = isUserIdNullthenRedirect(session);
+        if(!redirectLogin.equals("")) {
+            return redirectLogin;
+        }
+//        isUserIdNullthenRedirect(userId);
+        List<PostDTO> postDtoList = postMapper.selectPostList(userId);
+        userPostVO.setUserDTO(userDTO);
+        userPostVO.setUserId(userId);
         userPostVO.setUserPostList(postDtoList);
-        // 세션에 UserId set
-        session.setAttribute("userId", 1);
-
         return "mypost";
     }
 
@@ -58,19 +61,15 @@ public class MyPageController {
     public String modifyUserPost(@ModelAttribute("userPostVO") UserPostVO userPostVO,
                                   @ModelAttribute PostDTO postDTO,
                                   Model model,
-                                  @PathVariable("postId") int postId,
-                                  @PathVariable("userId") int userId,
-                                 HttpSession session) {
-        HashMap<String, Object> map = new HashMap<>();
-        //postDTO = postMapper.detailss(String.valueOf(postId));
-        //System.out.println(postDTO.getTitle() + "  " + postDTO.getContent() + " " + userId + " " + postId);
+                                  @PathVariable("postId") Integer postId,
+                                  @PathVariable("userId") Integer userId) {
 
+//        isUserIdNullthenRedirect(userId);
         boolean result = postMapper.updatePostByPostIdAndUserId(postDTO.getTitle(), postDTO.getContent(), postId, userId);
 //        postDTO = postMapper.detailss(String.valueOf(postId));
         List<PostDTO> postDtoList = postMapper.selectPostList(userId);
         userPostVO.setUserPostList(postDtoList);
         userPostVO.setUserId(userId);
-        session.setAttribute("userId", 1);
         if(result) {
             model.addAttribute(userPostVO);
         }
@@ -83,16 +82,19 @@ public class MyPageController {
      * 유저의 계정관리 페이지를 보여줍니다.
      * @param userId
      * @param model
-     * @param session
      * @return accountmanageView
      */
     @GetMapping("/user/{userId}")
-    public String userAccountManageView(@PathVariable("userId") int userId,
+    public String userAccountManageView(@PathVariable("userId") Integer userId,
                                         Model model,
                                         HttpSession session) {
-        UserDTO userDTO = userMapper.selectUserByUserId(1);
+        String redirectLogin = isUserIdNullthenRedirect(session);
+        if(!redirectLogin.equals("")) {
+            return redirectLogin;
+        }
+
+        UserDTO userDTO = userMapper.selectUserByUserId(userId);
         model.addAttribute(userDTO);
-        session.setAttribute("userId", 1); //userId
 
         return "accountmanage";
     }
@@ -101,22 +103,21 @@ public class MyPageController {
      * 유저의 닉네임을 수정합니다.
      * @param userId
      * @param userDTO
-     * @param session
      * @return accountmanageView
      */
     @PutMapping(value = "/api/reset-nickname/{userId}", produces = "application/json; charset=utf-8")
     @ResponseBody
-    public HashMap<String, Object> changeUserNickname(@PathVariable("userId") int userId,
-                                                      @RequestBody UserDTO userDTO,
-                                                      HttpSession session
-    ) {
+    public HashMap<String, Object> changeUserNickname(@PathVariable("userId") Integer userId,
+                                                      @RequestBody UserDTO userDTO) {
+
         HashMap<String, Object> map = new HashMap<>();
-        UserDTO user = userMapper.selectUserByUserId(1); // session.getUserId()
-        //System.out.println(nickName);
+//        UserDTO user = userMapper.selectUserByUserId(1); // session.getUserId()
+        UserDTO user = userMapper.selectUserByUserId(userId); // session.getUserId()
+        System.out.println(user.getUserId());
         if(user != null) {
             user.setNickName(userDTO.getNickName());
             userMapper.resetNickname(user.getEmail(), user.getNickName());
-            user = userMapper.selectUserByUserId(1);
+            user = userMapper.selectUserByUserId(user.getUserId());
             map.put("result", 200);
             map.put("obj", user);
         } else {
@@ -129,9 +130,8 @@ public class MyPageController {
 
     @PutMapping(value = "/api/withdraw-user/{userId}", produces = "application/json; charset=utf-8")
     @ResponseBody
-    public HashMap<String, Object> withDrawUser(@PathVariable("userId") int userId,
-                                                @RequestBody UserDTO userDTO,
-                                                HttpSession session) {
+    public HashMap<String, Object> withDrawUser(@PathVariable("userId") Integer userId,
+                                                @RequestBody UserDTO userDTO) {
 
         HashMap<String, Object> map = new HashMap<>();
         //session에 로그인되어 있는 사용자로 select 해오고
@@ -154,13 +154,11 @@ public class MyPageController {
     @PostMapping(value = "/api/isduplicated-nickname/{nickName}", produces = "application/json; charset=utf-8")
     @ResponseBody
     public HashMap<String, Object> isDuplicatedNickName(@PathVariable("nickName") String nickName,
-                                                        @RequestBody UserDTO userDTO,
-                                                        HttpSession session) {
+                                                        @RequestBody UserDTO userDTO) {
         HashMap<String, Object> map = new HashMap<>();
         int checkedVal = userMapper.getExists("nickName", userDTO.getNickName());
 
         if(checkedVal < 1 && !userDTO.getNickName().equals("null")) {
-            //session.removeAttribute();
             map.put("result", 200);
             map.put("msg", "사용가능한 닉네임입니다.");
         } else {
@@ -173,10 +171,8 @@ public class MyPageController {
 
     @RequestMapping(value = "/api/change-profileimgurl/{userId}", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE, consumes = "multipart/form-data")
     @ResponseBody
-    public HashMap<String, Object>  changeProfileImgUrl(
-                                        @RequestParam("profileImg") MultipartFile imgFile
-                                      , @PathVariable int userId
-                                       ) {
+    public HashMap<String, Object> changeProfileImgUrl(@RequestParam("profileImg") MultipartFile imgFile,
+                                                        @PathVariable Integer userId) {
         HashMap<String, Object> map = new HashMap<>();
         UserDTO user = userMapper.selectUserByUserId(userId);
         if(user == null) {
@@ -200,7 +196,7 @@ public class MyPageController {
                 map.put("msg", "같은 프로필 사진입니다. 다른 사진을 선택해주세요.");
             } else {
                 userMapper.updateProfileImg(user.getEmail(), f.getAbsolutePath().split("static")[1]);
-                userMapper.selectUserByUserId(1);
+                userMapper.selectUserByUserId(user.getUserId());
                 FileOutputStream fos = new FileOutputStream(f);
                 fos.write(content);
                 fos.close();
@@ -216,53 +212,80 @@ public class MyPageController {
     }
 
     @GetMapping("/ingnono/{userId}")
-    public String getIngUserNono(@PathVariable("userId") int userId,
-                                 Model model) {
-//        List<UserNonoDTO> nonoList = mainMapper.selectUserNono(userId);
+    public String getIngUserNono(@PathVariable("userId") Integer userId,
+                                 Model model,
+                                 HttpSession session) {
+        String redirectLogin = isUserIdNullthenRedirect(session);
+        if(!redirectLogin.equals("")) {
+            return redirectLogin;
+        }
+
         List<UserNonoVO> userNonnolist = userMapper.selectUserNonoByIsSolved(userId, 0);
-//        System.out.println(userNonnolist.get(0).getUserNonoId());
+        model.addAttribute("title", "내가 풀고 있는 노노들");
         model.addAttribute("isSolved", 0);
         model.addAttribute("nonoList", userNonnolist);
         return "my-nono";
     }
 
     @GetMapping("/ingnono/detail/{userId}/{nonoId}")
-    public String getIngUsernono(@PathVariable("userId") int userId,
-                                 @PathVariable("nonoId") int nonoId,
-                                 Model model) {
+    public String getIngUsernono(@PathVariable("userId") Integer userId,
+                                 @PathVariable("nonoId") Integer nonoId,
+                                 Model model,
+                                 HttpSession session) {
+        String redirectLogin = isUserIdNullthenRedirect(session);
+        if(!redirectLogin.equals("")) {
+            return redirectLogin;
+        }
+
         UserNonoVO userNonoVO = userMapper.selectIngUserNonoDetail(userId, nonoId);
         if(userNonoVO == null) {
             // 유효성검사?
         }
-//        System.out.println(userNonoVO.getUserId());
         model.addAttribute("userNono", userNonoVO);
 
         return "usernono-detail";
     }
 
     @GetMapping("/solvednono/{userId}")
-    public String getSolvedUserNono(@PathVariable("userId") int userId,
-                                 Model model) {
-//        List<UserNonoDTO> nonoList = mainMapper.selectUserNono(userId);
+    public String getSolvedUserNono(@PathVariable("userId") Integer userId,
+                                    Model model,
+                                    HttpSession session) {
+        String redirectLogin = isUserIdNullthenRedirect(session);
+        if(!redirectLogin.equals("")) {
+            return redirectLogin;
+        }
         List<UserNonoVO> userNonnolist = userMapper.selectUserNonoByIsSolved(userId, 1);
-        System.out.println(userNonnolist.size());
-        System.out.println(userNonnolist.get(0).getUserNonoId());
+        model.addAttribute("title", "내가 푼 노노들");
         model.addAttribute("isSolved", 1);
         model.addAttribute("nonoList", userNonnolist);
+//        System.out.println(userNonnolist.size());
         return "my-nono";
     }
 
     @GetMapping("/solvednono/detail/{userId}/{nonoId}")
-    public String getSolvedUsernono(@PathVariable("userId") int userId,
-                                 @PathVariable("nonoId") int nonoId,
-                                 Model model) {
+    public String getSolvedUsernono(@PathVariable("userId") Integer userId,
+                                    @PathVariable("nonoId") Integer nonoId,
+                                    Model model,
+                                    HttpSession session) {
+        String redirectLogin = isUserIdNullthenRedirect(session);
+        if(!redirectLogin.equals("")) {
+            return redirectLogin;
+        }
         UserNonoVO userNonoVO = userMapper.selectSolvedUserNonoDetail(userId, nonoId);
         if(userNonoVO == null) {
             // 유효성검사?
         }
-//        System.out.println(userNonoVO.getUserId());
         model.addAttribute("userNono", userNonoVO);
 
         return "usernono-detail";
+    }
+
+    public String isUserIdNullthenRedirect(HttpSession session) {
+        if(session.getAttribute("value") == null) {
+            System.out.println("************ userId is NULL ************");
+            return "redirect:/login";
+        } else {
+            return "";
+        }
     }
 }
