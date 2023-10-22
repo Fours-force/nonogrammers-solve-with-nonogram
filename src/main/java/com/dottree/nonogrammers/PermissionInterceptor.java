@@ -1,35 +1,43 @@
 package com.dottree.nonogrammers;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 @Component
 public class PermissionInterceptor implements HandlerInterceptor {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+//    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
 
         // 요청 url을 가져온다.
         String uri = request.getRequestURI(); // 요청 들어온 것에 대한 path를 가져올 수 있음
-        logger.info("[##### preHandler - get uri] uri : {}", uri);
+//        logger.info("[##### preHandler - get uri] uri : {}", uri);
 
         // 로그인 여부 확인 - 세션확인
         HttpSession session = request.getSession();
-        Integer userId = (Integer)session.getAttribute("userId"); // 비로그인일 수 있음
+        if(session.getAttribute("value") == null) {
+            session.invalidate();
+            //response.sendRedirect("/");
+            ;
+            return true; // 컨트롤러 수행안함
+        }
+        HashMap<String, Object> value = null;
+        value = (HashMap<String, Object>) session.getAttribute("value"); // 비로그인일 수 있음
+        Integer userId = Integer.parseInt(value.get("userId").toString());
+//        System.out.println("userId == "+ userId);
 
         // 접근못하게 막고 싶은 url 설정 - myPage
-        if (userId == null && (uri.startsWith("/user") || uri.startsWith("/ingnono") || uri.startsWith("/solvednono"))) {
-            response.sendRedirect("/");
-
+        if (userId == null && (uri.startsWith("/user") || uri.startsWith("/ingnono") || uri.startsWith("/solvednono") || uri.startsWith("/api"))) {
+            response.sendRedirect("/login");
             return false; // 컨트롤러 수행안함
         }
 
@@ -51,13 +59,13 @@ public class PermissionInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView mav) {
         String uri = request.getRequestURI(); // 요청 들어온 것에 대한 path를 가져올 수 있음
-        logger.info("[$$$$$ postHandle - get uri] uri : {}", uri);
+//        logger.info("[$$$$$ postHandle - get uri] uri : {}", uri);
     }
 
     // jsp가 HTML로 최종 변환된 후 (api가 끝난 후)
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
             throws Exception {
-        logger.info("[@@@@@ afterCompletion]");
+//        logger.info("[@@@@@ afterCompletion]");
     }
 }
