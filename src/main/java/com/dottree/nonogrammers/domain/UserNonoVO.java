@@ -15,5 +15,6 @@ public class UserNonoVO {
     private int userId;
     private String nonoImgUrl;
     private int isSolved;
+    private int levelType;
     private LocalDate createdAt;
 }
