@@ -11,6 +11,7 @@ public class UserDTO {
     private String password;
     private String nickName;
     private String profileImgUrl;
+    private String baekjoonUserId;
     private LocalDate createdAt;
     private LocalDate updatedAt;
     private LocalDate changedAt;
