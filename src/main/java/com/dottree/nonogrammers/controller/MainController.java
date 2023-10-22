@@ -341,6 +341,16 @@ public class MainController {
         return udDTOList;
     }
 
+    @RequestMapping(value = ("/api/updateisSolved/{userId}/{nonoId}"), method = RequestMethod.POST)
+    @ResponseBody
+    public String updateIsSolved(UserNonoDTO unDTO){
+        log.info(getClass().getName() + ": updateIsSolved start!!!!!");
+        String msg ="";
+        mdao.updateUserNonoIsSolved(unDTO);
+        msg = "성공";
+        return msg;
+    }
+
     @GetMapping("/nonobox")
     public String getIngUserNono(Model model) {
     List<UserNonoVO> userNonnolist = mdao.selectAllNoNo();

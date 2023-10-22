@@ -62,6 +62,9 @@
         console.log("세션 유저 아이디 : " + userId);
         let nonoId = 1;
         let progress = [[${progress}]];
+        if(progress == 100){
+            updateSolvedStat();
+        }
         console.log("progress : "+progress);
 
         let baekjoonId = [[${session.value.get("baekjoonUserId")}]];
@@ -208,6 +211,18 @@
             }
             xhr.open('GET',`/api/selectSolvedDotId/${userId}/${nonoId}`);
             xhr.send();
+        }
+
+        function updateSolvedStat(){
+            let xhr = new XMLHttpRequest();
+            xhr.onload = () => {
+                if(xhr.status == 200) {
+                    console.log("isSolved 갱신 완료");
+                }
+            }
+            xhr.open('POST','/api/updateIsSolved/'+userId+'/'+nonoId);
+            xhr.send("");
+            window.location.reload();
         }
 
        /* window.onload = function createPicture() {
