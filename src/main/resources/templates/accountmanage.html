@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{./defaultLayout.html}">
-
 <body>
-    <th:block layout:fragment="content" th:with="userId=${session.userId}"> <!-- session 타임리프 변수에 저장 -->
-        <div class="flex justify-center h-max w-screen px-1 sm:px-6 lg:px-8 mx-auto sm:px-6 lg:px-8 gap-x-2 bg-back">
+    <script th:inline="javascript">
+        if (![[${session.value}]]){
+            alert("로그인이 필요한 기능입니다");
+            window.location.href = "/login";
+        }
+    </script>
+    <th:block layout:fragment="content" th:with="userId=${session.value.userId}"> <!-- session 타임리프 변수에 저장 -->
+        <div class="flex justify-center min-h-screen h-[calc(100%-1rem)] w-screen px-1 pt-10 sm:px-6 lg:px-8 mx-auto sm:px-6 lg:px-8 gap-x-2 bg-back">
             <!-- 좌측 nav -->
             <th:block th:replace="~{./my-activity-nav.html :: myactivitynavFragment}"></th:block>
-            <div class="w-8/12 mt-2 max:w-8/12 font-brr min-w-max">
+            <div class="w-6/12 mt-2 max:w-8/12 font-brr min-w-min">
                 <h1 class="pb-5 pl-5 text-3xl border-b-2 mb-7 font-brr text-nav-navy">계정 관리</h1>
                 <article class="w-12/12">
                     <div class="flex justify-between">
@@ -50,8 +55,8 @@
                         </div>
                         <div class="w-6/12 min-w-fit">
                             <h2 class="text-2xl text-opacity-80 text-mypg-border">프로필 사진 변경</h2>
-                            <div class="flex items-center justify-between p-4">
-                                <div class="mr-3">
+                            <div class="flex items-center justify-around p-2 mt-10 sm:mt-10 md:mt-1">
+                                <div class="mr-3 hidden sm:hidden md:block">
                                     <img th:src="@{${userDTO.profileImgUrl}}" alt="" id="profileImgPreView"
                                          class="w-40 h-40 transition duration-200 border-2 rounded-full border-nono-mypg-item-border hover:scale-110 hover:shadow-xl">
                                 </div>

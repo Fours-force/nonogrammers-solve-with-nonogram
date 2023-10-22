@@ -137,12 +137,12 @@ public class MainController {
         mav.addObject("testcolor", aaad);
         mav.addObject("testcode", "와웅우우아아");
 
-        System.out.println(totalRowList.get(1).size());
-            for(int i=0; i<48; i++){
-                for( int j = 0; j < totalRowList.get(0).size(); j++) {
-                    System.out.print(totalRowList.get(i).get(j).getColor()+" ,");
-                }
-            }
+//        System.out.println(totalRowList.get(1).size());
+//            for(int i=0; i<48; i++){
+//                for( int j = 0; j < totalRowList.get(0).size(); j++) {
+//                    System.out.print(totalRowList.get(i).get(j).getColor()+" ,");
+//                }
+//            }
         return mav;
     }
 
