@@ -66,8 +66,8 @@
 .eightbit-btn--proceed:active {
   box-shadow: inset 4px 4px 0px 0px #e59400;
 }
-*,
-*:before,
-*:after {
-  box-sizing: border-box;
-}
+/**,*/
+/**:before,*/
+/**:after {*/
+/*  box-sizing: border-box;*/
+/*}*/
