@@ -1,6 +1,7 @@
 package com.dottree.nonogrammers.controller;
 
 import com.dottree.nonogrammers.dao.MainMapper;
+import com.dottree.nonogrammers.dao.UserMapper;
 import com.dottree.nonogrammers.domain.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -21,11 +22,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -33,8 +36,10 @@ import java.util.List;
 @Slf4j
 public class MainController {
     final MainMapper mdao;
-    public MainController(MainMapper mdao) {
+    private final UserMapper userMapper;
+    public MainController(MainMapper mdao, UserMapper userMapper) {
         this.mdao = mdao;
+        this.userMapper = userMapper;
     }
 
     //사용자 아이디, 노노아이디로 노노 개방
@@ -73,9 +78,9 @@ public class MainController {
                 if (color instanceof XSSFColor) {
                     XSSFColor xssfColor = (XSSFColor) color;
                     String d = xssfColor.getARGBHex().substring(2);
-//                    dDTO.setNonoId(nonoId);
-//                    dDTO.setColor(d);
-//                    mdao.insertDotsInDot(dDTO);
+                    dDTO.setNonoId(nonoId);
+                    dDTO.setColor(d);
+                    mdao.insertDotsInDot(dDTO);
                     System.out.print(d + ",");
                 }
             }
@@ -87,19 +92,19 @@ public class MainController {
     }
 
     //화면에 노노 출력.
-    @RequestMapping("/nonodots/{userId}/{nonoId}")
-    public ModelAndView nonodots(UserNonoDTO unDTO){
+    @RequestMapping("/nonodots/{userId}/{nonoId}/{baekjoonId}")
+    public ModelAndView nonodots(UserNonoDTO unDTO,@PathVariable("baekjoonId")String beakjoonId){
         log.info("nonodots start!!!!!!!!");
+        log.info("노노 조회 시 백준 아이디 : " + beakjoonId);
         //노노개방
         if(mdao.selectUserFromUserNono(unDTO) == 0){
             log.info("insert UserNono start!!!!!!!!!");
-            mdao.insertUserNono(unDTO,1);
-            mdao.insertUserSolvedCount(unDTO);
+            mdao.insertUserNono(unDTO);
+            mdao.insertUserSolvedCount(unDTO.getUserId(),getUserBaekData(beakjoonId)); // 백준 회원가입이 되어있어야함
         }
 
         log.info("nonoId : " + unDTO.getNonoId());
         int cnt = 0;
-        String aaad = "212352";
         List<List<DotDTO>> totalRowList = new ArrayList<>(); // 모든 도트의 정보를 담을 이중ArrayList. 행,열로 나뉘어 있음.
 
         ModelAndView mav = new ModelAndView(); // 모델 생성,nonodot으로 이동
@@ -125,24 +130,30 @@ public class MainController {
             totalRowList.add(singleRowList);
         }
 
-        //푼 문제가 0이라 생긴 문제. 지우지 말 것
-       /* UserDotDTO udDTO = new UserDotDTO();
-        udDTO.setNonoId(nonoId);
-        udDTO.setUserId(userId);
-        int userSolvedCnt = mdao.selectSolvedNumber(udDTO);
-        mav.addObject("progress",cnt/userSolvedCnt);*/
+        //Progress bar //////////////////////////////////////////////////////////////////////////////
+        UserDotDTO udDTO = new UserDotDTO();
+        udDTO.setNonoId(unDTO.getNonoId());
+        udDTO.setUserId(unDTO.getUserId());
 
+        float ssn = mdao.selectAllDotCount(udDTO.getNonoId());
+        float sadc = mdao.selectSolvedNumber(udDTO);
+        int progress = (int) (sadc*100/ssn);
+        log.info(getClass().getName() + ": 모든 도트의 수 : "+ ssn);
+        log.info(getClass().getName()+": 해결한 도트의 수 : "+ sadc);
+        log.info(getClass().getName() + ": 프로그래스 바 :" + progress);
+        mav.addObject("progress",progress);
+
+        ///////////////////////////////////////////////////////////////////////////////////////
         mav.addObject("dotList", totalRowList);
         mav.addObject("urlAry", urlAry);
-        mav.addObject("testcolor", aaad);
-        mav.addObject("testcode", "와웅우우아아");
+        mav.addObject("baekjoonUserIdStatus", "1");
 
-        System.out.println(totalRowList.get(1).size());
-            for(int i=0; i<48; i++){
-                for( int j = 0; j < totalRowList.get(0).size(); j++) {
-                    System.out.print(totalRowList.get(i).get(j).getColor()+" ,");
-                }
-            }
+//        System.out.println(totalRowList.get(1).size());
+//            for(int i=0; i<48; i++){
+//                for( int j = 0; j < totalRowList.get(0).size(); j++) {
+//                    System.out.print(totalRowList.get(i).get(j).getColor()+" ,");
+//                }
+//            }
         return mav;
     }
 
@@ -216,15 +227,16 @@ public class MainController {
         udDTO.setUserId(userId);
 
         int userSolvedCnt = mdao.selectUserSolvedCount(udDTO);
+        int baekjoonSolvedCnt = getUserBaekData(baekjoonId);
 
         log.info(getClass().getName()+" 해결해온 문제의 수 "+userSolvedCnt);
-        log.info(getClass().getName()+" 지금 해결한 문제의 수 "+getUserBaekData(baekjoonId));
-        if(userSolvedCnt < getUserBaekData(baekjoonId)){
+        log.info(getClass().getName()+" 지금 해결한 문제의 수 "+baekjoonSolvedCnt);
+        if(userSolvedCnt < baekjoonSolvedCnt){
             result = 1;
             UserSolvedCountDTO uscDTO = new UserSolvedCountDTO();
             uscDTO.setUserId(userId);
             uscDTO.setSolvedCount(userSolvedCnt+1);
-            mdao.updateUserSolvedCount(uscDTO);
+            mdao.updateUserSolvedCount(userId,baekjoonSolvedCnt);
             mdao.selectUserSolvingRow(udDTO);
         }
         log.info("해결한 문제의 수 " + userSolvedCnt);
@@ -233,10 +245,12 @@ public class MainController {
     }
 
     //userdot에 해결한 dots들 삽입.
+    @ResponseBody
     @RequestMapping(value =("/api/updateUserDot/{userId}/{nonoId}"),method = RequestMethod.POST, produces = "application/json; charset=utf-8")
     public String updateUserDot(@RequestBody String jsonString, @PathVariable("userId") int userId, @PathVariable("nonoId")int nonoId) throws JsonProcessingException {
         log.info("updateUserDot 시작!!!!!!!");
         UserDotDTO udDTO = new UserDotDTO();
+        String msg ="";
 
         System.out.println("받아온 JSON 형식의 String : "+jsonString);
 
@@ -248,8 +262,12 @@ public class MainController {
         udDTO.setNonoId(nonoId);
         log.info(String.valueOf(udDTO.getDotId()));
         try {
-            if(mdao.selectIsDotsSolved(udDTO).getDotId() == udDTO.getDotId())
+            if(mdao.selectIsDotsSolved(udDTO).getDotId() == udDTO.getDotId()){
                 log.info("중복된 userDotInsert 처리.");//뇌정지..
+                msg = "이미 푼 문제여서 실패~";
+            }
+
+
         }catch (NullPointerException e){
             log.info("에러메세지 : " + e.getMessage());
             for (int i = 0; i < getNumJsonNode.size(); i++) {
@@ -259,6 +277,7 @@ public class MainController {
                 mdao.insertUserDot(udDTO);
             }
             mdao.resetUserSolvingRow(udDTO);
+            msg = "성공~";
         }
         StringBuilder sb = new StringBuilder();
         sb.append("redirect:/nonodots/").append(userId).append("/").append(nonoId);
@@ -272,13 +291,22 @@ public class MainController {
         log.info("userSolvingDTO solvingRow : " + usrDTO.getSolvingRow());
         UserDotDTO udDTO = new UserDotDTO();
         udDTO.setUserId(usrDTO.getUserId());
-        udDTO.setNonoId(udDTO.getNonoId());
-
+        udDTO.setNonoId(usrDTO.getNonoId());
+        log.info("풀고있는 행 변경 : UserId : " + usrDTO.getUserId());
+        log.info("풀고있는 행 변경 : nonoId : " + udDTO.getNonoId());
         try {
             mdao.selectUserSolvingRow(udDTO);
         }catch (BindingException e){
-            log.info(e.getMessage());
+            log.info(getClass().getName()+": BindingException 발생 : " + e.getMessage());
             mdao.insertUserSolvingRow(usrDTO);
+//            try {
+//                log.info(e.getMessage());
+//
+//
+//            }catch (SQLIntegrityConstraintViolationException e1){
+//                log.info(getClass().getName()+"유니크 중복 발생" + e1.getMessage());
+//            }
+
         }
 
         mdao.updateUserSolvingRow(usrDTO);
@@ -313,6 +341,35 @@ public class MainController {
         return udDTOList;
     }
 
+    @RequestMapping(value = ("/api/updateisSolved/{userId}/{nonoId}"), method = RequestMethod.POST)
+    @ResponseBody
+    public String updateIsSolved(UserNonoDTO unDTO){
+        log.info(getClass().getName() + ": updateIsSolved start!!!!!");
+        String msg ="";
+        mdao.updateUserNonoIsSolved(unDTO);
+        msg = "성공";
+        return msg;
+    }
+
+    @GetMapping("/nonobox")
+    public String getIngUserNono(Model model) {
+    List<UserNonoVO> userNonnolist = mdao.selectAllNoNo();
+//        List<UserNonoDTO> nonoList = mainMapper.selectUserNono(userId);
+//        System.out.println(userNonnolist.get(0).getUserNonoId());
+        model.addAttribute("nonoList", userNonnolist);
+
+        return "/nonobox";
+    }
+    @GetMapping("/nonobox/{levelType}")
+    public String getIngUserNono(@PathVariable(value = "levelType")int levelType, Model model) {
+        List<UserNonoVO> userNonnolist = mdao.selectNonoByLevel(levelType);
+//        List<UserNonoDTO> nonoList = mainMapper.selectUserNono(userId);
+//        System.out.println(userNonnolist.get(0).getUserNonoId());
+        model.addAttribute("nonoList", userNonnolist);
+
+        return "/nonobox";
+    }
+
 
     ////////////////////////////////////////////내가 선언한 메서드/////////////////////////////////////////////////////////////
 
@@ -320,7 +377,7 @@ public class MainController {
     public int getNumPerLevel(int level) throws IOException {
         AsyncHttpClient getNumPerLevelClient = new DefaultAsyncHttpClient();
         String[] getNumResponseBody = new String[1];
-            getNumPerLevelClient.prepare("GET", "https://solved.ac/api/v3/problem/level")
+        getNumPerLevelClient.prepare("GET", "https://solved.ac/api/v3/problem/level")
                 .setHeader("Accept", "application/json")
                 .execute()
                 .toCompletableFuture()
@@ -329,7 +386,7 @@ public class MainController {
                     //System.out.println(getNumResponseBody[0]);
                 })
                 .join();
-            getNumPerLevelClient.close();
+        getNumPerLevelClient.close();
 
         ObjectMapper getNumMapper = new ObjectMapper();
         JsonNode getNumJsonNode = getNumMapper.readTree(getNumResponseBody[0]);
