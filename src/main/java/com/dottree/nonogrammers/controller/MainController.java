@@ -338,6 +338,7 @@ public class MainController {
         }
         List<UserNonoVO> userNonnolist = mdao.selectAllNoNo();
         model.addAttribute("nonoList", userNonnolist);
+        model.addAttribute("nav", "nonobox" );
 
         return "/nonobox";
     }
