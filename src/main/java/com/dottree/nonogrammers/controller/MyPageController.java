@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 public class MyPageController {
@@ -189,7 +190,12 @@ public class MyPageController {
             } catch (FileAlreadyExistsException e) {
                 System.out.println("디렉토리가 이미 존재합니다");
             }
-            File f = new File("/Users/jasonmilian/Downloads/nonogrammers/src/main/resources/static/images/profile/"+userId+"/"+fileName);
+            UUID uuid = UUID.randomUUID();
+            System.out.println(fileName);
+            String ext = fileName.split("\\.")[1];
+            fileName = uuid.toString() + "_" + user.getNickName() + "." + ext;
+            File f = null;
+            f = new File("/Users/jasonmilian/Downloads/nonogrammers/src/main/resources/static/images/profile/"+userId+"/"+fileName);
 
             if ( f.exists() ) {
                 map.put("result", 404);
@@ -197,9 +203,11 @@ public class MyPageController {
             } else {
                 userMapper.updateProfileImg(user.getEmail(), f.getAbsolutePath().split("static")[1]);
                 userMapper.selectUserByUserId(user.getUserId());
-                FileOutputStream fos = new FileOutputStream(f);
-                fos.write(content);
-                fos.close();
+                //FileOutputStream fos = new FileOutputStream(f);
+//                fos.write(content);
+//                fos.close();
+                Path savePath = Paths.get(f.getAbsolutePath());
+                imgFile.transferTo(savePath);
                 map.put("result", 200);
                 map.put("msg", "프로필 사진이 변경되었습니다.");
             }

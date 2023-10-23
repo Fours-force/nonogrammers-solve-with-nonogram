@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{./defaultLayout.html}">
 <body>
 <th:block layout:fragment="content" th:with="userId=${session.value.userId}"> <!-- session 타임리프 변수에 저장 -->
-    <div class="flex justify-center pt-10 min-h-screen h-[calc(100%-1rem)] w-screen mx-auto sm:px-6 lg:px-8 gap-x-2 bg-back">
+    <div class="flex justify-center pt-10 min-h-screen h-[calc(100%-1rem)] w-screen mx-auto sm:px-6 lg:px-8 gap-x-2 bg-back mb-5">
         <!-- 좌측 nav -->
         <th:block th:replace="~{./my-activity-nav.html :: myactivitynavFragment}"></th:block>
         <!-- 우측 contents -->
@@ -33,22 +33,22 @@
                 </div>
             </th:block>
             <article
-                class="grid grid-cols-1 gap-y-3 gap-x-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-1 xl:gap-y-1">
+                class="grid grid-cols-1 gap-y-2 gap-x-2 lg:gap-y-1 lg:gap-x-1 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-3 xl:gap-y-2">
                 <th:block th:if="${isSolved eq 0}" th:each="nono : ${nonoList}">
-                    <div class="w-6/6 mx-auto h-6/6">
-                        <a th:href="@{|/ingnono/detail/${userId}/${nono.getNonoId()}|}"
-                            class="flex items-center h-full max-w-md p-6 mx-auto bg-white border-4 rounded-lg shadow w-12/12 border-nono-mypg-item-border">
+                    <div class="w-6/6 bg-white p-6 mx-auto h-60 border-4 border-nono-mypg-item-border rounded-lg transition duration-200 hover:scale-105">
+                        <a th:href="@{|/nonodots/${userId}/${nono.nonoId}|}"
+                            class="mx-auto bg-white h-full">
                             <img th:src="@{${nono.getNonoImgUrl()}}"
-                                alt="" class="object-contain transition duration-200 hover:scale-105">
+                                alt="" class="w-80 h-80 xl:h-48 xl:w-56 lg:h-72 lg:w-72 md:h-80 md:w-80 object-contain">
                         </a>
                     </div>
                 </th:block>
                 <th:block th:if="${isSolved eq 1}" th:each="nono : ${nonoList}">
-                    <div class="w-6/6 mx-auto h-6/6">
-                        <a th:href="@{|/nonodots/${userId}/${nono.getNonoId}|}"
-                           class="flex items-center h-full  max-w-md p-6 mx-auto bg-white border-4 rounded-lg shadow w-12/12 border-nono-mypg-item-border">
+                    <div class="w-6/6 bg-white p-6 mx-auto h-60 border-4 border-nono-mypg-item-border rounded-lg transition duration-200 hover:scale-105">
+                        <a th:href="@{|/nonodots/${userId}/${nono.nonoId}|}"
+                           class="mx-auto bg-white">
                             <img th:src="@{${nono.getNonoImgUrl()}}"
-                                 alt="" class="object-contain transition duration-200 hover:scale-105">
+                                 alt="" class="w-80 h-80 xl:h-48 xl:w-56 lg:h-72 lg:w-72 md:h-80 md:w-80 object-contain">
                         </a>
                     </div>
                 </th:block>
