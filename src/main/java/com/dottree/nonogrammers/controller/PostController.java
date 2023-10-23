@@ -1,6 +1,7 @@
 package com.dottree.nonogrammers.controller;
 import com.dottree.nonogrammers.dao.PostMapper;
 import com.dottree.nonogrammers.domain.*;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -117,7 +118,13 @@ public class PostController {
         return "redirect:/detail?postId=" + postId;
     }
     @RequestMapping("/posting")
-    public String posting(Model model, @RequestHeader String referer){
+    public String posting(Model model,
+                          @RequestHeader String referer,
+                          HttpSession session){
+        String redirectLogin = isUserIdNullthenRedirect(session);
+        if(!redirectLogin.equals("")) {
+            return redirectLogin;
+        }
         model.addAttribute("ref", referer);
         return "write";
     }
@@ -207,5 +214,14 @@ public class PostController {
         response.setTitle("Like");
         response.setMapData(mapData);
         return response;
+    }
+
+    public String isUserIdNullthenRedirect(HttpSession session) {
+        if(session.getAttribute("value") == null) {
+            System.out.println("************ userId is NULL ************");
+            return "redirect:/login";
+        } else {
+            return "";
+        }
     }
 }
