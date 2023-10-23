@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @Data
 public class PostDTO {
@@ -22,7 +25,14 @@ public class PostDTO {
     private String boardTypeStr;
     private String nickName;
     private String imgSrc;
-    private String fileUrl;
+    private String fileUrls;
+    public List<String> getFileUrls() {
+        if (fileUrls != null && !fileUrls.isEmpty()) {
+            return Arrays.asList(fileUrls.split(","));
+        } else {
+            return Collections.emptyList();
+        }
+    }
 }
 
 

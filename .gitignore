@@ -278,6 +278,7 @@ src/main/resources/application.properties
 src/main/resources/application.yaml
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij,java,gradle,dbeaver
+src/main/java/com/dottree/nonogrammers/MyConfig.java
 
 
 
