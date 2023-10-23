@@ -54,6 +54,14 @@ public class PostController {
         mav.setViewName("community");
         return mav;
     }
+    @GetMapping("/post/nono")
+    public ModelAndView nono(){
+        List<PostDTO> list= dao.listNN();
+        ModelAndView mav=new ModelAndView();
+        mav.addObject("list",list);
+        mav.setViewName("community");
+        return mav;
+    }
     @RequestMapping("/detail")
     public ModelAndView detail(String postId){
         ModelAndView mav=new ModelAndView();
@@ -87,10 +95,37 @@ public class PostController {
         System.out.println(cd.getPostId());
         return "redirect:/detail?postId=" + cd.getPostId();
     }
+    @PostMapping("/deleteComment")
+    public String deleteComment(@RequestParam String postId,CommentDTO cd){
+        boolean result= dao.deleteComm(cd);
+        ModelAndView mav=new ModelAndView();
+        PostDTO pos= dao.detailss(postId);
+        List<CommentDTO> list=dao.commList(postId);
+        mav.addObject("pos", pos);
+        mav.addObject("comm",list);
+        return "redirect:/detail?postId=" + postId;
+    }
+    @PostMapping("/editComment")
+    public String editComment(@RequestParam String postId,CommentDTO cd){
+        boolean result= dao.editComm(cd);
+        ModelAndView mav=new ModelAndView();
+        PostDTO pos= dao.detailss(postId);
+        List<CommentDTO> list=dao.commList(postId);
+        mav.addObject("pos", pos);
+        mav.addObject("comm",list);
+        System.out.println(postId);
+        return "redirect:/detail?postId=" + postId;
+    }
     @RequestMapping("/posting")
     public String posting(Model model, @RequestHeader String referer){
         model.addAttribute("ref", referer);
         return "write";
+    }
+
+    @PostMapping("/postDelete")
+    public String postDelete(PostDTO pd){
+        boolean result= dao.deletePost(pd);
+        return "redirect:/post";
     }
 
     @PostMapping("/post/write")

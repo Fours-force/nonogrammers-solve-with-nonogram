@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{./defaultLayout.html}">
 
 <head>
     <meta charset="UTF-8" />
@@ -14,8 +14,9 @@
         !-->
 </head>
 
-<body class="max-w-screen-xl mx-60">
-    <div id="wapper" class="h-auto min-h-full mb-5">
+<body>
+<th:block layout:fragment="content">
+    <div id="wapper" class="mx-60 max-w-screen-xl h-auto min-h-full mb-5">
         <div class="w-full mb-4 test flex md:flex-col lg:flex-row">
             <div class="font-super256 min-w-max movebtn eightbit-btn">BACK</div>
             <div>
@@ -49,7 +50,6 @@
             <div class="font-super256 min-w-max movebtn eightbit-btn">NEXT</div>
         </div><br>
     </div>
-    <div th:replace="../static/footer.html :: fragment-footer"></div>
     <script th:inline="javascript">
         let progressBar = document.getElementById("progressBar");
         let allDots = document.querySelectorAll(".nonoDot");
@@ -58,15 +58,24 @@
         var dotcntt = 0;
         var dotList = [[${dotList}]];
         var urlAry = [[${urlAry}]];
-        let userId = 1;
+        let userId = [[${session.value.get("userId")}]];
+        console.log("세션 유저 아이디 : " + userId);
         let nonoId = 1;
-        let baekjoonId = "tjdtndlwkd";
+        let progress = [[${progress}]];
+        if(progress == 100){
+            updateSolvedStat();
+        }
+        console.log("progress : "+progress);
+
+        let baekjoonId = [[${session.value.get("baekjoonUserId")}]];
+        console.log("세션 백준 아이디 : " + baekjoonId);
         let solvingRow = 0;
         let allDotsInRow;
         progressBar.style.transition = "width 1.5s";
-        progressBar.style.width = bar + "%";
-        progressBar.innerHTML = `${bar}`;
+        progressBar.style.width = progress + "%";
+        progressBar.innerHTML = `${progress}%`;
         progressBar.style.fontSize = "20px";
+        progressBar.style.fontFamily = "br r"
 
         window.onload= function () {
             for (let i = 0; i < dotList.length; i++) {
@@ -124,6 +133,7 @@
                     if(xhr.responseText === "1"){
                         window.alert("문제 추가하러 갑시다");
                         insertDots();
+                        window.location.reload();
                     }else{
                         window.alert("새로 푼 문제가 없습니다.");
 
@@ -176,7 +186,7 @@
             xhr.onload = function() {
                 if (xhr.status == 200) {
 
-                    location.reload();
+                    window.location.reload();
                 }
             };
             xhr.open('POST', `/api/updateUserDot/${userId}/${nonoId}`, true);
@@ -201,6 +211,18 @@
             }
             xhr.open('GET',`/api/selectSolvedDotId/${userId}/${nonoId}`);
             xhr.send();
+        }
+
+        function updateSolvedStat(){
+            let xhr = new XMLHttpRequest();
+            xhr.onload = () => {
+                if(xhr.status == 200) {
+                    console.log("isSolved 갱신 완료");
+                }
+            }
+            xhr.open('POST','/api/updateIsSolved/'+userId+'/'+nonoId);
+            xhr.send("");
+            window.location.reload();
         }
 
        /* window.onload = function createPicture() {
@@ -256,6 +278,7 @@
             e
         });*/
     </script>
+</th:block>
 </body>
 
 </html>

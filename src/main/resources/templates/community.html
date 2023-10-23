@@ -15,6 +15,11 @@
             color: #FFFFFF; /* 현재 페이지 버튼의 텍스트 색상을 변경 */
             /* 다른 원하는 스타일 변경을 추가하세요 */
         }
+        .rounded-image {
+            border-radius: 50%; /* 50%로 설정하여 이미지를 원형으로 만듭니다. */
+            width: 30px; /* 이미지의 너비를 설정합니다. */
+            height: 30px; /* 이미지의 높이를 설정합니다. */
+        }
     </style>
 </head>
 
@@ -32,6 +37,7 @@
                                 <option value="notice" class="text-main-skyblue">공지사항</option>
                                 <option value="free" class="text-main-skyblue">자유게시판</option>
                                 <option value="qa" class="text-main-skyblue">질문/답변</option>
+                                <option value="nono" class="text-main-skyblue">전국노노자랑</option>
                             </select>
                         </label>
 
@@ -49,7 +55,7 @@
                     </div>
                     <div>
                         <div class="relative w-full h-10">
-                            <button class="w-full h-10 text-center text-white duration-300 ease-in-out border rounded-sm bg-main-blue pl-7 pr-7 hover:bg-main-skyblue" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                            <button class="w-full h-10 text-center text-white duration-300 ease-in-out border rounded-md bg-main-blue pl-7 pr-7 hover:bg-main-skyblue" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
 
                             onclick="window.location.href='/posting'">
                                 글 작성
@@ -60,23 +66,24 @@
                 <h2 class="sr-only">Products</h2>
                 <div class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
                     <div th:each="vo, iterStat : ${list}" class="post-item" data-page="1">
-<!--                        <div th:if="${#dates.createNow().minusDays(1).isBefore(vo.formattedCreatedAt)}">-->
                         <a th:href="@{'/detail?postId=' + ${vo.postId}}" class="group">
                                 <div class="w-full h-40 overflow-hidden transition-transform duration-300 ease-in-out transform bg-white rounded-lg shadow-lg aspect-h-1 aspect-w-1 xl:aspect-h-8 xl:aspect-w-7 group-hover:scale-110 group-hover:opacity-85">
                                     <div class="object-cover object-center w-full h-full">
-                                        <h3 class="pl-6 mt-4 text-sm font-bold text-main-blue" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">                                             <span th:if="${vo.boardType == 1}">공지사항</span>
+                                        <h3 class="pl-6 mt-4 text-sm font-bold text-main-blue" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                            <span th:if="${vo.boardType == 1}">공지사항</span>
                                             <span th:if="${vo.boardType == 2}">자유게시판</span>
                                             <span th:if="${vo.boardType == 3}">질문/답변</span>
                                             <span th:if="${vo.boardType == 4}">전국노노자랑</span>
                                         </h3>
                                         <div class="flex">
-                                            <img src="/images/new_post_1.png" class="w-3 mt-1.5 ml-3 h-fit " alt="">
+<!--                                            <img th:if="${vo.fileUrls !=null}" src="/images/new_post_1.png" class="w-3 mt-1.5 ml-3 h-fit profile-image" alt="">-->
+                                            <img src="/images/new_post_1.png" class="w-3 mt-1.5 ml-3 h-fit profile-image" alt="">
                                             <p class="pl-2 pr-4 mt-1 text-sm font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[[${vo.title}]]</p>
                                         </div>
                                         <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[[${vo.content}]]</p>
                                         <div class="flex items-center">
-<!--                                            <img src="/images/profile/1/congra.jpeg" class="object-cover object-center pl-3 mt-1" alt="">-->
-                                            <div>
+                                            <img th:src="${vo.imgSrc}" class="rounded-image ml-5 mt-1" alt="">
+                                            <div class="ml-2">
                                                 <span class="text-xs">[[${vo.nickName}]]</span>
                                                 <p class="text-xs text-gray-500">[[${vo.createdAt}]]</p>
                                             </div>
@@ -162,6 +169,9 @@
             } else if (optionValue === "qa") {
                 document.getElementById("filterSelect").value = "qa";
                 window.location.href = "/post/qa"; // 또 다른 경로로 이동
+            }else if (optionValue === "nono") {
+                document.getElementById("filterSelect").value = "nono";
+                window.location.href = "/post/nono"; // 또 다른 경로로 이동
             }else if (optionValue === "all") {
                 document.getElementById("filterSelect").value = "all";
                 window.location.href = "/post"; // 또 다른 경로로 이동

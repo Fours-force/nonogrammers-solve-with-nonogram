@@ -2,8 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{./defaultLayout.html}">
 
 <body>
-    <th:block layout:fragment="content" th:with="userId=${session.userId}"> <!-- session 타임리프 변수에 저장 -->
-        <div class="flex justify-center w-screen px-1 pt-10 mx-auto h-max sm:px-6 lg:px-8 gap-x-2 bg-back">
+    <th:block layout:fragment="content" th:with="userId=${session.value.userId}"> <!-- session 타임리프 변수에 저장 -->
+        <div class="flex justify-center w-screen px-1 pt-10 mx-auto min-h-screen h-[calc(100%-1rem)] sm:px-6 lg:px-8 gap-x-2 bg-back">
         <!-- 좌측 nav -->
         <th:block th:replace="~{./my-activity-nav.html :: myactivitynavFragment}"></th:block>
         <!-- 우측 contents -->
@@ -14,11 +14,11 @@
                 <div class="flex p-4 border-b-2 bg-ma">
                     <div class="justify-center hidden w-2/6 mr-2 md:flex">
                         <a href="#"> <!--mypage-계정관리로-->
-                            <img src="/images/kang.png" class="w-24 h-24 transition duration-200 border-2 rounded-full hover:scale-110 border-nono-mypg-item-border" alt="프로필 이미지">
+                            <img th:src="@{${userPostVO.userDTO.profileImgUrl}}" class="w-24 h-24 transition duration-200 border-2 rounded-full hover:scale-110 border-nono-mypg-item-border" alt="프로필 이미지">
                         </a>
                     </div>
                     <div class="flex items-center w-5/6">
-                        <h1 class="text-2xl"><span class="text-3xl font-bold">[[${userPostVO.userId}]]</span>의 글</h1>
+                        <h1 class="text-2xl"><span class="text-3xl font-extrabold text-nono-mypg-item-border">"[[${userPostVO.userDTO.nickName}]]"</span>의 글</h1>
                     </div>
                 </div>
                 <div class="relative w-full overflow-x-auto shadow-md sm:rounded-lg sm:min-w-full">

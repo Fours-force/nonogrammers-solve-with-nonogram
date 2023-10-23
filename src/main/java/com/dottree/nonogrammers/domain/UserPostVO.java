@@ -11,6 +11,6 @@ import java.util.List;
 @ToString
 public class UserPostVO {
     private int userId;
-//    private User user;
+    private UserDTO userDTO;
     private List<PostDTO> userPostList;
 }
