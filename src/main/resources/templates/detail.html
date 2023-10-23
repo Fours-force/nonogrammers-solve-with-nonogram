@@ -36,7 +36,20 @@
                             <div class="ml-3">
                                 <span class="text-sm text-nav-navy" th:text="${pos.nickName}"></span>
                                 <p class="text-xs text-commu-time-info" th:text="${pos.createdAt}"></p>
+                                <div th:if="${pos.createdAt != pos.updatedAt}" class="flex text-xs text-commu-time-info">
+                                    <p>수정일시 :</p>
+                                    <p class="ml-2" th:text="${pos.updatedAt}"></p>
+                                </div>
                             </div>
+                            <form th:if="${session.value != null and session.value.userId == pos.userId}" id="posEditForm" action="/editing" method="post">
+                                <input type="hidden" name="postId" id="pos_postId_edit" th:value="${pos.postId}">
+                                <input type="hidden" name="content" id="pos_content_edit" th:value="${pos.content}">
+                                <input type="hidden" name="title" id="pos_title_edit" th:value="${pos.title}">
+                                <input type="hidden" name="boardType" id="pos_boardType_edit" th:value="${pos.boardType}">
+                                <button type="submit" class="flex h-5 mt-2 duration-300 ease-in-out rounded-md w-9 ml-3 bg-main-skyblue hover:bg-main-blue">
+                                    <div class="mt-0.5 ml-2 text-xs text-white">수정</div>
+                                </button>
+                            </form>
                             <form th:if="${session.value != null and session.value.userId == pos.userId}" id="postDeleteForm" action="/postDelete" method="post">
                                 <input type="hidden" name="postId" id="pos_postId" th:value="${pos.postId}">
                                 <button type="submit" class="flex h-5 mt-2 duration-300 ease-in-out rounded-md w-9 ml-3 bg-main-skyblue hover:bg-main-blue">
@@ -45,7 +58,7 @@
                             </form>
                         </div>
                         <div th:each="fileUrl : ${pos.getFileUrls()}" class="ml-5 mt-5">
-                            <img th:src="@{${fileUrl}}" alt="">
+                            <img th:src="@{${fileUrl}}" width="400" alt="">
                         </div>
                         <p class="px-6 mt-6 text-lg leading-8 text-nav-navy" th:text="${pos.content}"></p>
                         <div class="flex mt-5">
@@ -70,7 +83,14 @@
 <!--                                    <img src="/images/Rectangle 28.png" class="object-cover object-center h-8 pl-3 mt-3 w-fit" alt="">-->
                                     <div class="mt-2 ml-3">
                                         <span class="text-sm" th:text="${vo.nickName}"></span>
-                                        <p class="text-xs text-commu-time-info" th:text="${vo.createdAt}"></p>
+                                        <div class="flex">
+                                            <p class="text-xs text-commu-time-info" th:text="${vo.createdAt}"></p>
+                                            <div th:if="${vo.createdAt != vo.updatedAt}" class="flex text-xs text-commu-time-info">
+                                                <p class="ml-3">수정일시 :</p>
+                                                <p class="ml-2" th:text="${vo.updatedAt}"></p>
+                                            </div>
+                                        </div>
+
                                     </div>
 
                                 </div>
