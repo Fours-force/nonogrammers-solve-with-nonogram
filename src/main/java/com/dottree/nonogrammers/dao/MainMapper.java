@@ -87,7 +87,7 @@ public interface MainMapper {
     @Select("SELECT nonoId, nonoImgUrl, levelType from nono where levelType = #{levelType}")
     public List<UserNonoVO> selectNonoByLevel(@Param("levelType")int levelType);
 
-    @Select("SELECT nonoId, nonoImgUrl, levelType from nono ")
+    @Select("SELECT nonoId, nonoImgUrl, levelType from nono")
     public List<UserNonoVO> selectAllNoNo();
 
 
