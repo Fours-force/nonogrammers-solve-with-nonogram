@@ -90,7 +90,7 @@
                         return;
                     }
                     let temp = f.target;
-                    temp.style.borderBottom = "10px solid blue";
+                    temp.style.borderBottom = "10px solid #264E86";
                 }, false);
                 //mouseout 이벤트 설정
                 allRowDivs[i].addEventListener("mouseout", (f) => {
@@ -121,7 +121,7 @@
                     console.log("int로 반환한 값의 Type : " + typeof (xhr.responseText));
                     console.log(xhr.responseText);
                     if(xhr.responseText === "1"){
-                        window.alert("문제 추가하러 갑시다");
+                        window.alert("문제 풀이 성공!");
                         insertDots();
                     }else{
                         window.alert("새로 푼 문제가 없습니다.");
@@ -158,7 +158,6 @@
 
 
         function insertDots(){
-            window.alert("문제 추가 시작~~");
             var missionList = new Array();
             allDotsInRow = allRowDivs[solvingRow-1].querySelectorAll(".nonoDot");
             for(let element of allDotsInRow){
@@ -206,9 +205,8 @@
                     console.log("isSolved 갱신 완료");
                 }
             }
-            xhr.open('POST','/api/updateIsSolved/'+userId+'/'+nonoId);
-            xhr.send("");
-            window.location.reload();
+            xhr.open('GET',`/api/updateIsSolved/${userId}/${nonoId}`);
+            xhr.send();
         }
 
         function gonext(){
@@ -216,7 +214,7 @@
         }
 
         function goback(){
-            if(`${nono}`==1){
+            if(`${nonoId}`==1){
                 window.alert("가장 처음 노노입니다.")
             }else{
                 location.href=`/nonodots/${userId}/${nonoId-1}/${baekjoonId}`;
