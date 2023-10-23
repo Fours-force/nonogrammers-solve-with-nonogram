@@ -14,7 +14,7 @@ public class MyConfig implements WebMvcConfigurer {
 //    String correctedPath = currentDirectory.re"file:~/Downloads/nonogrammers/src/main/resources/static/images/1/";place("\\", "/");
 
 //    String location = "file:///nonogrammers-solve-with-nonogram/src/main/resources/static/images/profile/";
-    String location = "file:/Users/jasonmilian/Downloads/nonogrammers/src/main/resources/static/images/profile/";
+    String location = "file:/Users/jasonmilian/Downloads/nonogrammers/src/main/resources/static/images/";
 
 //"file:~/Downloads/nonogrammers-solve-with-nonogram/src/main/resources/static/images/1/";
 //    " + correctedPath + "/uni-pet/src/main/resources/static/img/mypage/upload/
