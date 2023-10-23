@@ -17,4 +17,5 @@ public class CommentDTO {
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private String nickName;
+    private String imgSrc;
 }
