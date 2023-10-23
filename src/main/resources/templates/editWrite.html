@@ -26,16 +26,22 @@
             border: 2px solid #E2E0E0;
         }
     </style>
+    <script th:inline="javascript">
+        if (![[${session.value}]]){
+            alert("로그인이 필요한 기능입니다");
+            window.location.href = "/login";
+        }
+    </script>
 </head>
 <th:block layout:fragment="content">
 <body class="bg-back">
 
 <div class="max-w-screen-xl flex flex-col mx-auto mt-5 sm:px-6 lg:px-8">
-    <form action="/post/write" method="POST" enctype="multipart/form-data">
+    <form action="/editPosts" method="POST" enctype="multipart/form-data">
     <!--  카테고리  -->
     <div class="flex flex-col space-y-2 font-brr">
         <p>카테고리<span class="text-red-500"> *</span></p>
-        <select name="category">
+        <select name="category" id="optionSpace">
             <option value="공지사항">공지사항</option>
             <option value="자유게시판">자유게시판</option>
             <option value="질문답변">질문/답변</option>
@@ -45,11 +51,11 @@
 
     <!--  유저  -->
     <input type="hidden" id="user" name="userId" th:if="${session.value}" th:value="${session.value.userId}">
-
+    <input type="hidden" id="postId" name="postId" th:value="${pos.postId}">
     <!--  제목  -->
     <div class="flex flex-col mt-5 space-y-2 font-brr">
         <p>제목<span class="text-red-500"> *</span></p>
-        <input type="text" name="title" class="py-2 pl-3 rounded-md border border-write-border focus:outline-none" placeholder="제목을 입력해주세요" required>
+        <input id="titleSpace" type="text" name="title" class="py-2 pl-3 rounded-md border border-write-border focus:outline-none" placeholder="제목을 입력해주세요" required>
     </div>
     <!--  내용  -->
     <div class="flex flex-col mt-5 space-y-2 font-brr">
@@ -137,7 +143,7 @@
             취소
         </button></a>
         <button type="submit" id="submitButton" class="items-center px-9 py-2 text-md text-center text-white rounded-lg">
-            등록
+            수정
         </button>
     </div>
     </form>
@@ -160,6 +166,28 @@
             container.appendChild(img);
         }
     }
+
+</script>
+<script th:inline="javascript" th:if="${session.value != null}">
+    window.onload = function() {
+        const editedOption = document.getElementById("optionSpace");
+        editedOption.value = "자유게시판";
+<!--        var boardType =[[${pos.boardType}]];-->
+<!--        if(boardType===1){-->
+<!--            editedOption.value = "공지사항";-->
+<!--        }else if(boardType===2){-->
+<!--            editedOption.value = "자유게시판";-->
+<!--        }else if(boardType===3){-->
+<!--            editedOption.value = "질문/답변";-->
+<!--        }else if(boardType===4){-->
+<!--            editedOption.value = "전국노노자랑";-->
+<!--        }-->
+        const editedTitle = document.getElementById("titleSpace");
+        editedTitle.value = [[${pos.title}]];
+        const editedContent = document.getElementById("editor");
+        editedContent.value = [[${pos.content}]];
+    }
+
 </script>
 </body>
 </th:block>

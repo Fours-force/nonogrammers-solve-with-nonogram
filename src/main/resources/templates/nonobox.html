@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{./defaultLayout.html}">
-<body class="bg-back">
+<body class="bg-back" >
 <th:block layout:fragment="content"> <!-- session 타임리프 변수에 저장 -->
-    <div class="flex justify-center w-screen h-full max-w-screen-xl mx-auto sm:px-6 lg:px-8 gap-x-2">
+    <div class="flex justify-center w-screen h-full max-w-screen-xl mx-auto sm:px-6 lg:px-8 gap-x-2 ">
         <!-- 우측 contents -->
-        <div class="w-8/12 mt-2 max:w-full font-brr min-w-max lg:max-w-4xl">
-            <div class="flex justify-between mb-10 mt-4">
-                <div><img src="/images/Bronze.png" alt="" class="transition duration-200 hover:scale-105 imgs" /></div>
-                <div><img src="/images/Silver.png" alt="" class="transition duration-200 hover:scale-105 imgs" /></div>
-                <div><img src="/images/Gold.png" alt="" class="transition duration-200 hover:scale-105 imgs" /></div>
-                <div><img src="/images/Platinum.png" alt="" class="transition duration-200 hover:scale-105 imgs" /></div>
+        <div class="w-8/12 mt-2 max:w-full font-brr min-w-max">
+            <div class="flex justify-between mb-10">
+                <div><a href="/nonobox/1"><img src="/images/Bronze.png" alt="" class="transition duration-200 hover:scale-105 imgs" /></a></div>
+                <div><a href="/nonobox/2"><img src="/images/Silver.png" alt="" class="transition duration-200 hover:scale-105 imgs" /></a></div>
+                <div><a href="/nonobox/3"><img src="/images/Gold.png" alt="" class="transition duration-200 hover:scale-105 imgs" /></a></div>
+                <div><a href="/nonobox/4"><img src="/images/Platinum.png" alt="" class="transition duration-200 hover:scale-105 imgs" /></a></div>
             </div>
             <article id="NonoListContainer"
                 class="grid grid-cols-1 gap-y-2 gap-x-2 lg:gap-y-1 lg:gap-x-1 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-3 xl:gap-y-2 mb-5">
@@ -34,31 +34,22 @@
         // console.log(nono);
         // let nonoList = [[${nonoList}]];
         // console.log(nonoList.get(0).get('nonoId'));
-        let imgs = document.getElementsByClassName("imgs");
-        let NonoListContainer = document.getElementById("NonoListConatiner");
-        console.log("imgs 의 돔객체" + imgs);
-        for(let i =0; i<imgs.length; i++){
-            console.log(imgs[i].classList);
-            imgs[i].addEventListener("click",function (i) {
-                console.log("clicked!");
-                const xhr = new XMLHttpRequest();
-                xhr.onload = () => {
-                    if(xhr.status == 200){
-                        console.log(xhr.response);
-                        NonoListContainer.replaceWith(JSON.parse(xhr.response));
-                    }
-                }
-                xhr.open('Get','/nonobox/'+cnt);
-                xhr.send();
-            })
-            cnt++;
-        }
+        // let imgs = document.getElementsByClassName("imgs");
+        // let NonoListContainer = document.getElementById("NonoListContainer");
+        // console.log("imgs 의 돔객체" + imgs);
+        // for(let i =0; i<imgs.length; i++){
+        //     console.log(imgs[i].classList);
+        //     imgs[i].addEventListener("click",function () {
+        //         getNonoListByLevel(i+1);
+        //     })
+        //     cnt++;
+        // }
         // function getNonoListByLevel(level){
-        //     window.alert("시작!")
-        //     let NonoListContainer = document.getElementById("NonoListContainer");
+        //    console.log("clicked!");
         //     const xhr = new XMLHttpRequest();
         //     xhr.onload = () => {
         //         if(xhr.status == 200){
+        //             console.log(xhr.response);
         //             NonoListContainer.replaceWith(xhr.response);
         //         }
         //     }

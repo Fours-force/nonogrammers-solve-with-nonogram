@@ -17,7 +17,7 @@ public interface UserMapper {
      * @param userId
      * @return UserDTO
      */
-    @Select("select userId, email, nickName, profileImgUrl, changedAt from user where userId = #{userId}")
+    @Select("select userId, email, nickName, profileImgUrl, changedAt, baekjoonUserId from user where userId = #{userId}")
     public UserDTO selectUserByUserId(int userId);
 
     // 회원가입 - 유저 생성

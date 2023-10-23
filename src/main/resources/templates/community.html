@@ -32,6 +32,7 @@
                     <div>
                         <div class="relative w-full h-10">
                         <label for="filterSelect">
+<!--                            게시판 종류 표시-->
                             <select name="filterSelect" id="filterSelect" class="w-full h-10 pl-2 pr-2 bg-white border border-black rounded-md text-nav-navy">
                                 <option value="all" class="text-main-skyblue">전체</option>
                                 <option value="notice" class="text-main-skyblue">공지사항</option>
@@ -56,7 +57,6 @@
                     <div>
                         <div class="relative w-full h-10">
                             <button class="w-full h-10 text-center text-white duration-300 ease-in-out border rounded-md bg-main-blue pl-7 pr-7 hover:bg-main-skyblue" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-
                             onclick="window.location.href='/posting'">
                                 글 작성
                             </button>
@@ -70,19 +70,20 @@
                                 <div class="w-full h-40 overflow-hidden transition-transform duration-300 ease-in-out transform bg-white rounded-lg shadow-lg aspect-h-1 aspect-w-1 xl:aspect-h-8 xl:aspect-w-7 group-hover:scale-110 group-hover:opacity-85">
                                     <div class="object-cover object-center w-full h-full">
                                         <h3 class="pl-6 mt-4 text-sm font-bold text-main-blue" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                            <!-- boardType에 따라 게시판 종류 나누기 -->
                                             <span th:if="${vo.boardType == 1}">공지사항</span>
                                             <span th:if="${vo.boardType == 2}">자유게시판</span>
                                             <span th:if="${vo.boardType == 3}">질문/답변</span>
                                             <span th:if="${vo.boardType == 4}">전국노노자랑</span>
                                         </h3>
                                         <div class="flex">
-<!--                                            <img th:if="${vo.fileUrls !=null}" src="/images/new_post_1.png" class="w-3 mt-1.5 ml-3 h-fit profile-image" alt="">-->
-                                            <img src="/images/new_post_1.png" class="w-3 mt-1.5 ml-3 h-fit profile-image" alt="">
-                                            <p class="pl-2 pr-4 mt-1 text-sm font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[[${vo.title}]]</p>
+<!--                                            나중에 구현할 거 <img src="/images/new_post_1.png" class="w-3 mt-1.5 ml-3 h-fit profile-image" alt="">-->
+                                            <img th:if="${vo.fileUrls.isEmpty() == false}" src="/images/show_image.png" class="w-4 mt-1.5 ml-3 h-fit profile-image" alt="">
+                                            <p class="pl-3 pr-4 mt-0.5 text-base font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[[${vo.title}]]</p><!-- 제목 -->
                                         </div>
-                                        <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[[${vo.content}]]</p>
+                                        <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[[${vo.content}]]</p><!-- 내용 -->
                                         <div class="flex items-center">
-                                            <img th:src="${vo.imgSrc}" class="rounded-image ml-5 mt-1" alt="">
+                                            <img th:src="${vo.imgSrc}" class="rounded-image ml-5 mt-1" alt=""><!-- 프로필 이미지 -->
                                             <div class="ml-2">
                                                 <span class="text-xs">작성자 : [[${vo.nickName}]]</span>
                                                 <p class="text-xs text-gray-500">[[${vo.createdAt}]]</p>
@@ -91,13 +92,13 @@
                                         </div>
                                         <div class="flex">
                                             <img src="/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
-                                            <p class="pl-1 mt-1 text-xs" th:text="${vo.commentCount}"></p>
+                                            <p class="pl-1 mt-1 text-xs" th:text="${vo.commentCount}"></p><!-- 추천수 표시 -->
                                             <img src="/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
-                                            <p class="pl-2 mt-1 text-xs" th:text="${vo.likeCount}"></p>
+                                            <p class="pl-2 mt-1 text-xs" th:text="${vo.likeCount}"></p><!-- 좋아요수 표시 -->
                                             <div class="ml-auto"> <!-- ml-auto class 추가 -->
                                                 <img src="/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
                                             </div>
-                                            <span class="pr-4 mt-1 text-xs" th:text="${vo.viewCount}"></span>
+                                            <span class="pr-4 mt-1 text-xs" th:text="${vo.viewCount}"></span><!-- 조회수 표시 -->
                                         </div>
                                     </div>
 
@@ -109,7 +110,7 @@
         </div>
 
     </section>
-    <section>
+    <section><!-- 페이징 -->
         <div class="flex items-center justify-between px-4 py-3 sm:px-6 bg-back">
             <div class="flex justify-between flex-1 sm:hidden">
               <a class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">Previous</a>
@@ -155,48 +156,51 @@
           </div>
     </section>
     <script>
-        movePage(1);
+        movePage(1); // 첫 화면은 1페이지를 보여줌
         document.getElementById("filterSelect").addEventListener("change", function () {
             var selectedOption = this.options[this.selectedIndex];
             var optionValue = selectedOption.value;
 
             if (optionValue === "notice") {
                 document.getElementById("filterSelect").value = "notice";
-                window.location.href = "/post/notice"; // 원하는 경로로 이동=
+                window.location.href = "/post/notice"; // 공지사항으로 이동
             } else if (optionValue === "free") {
                 document.getElementById("filterSelect").value = "free";
-                window.location.href = "/post/free"; // 다른 경로로 이동
+                window.location.href = "/post/free"; // 자유게시판으로 이동
             } else if (optionValue === "qa") {
                 document.getElementById("filterSelect").value = "qa";
-                window.location.href = "/post/qa"; // 또 다른 경로로 이동
+                window.location.href = "/post/qa"; // 질문답변으로 이동
             }else if (optionValue === "nono") {
                 document.getElementById("filterSelect").value = "nono";
-                window.location.href = "/post/nono"; // 또 다른 경로로 이동
+                window.location.href = "/post/nono"; // 전국노노자랑으로 이동
             }else if (optionValue === "all") {
                 document.getElementById("filterSelect").value = "all";
-                window.location.href = "/post"; // 또 다른 경로로 이동
+                window.location.href = "/post"; // 전체로 이동하려고 했으나 왜인지 안됨. 추후 수정필요
             }
         });
         function searchOnEnter(event) {
-        if (event.key === 'Enter') {
+        if (event.key === 'Enter') { //검색하고 엔터키 눌렀을 시에 동작
                 const searchValue = document.getElementById("search").value;
                 const searchUrl = `/search?keyword=${encodeURIComponent(searchValue)}`;
                 window.location.href = searchUrl;
             }
         }
         document.addEventListener("DOMContentLoaded", function() {
-        // 페이지 번호를 클릭할 때 처리
-        document.querySelectorAll(".page-link").forEach(function(link) {
-            link.addEventListener("click", function(event) {
-                event.preventDefault();
-                const pageNumber = parseInt(this.textContent); // 페이지 번호는 텍스트 내용으로부터 추출
-                movePage(pageNumber); // 페이지 이동 함수 호출
+            let currentPage = 1; // 초기 페이지 번호
+            let itemsPerPage = 12; // 페이지당 항목 수
+            let totalPages = Math.ceil(document.querySelectorAll(".post-item").length / itemsPerPage); // 전체 페이지 수
+            // 페이지 번호를 클릭할 때 처리
+            document.querySelectorAll(".page-link").forEach(function(link) {
+                link.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    const pageNumber = parseInt(this.textContent); // 페이지 번호는 텍스트 내용으로부터 추출
+                    if (pageNumber <= totalPages) {
+                        movePage(pageNumber); // 페이지 이동 함수 호출
+                    }
+                });
             });
-        });
 
-        let currentPage = 1; // 초기 페이지 번호
-        let itemsPerPage = 12; // 페이지당 항목 수
-        let totalPages = Math.ceil(document.querySelectorAll(".post-item").length / itemsPerPage); // 전체 페이지 수
+
 
         // "이전" 버튼 클릭 이벤트 처리
         document.getElementById("previousPage").addEventListener("click", function(event) {

@@ -1,9 +1,11 @@
 package com.dottree.nonogrammers.controller;
 import com.dottree.nonogrammers.dao.PostMapper;
 import com.dottree.nonogrammers.domain.*;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -104,6 +106,7 @@ public class PostController {
         mav.addObject("comm",list);
         return "redirect:/detail?postId=" + postId;
     }
+
     @PostMapping("/editComment")
     public String editComment(@RequestParam String postId,CommentDTO cd){
         boolean result= dao.editComm(cd);
@@ -116,14 +119,79 @@ public class PostController {
         return "redirect:/detail?postId=" + postId;
     }
     @RequestMapping("/posting")
-    public String posting(){
+    public String posting(Model model,
+                          @RequestHeader String referer,
+                          HttpSession session){
+        String redirectLogin = isUserIdNullthenRedirect(session);
+        if(!redirectLogin.equals("")) {
+            return redirectLogin;
+        }
+        model.addAttribute("ref", referer);
         return "write";
     }
+    @RequestMapping("/editing")
+    public ModelAndView editing(PostDTO pd){
+        ModelAndView mav=new ModelAndView();
+        PostDTO pos= dao.detailss(String.valueOf(pd.getPostId()));
+        mav.addObject("pos", pos);
+        mav.setViewName("editWrite");
+        return mav;
+    }
+//    @PostMapping("/editPosts")
+//    public String editPosts(@RequestParam String postId,PostDTO pd){
+//        boolean result= dao.editPost(pd);
+//        return "redirect:/detail?postId=" + postId;
+//    }
+    @PostMapping("/editPosts")
+    public String editPosts(PostDTO postDTO,
+                            UploadImageVO vo,
+                            FileDTO fileDTO,
+                            @RequestParam("category") String category){
+            try{
+                postDTO.setBoardType(dao.getBoardType(category));
+                boolean insertResult = dao.editPost(postDTO);
+                MultipartFile[] uploadImageFiles = vo.getUploadImageFiles();
+
+                if (insertResult && (!uploadImageFiles[0].isEmpty())) {
+                    String path = System.getProperty("user.dir") + "/src/main/resources/static/images/post/";
+                    fileDTO.setPostId(postDTO.getId());
+
+                    for (MultipartFile mfile : uploadImageFiles) {
+                        String filename = UUID.randomUUID().toString();
+                        System.out.println(mfile);
+                        try {
+                            // 파일 정보
+                            String originalFilename = mfile.getOriginalFilename();
+                            String contentType = mfile.getContentType(); // MIME ex) image/jpeg, image/png,
+                            String fileExtension = "." + (contentType.substring(contentType.indexOf("/") + 1));
+
+                            // 파일 저장
+                            File filepath = new File(path + filename + fileExtension);
+                            mfile.transferTo(filepath);
+
+                            // Insert - 파일 테이블
+                            fileDTO.setFilename(originalFilename.substring(0, originalFilename.indexOf("."))); // 클라이언트가 제공한 파일명
+                            fileDTO.setFileExtension(fileExtension);
+                            fileDTO.setFileUrl("/images/post/" + filename + fileExtension);
+                            boolean uploadResult = dao.updateUploadImage(fileDTO);
+
+                        } catch (IOException ioe) {
+                            ioe.printStackTrace();
+                        }
+                    }
+                }
+            } catch(Exception e){
+                e.printStackTrace();
+            }
+            return "redirect:/detail?postId=" + String.valueOf(postDTO.getPostId());
+    }
+
     @PostMapping("/postDelete")
     public String postDelete(PostDTO pd){
         boolean result= dao.deletePost(pd);
         return "redirect:/post";
     }
+
     @PostMapping("/post/write")
     public String writePost(PostDTO postDTO,
                             UploadImageVO vo,
@@ -203,5 +271,14 @@ public class PostController {
         response.setTitle("Like");
         response.setMapData(mapData);
         return response;
+    }
+
+    public String isUserIdNullthenRedirect(HttpSession session) {
+        if(session.getAttribute("value") == null) {
+            System.out.println("************ userId is NULL ************");
+            return "redirect:/login";
+        } else {
+            return "";
+        }
     }
 }
