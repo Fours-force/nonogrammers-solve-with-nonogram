@@ -180,19 +180,21 @@
                 const formData = new FormData();
                 // formData.append("userId", [[${userId}]]);
                 formData.append("profileImg", profileImgForm[0].files[0]);
+                if(profileImgForm[0].files[0] == null) {
+                    alert("선택된 이미지가 없습니다.");
+                    return false;
+                }
                 fetch("/api/change-profileimgurl/"+[[${userId}]], {
                     method: 'post',
                     body : formData
                 })
                     .then((response) => response.json())
                     .then((data) => {
-                        alert(`${data.msg}`);
-                        //alert(data);
+
                         if(data.result == 200) {
                             location.reload();
-                            // alert(data.profileImg);
                         } else {
-
+                            alert("선택된 이미지가 없습니다.");
                         }
 
                     });
