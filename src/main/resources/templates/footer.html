@@ -1,86 +1,68 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <link th:href="@{../static/css/dist/output.css}" rel="stylesheet"/>
-    <link th:href="@{../static/css/footer.css}" rel="stylesheet">
-</head>
-
-<body>
-    <div id="wapper" class="pb-20">
-        <!--여기에 본문 내용-->
-    </div>
-    <th:block th:fragment="fragment-footer">
-        <hr>
-        <footer class="mx-auto sm:px-6 lg:px-8 max-w-screen-xl h-auto pt-5 mt-auto overflow-hidden text-sm font-brr mypg-left-nav css-14vpx1i eh7swou2">
-            <br>
-            <div class="container flex space-x-4 lg:flex-row md:flex-col sm-flex-col">
-                <div class="min-w-max">
-                    <img src="/images/logo.png" alt="NoNoGramers" width="150" />
-                    <address>
-                        서울특별시 서울특별시 송파구 가락동 78 IT벤처타워 12층
-                    </address>
-                    <p>
-                        (팀)도트리 키재기 (팀장 : 유승희) (팀원 : 전승현, 송기영, 이성수)
-                    </p>
-                    <br />
-                    <small>©<!-- -->NoNoGramers. All rights reserved</small>
-                </div>
-                <div class="lg:mt-0 md:mt-3">
-                    <ul>
-                        <li class="text-2xl">노션</li>
-                        <li>
-                            <a
-                                    href="https://www.notion.so/425329165d90453f85af0b47881552b4?v=b4346c8d1a094f63b1c89a65552bd46b&p=02a66cc94f8c40318e859c5ccf3c5336&pm=s">기획</a>
-                        </li>
-                        <li>
-                            <a
-                                    href="https://www.notion.so/425329165d90453f85af0b47881552b4?v=b4346c8d1a094f63b1c89a65552bd46b&p=9bab0df8b21446058d81b326d14f5f5d&pm=s">설계</a>
-                        </li>
-                        <li>
-                            <a
-                                    href="https://www.notion.so/425329165d90453f85af0b47881552b4?v=b4346c8d1a094f63b1c89a65552bd46b&p=e34dc8300e3247059660e4226d8457bd&pm=s">구현</a>
-                        </li>
-                        <li>
-                            <a
-                                    href="https://www.notion.so/425329165d90453f85af0b47881552b4?v=b4346c8d1a094f63b1c89a65552bd46b&p=c8cc20d1d7d14c2abdb910f213694dd2&pm=s">FIgma</a>
-                        </li>
-                        <li>
-                            <a
-                                    href="https://www.notion.so/425329165d90453f85af0b47881552b4?v=b4346c8d1a094f63b1c89a65552bd46b&p=275d8e6cb8954e379d4e824a8bd63806&pm=s">Setting</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="lg:mt-0 md:mt-3">
-                    <ul class="min-w-max">
-                        <li class="text-2xl ">도움을 준 사이트</li>
-                        <li><a href="https://app.monopro.org/pixel/">이미지 픽셀화</a></li>
-                        <li><a href="http://dot-e-nanika.com/">이미지 엑셀저장</a></li>
-                        <li><a href="https://solvedac.github.io/unofficial-documentation/#/">solved.ac.Doc</a></li>
-                        <li><a href="https://www.acmicpc.net/">Baekjoon</a></li>
-                    </ul>
-                </div>
-                <div class="lg:mt-0 md:mt-3">
-                    <ul class="min-w-max">
-                        <li><a target="_blank" href="">팀소개</a></li>
-                        <li><a target="_blank" href="">이용약관</a></li>
-                        <li><a target="_blank" href="">개인정보처리방침</a></li>
-                    </ul>
-                </div>
-                <!-- 깃 허브와 노션 로고 클릭하면 이동 -->
-                <nav class="flex space-x-4 lg:mt-0 md:mt-3 min-w-max">
-                    <a target="_blank" href=""><img src="/images/iconmonstr-github-1.svg" alt="github" /></a>
-                    <a target="_blank" href="https://www.notion.so/90171fdf1e9f41359f0b59e868d7c08a"><img
-                            src="/images/Notion-logo.svg" alt="notion" /></a>
-                </nav>
+<th:block th:fragment="fragment-footer">
+    <footer class="bg-white">
+        <div class="mx-auto sm:px-6 lg:px-8 max-w-screen-xl h-auto pt-5 mt-auto overflow-hidden text-sm font-brr mypg-left-nav css-14vpx1i eh7swou2 pb-5">
+        <div class="container flex space-x-4 lg:flex-row md:flex-col sm-flex-col">
+            <div class="min-w-max">
+                <img src="/images/logo.png" alt="NoNoGramers" width="150" />
+                <address>
+                    서울특별시 서울특별시 송파구 가락동 78 IT벤처타워 12층
+                </address>
+                <p>
+                    (팀)도트리 키재기 (팀장 : 유승희) (팀원 : 전승현, 송기영, 이성수)
+                </p>
+                <small>©NoNoGramers. All rights reserved</small>
             </div>
-        </footer>
-    </th:block>
-
-</body>
-
+            <div class="lg:mt-0 md:mt-3">
+                <ul>
+                    <li class="text-2xl text-nono-mypg-item-border">노션</li>
+                    <li>
+                        <a
+                                href="https://www.notion.so/425329165d90453f85af0b47881552b4?v=b4346c8d1a094f63b1c89a65552bd46b&p=02a66cc94f8c40318e859c5ccf3c5336&pm=s">기획</a>
+                    </li>
+                    <li>
+                        <a
+                                href="https://www.notion.so/425329165d90453f85af0b47881552b4?v=b4346c8d1a094f63b1c89a65552bd46b&p=9bab0df8b21446058d81b326d14f5f5d&pm=s">설계</a>
+                    </li>
+                    <li>
+                        <a
+                                href="https://www.notion.so/425329165d90453f85af0b47881552b4?v=b4346c8d1a094f63b1c89a65552bd46b&p=e34dc8300e3247059660e4226d8457bd&pm=s">구현</a>
+                    </li>
+                    <li>
+                        <a
+                                href="https://www.notion.so/425329165d90453f85af0b47881552b4?v=b4346c8d1a094f63b1c89a65552bd46b&p=c8cc20d1d7d14c2abdb910f213694dd2&pm=s">FIgma</a>
+                    </li>
+                    <li>
+                        <a
+                                href="https://www.notion.so/425329165d90453f85af0b47881552b4?v=b4346c8d1a094f63b1c89a65552bd46b&p=275d8e6cb8954e379d4e824a8bd63806&pm=s">Setting</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="lg:mt-0 md:mt-3">
+                <ul class="min-w-max">
+                    <li class="text-2xl text-nono-mypg-item-border">도움을 준 사이트</li>
+                    <li><a href="https://app.monopro.org/pixel/">이미지 픽셀화</a></li>
+                    <li><a href="http://dot-e-nanika.com/">이미지 엑셀저장</a></li>
+                    <li><a href="https://solvedac.github.io/unofficial-documentation/#/">solved.ac.Doc</a></li>
+                    <li><a href="https://www.acmicpc.net/">Baekjoon</a></li>
+                </ul>
+            </div>
+            <div class="lg:mt-0 md:mt-3">
+                <ul class="min-w-max">
+                    <li><a target="_blank" href="">팀소개</a></li>
+                    <li><a target="_blank" href="">이용약관</a></li>
+                    <li><a target="_blank" href="">개인정보처리방침</a></li>
+                </ul>
+            </div>
+            <!-- 깃 허브와 노션 로고 클릭하면 이동 -->
+            <nav class="flex space-x-4 lg:mt-0 md:mt-3 min-w-max">
+                <a target="_blank" href=""><img src="/images/iconmonstr-github-1.svg" alt="github" /></a>
+                <a target="_blank" href="https://www.notion.so/90171fdf1e9f41359f0b59e868d7c08a"><img
+                        src="/images/Notion-logo.svg" alt="notion" /></a>
+            </nav>
+        </div>
+        </div>
+    </footer>
+</th:block>
 </html>

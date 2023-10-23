@@ -8,23 +8,37 @@
     <!-- <script src="https://cdn.tailwindcss.com"></script> -->
     <title>Community</title>
     <link rel="stylesheet" th:href="@{/css/dist/output.css}">
-
+    <style>
+        /* 현재 페이지 버튼의 스타일 */
+        .page-link[aria-current="page"] {
+            background-color: #74DBEF; /* 현재 페이지 버튼의 배경색을 변경 */
+            color: #FFFFFF; /* 현재 페이지 버튼의 텍스트 색상을 변경 */
+            /* 다른 원하는 스타일 변경을 추가하세요 */
+        }
+        .rounded-image {
+            border-radius: 50%; /* 50%로 설정하여 이미지를 원형으로 만듭니다. */
+            width: 30px; /* 이미지의 너비를 설정합니다. */
+            height: 30px; /* 이미지의 높이를 설정합니다. */
+        }
+    </style>
 </head>
 
 <th:block layout:fragment="content">
 <body>
     <section>
         <div class="bg-back font-brr">
-            <div class="max-w-screen-xl px-4 py-16 mx-60 sm:px-6 sm:py-24 lg:max-w-6xl lg:px-8">
+            <div class="max-w-screen-xl mx-auto px-4 py-16 mx-60 sm:px-6 sm:py-24 lg:max-w-6xl lg:px-8">
                 <div class="flex justify-around mb-10">
                     <div>
                         <div class="relative w-full h-10">
                         <label for="filterSelect">
+<!--                            게시판 종류 표시-->
                             <select name="filterSelect" id="filterSelect" class="w-full h-10 pl-2 pr-2 bg-white border border-black rounded-md text-nav-navy">
                                 <option value="all" class="text-main-skyblue">전체</option>
                                 <option value="notice" class="text-main-skyblue">공지사항</option>
                                 <option value="free" class="text-main-skyblue">자유게시판</option>
                                 <option value="qa" class="text-main-skyblue">질문/답변</option>
+                                <option value="nono" class="text-main-skyblue">전국노노자랑</option>
                             </select>
                         </label>
 
@@ -42,8 +56,8 @@
                     </div>
                     <div>
                         <div class="relative w-full h-10">
-                            <button class="w-full h-10 text-center text-white duration-300 ease-in-out border rounded-sm bg-main-blue pl-7 pr-7 hover:bg-main-skyblue" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-                            onclick="location.href='/write'">
+                            <button class="w-full h-10 text-center text-white duration-300 ease-in-out border rounded-md bg-main-blue pl-7 pr-7 hover:bg-main-skyblue" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                            onclick="window.location.href='/posting'">
                                 글 작성
                             </button>
                         </div>
@@ -51,38 +65,40 @@
                 </div>
                 <h2 class="sr-only">Products</h2>
                 <div class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-                    <div th:each="vo : ${list}">
-<!--                        <div th:if="${#dates.createNow().minusDays(1).isBefore(vo.formattedCreatedAt)}">-->
+                    <div th:each="vo, iterStat : ${list}" class="post-item" data-page="1">
                         <a th:href="@{'/detail?postId=' + ${vo.postId}}" class="group">
                                 <div class="w-full h-40 overflow-hidden transition-transform duration-300 ease-in-out transform bg-white rounded-lg shadow-lg aspect-h-1 aspect-w-1 xl:aspect-h-8 xl:aspect-w-7 group-hover:scale-110 group-hover:opacity-85">
                                     <div class="object-cover object-center w-full h-full">
-                                        <h3 class="pl-6 mt-4 text-sm font-bold text-main-blue" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">                                             <span th:if="${vo.boardType == 1}">공지사항</span>
+                                        <h3 class="pl-6 mt-4 text-sm font-bold text-main-blue" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                            <!-- boardType에 따라 게시판 종류 나누기 -->
+                                            <span th:if="${vo.boardType == 1}">공지사항</span>
                                             <span th:if="${vo.boardType == 2}">자유게시판</span>
                                             <span th:if="${vo.boardType == 3}">질문/답변</span>
                                             <span th:if="${vo.boardType == 4}">전국노노자랑</span>
                                         </h3>
                                         <div class="flex">
-                                            <img src="/images/new_post_1.png" class="w-3 mt-1.5 ml-3 h-fit" alt="">
-                                            <p class="pl-2 pr-4 mt-1 text-sm font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[[${vo.title}]]</p>
+<!--                                            나중에 구현할 거 <img src="/images/new_post_1.png" class="w-3 mt-1.5 ml-3 h-fit profile-image" alt="">-->
+                                            <img th:if="${vo.fileUrls.isEmpty() == false}" src="/images/show_image.png" class="w-4 mt-1.5 ml-3 h-fit profile-image" alt="">
+                                            <p class="pl-3 pr-4 mt-0.5 text-base font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[[${vo.title}]]</p><!-- 제목 -->
                                         </div>
-                                        <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[[${vo.content}]]</p>
+                                        <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[[${vo.content}]]</p><!-- 내용 -->
                                         <div class="flex items-center">
-                                            <img src="/images/profile/image2.png" class="object-cover object-center pl-3 mt-1" alt="">
-                                            <div>
-                                                <span class="text-xs">[[${vo.nickName}]]</span>
+                                            <img th:src="${vo.imgSrc}" class="rounded-image ml-5 mt-1" alt=""><!-- 프로필 이미지 -->
+                                            <div class="ml-2">
+                                                <span class="text-xs">작성자 : [[${vo.nickName}]]</span>
                                                 <p class="text-xs text-gray-500">[[${vo.createdAt}]]</p>
                                             </div>
 
                                         </div>
                                         <div class="flex">
                                             <img src="/images/image%2012.png" class="h-4 pl-5 mt-1" alt="">
-                                            <p class="pl-1 mt-1 text-xs" th:text="${vo.commentCount}"></p>
+                                            <p class="pl-1 mt-1 text-xs" th:text="${vo.commentCount}"></p><!-- 추천수 표시 -->
                                             <img src="/images/icon_thumbup_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
-                                            <p class="pl-2 mt-1 text-xs" th:text="${vo.likeCount}"></p>
+                                            <p class="pl-2 mt-1 text-xs" th:text="${vo.likeCount}"></p><!-- 좋아요수 표시 -->
                                             <div class="ml-auto"> <!-- ml-auto class 추가 -->
                                                 <img src="/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 pr-2 mt-1.5" alt="">
                                             </div>
-                                            <span class="pr-4 mt-1 text-xs" th:text="${vo.viewCount}"></span>
+                                            <span class="pr-4 mt-1 text-xs" th:text="${vo.viewCount}"></span><!-- 조회수 표시 -->
                                         </div>
                                     </div>
 
@@ -94,11 +110,11 @@
         </div>
 
     </section>
-    <section>
+    <section><!-- 페이징 -->
         <div class="flex items-center justify-between px-4 py-3 sm:px-6 bg-back">
             <div class="flex justify-between flex-1 sm:hidden">
-              <a href="#" class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" id="previousPage">Previous</a>
-              <a href="#" class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" id="nextPage">Next</a>
+              <a class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">Previous</a>
+              <a class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">Next</a>
             </div>
             <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
               <div>
@@ -108,21 +124,24 @@
               </div>
               <div>
                 <nav class="inline-flex -space-x-px rounded-md shadow-sm isolate" aria-label="Pagination">
-                  <a href="#" class="relative inline-flex items-center px-2 py-2 text-gray-400 rounded-l-md ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                  <a class="relative inline-flex items-center px-2 py-2 text-gray-400 rounded-l-md ring-1 ring-inset ring-gray-300 hover:bg-commu-pagination-hover focus:z-20 focus:outline-offset-0" id="previousPage">
                     <span class="sr-only">Previous</span>
                     <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                       <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
                     </svg>
                   </a>
                   <!-- Current: "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", Default: "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0" -->
-                  <a href="#" aria-current="page" class="relative z-10 inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-main-skyblue focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">1</a>
-                  <a href="#" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 duration-200 ease-in-out ring-1 ring-inset ring-gray-300 hover:bg-commu-pagination-hover focus:z-20 focus:outline-offset-0">2</a>
-                  <a href="#" class="relative items-center hidden px-4 py-2 text-sm font-semibold text-gray-900 duration-200 ease-in-out ring-1 ring-inset ring-gray-300 hover:bg-commu-pagination-hover focus:z-20 focus:outline-offset-0 md:inline-flex">3</a>
-                  <span class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">...</span>
-                  <a href="#" class="relative items-center hidden px-4 py-2 text-sm font-semibold text-gray-900 duration-200 ease-in-out ring-1 ring-inset ring-gray-300 hover:bg-commu-pagination-hover focus:z-20 focus:outline-offset-0 md:inline-flex">8</a>
-                  <a href="#" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 duration-200 ease-in-out ring-1 ring-inset ring-gray-300 hover:bg-commu-pagination-hover focus:z-20 focus:outline-offset-0">9</a>
-                  <a href="#" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 duration-200 ease-in-out ring-1 ring-inset ring-gray-300 hover:bg-commu-pagination-hover focus:z-20 focus:outline-offset-0">10</a>
-                  <a href="#" class="relative inline-flex items-center px-2 py-2 text-gray-400 rounded-r-md ring-1 ring-inset ring-gray-300 hover:bg-commu-pagination-hover focus:z-20 focus:outline-offset-0">
+                  <a aria-current="page" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 duration-200 ease-in-out ring-1 ring-inset ring-gray-300 hover:bg-commu-pagination-hover focus:z-20 focus:outline-offset-0 page-link">1</a>
+                  <a class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 duration-200 ease-in-out ring-1 ring-inset ring-gray-300 hover:bg-commu-pagination-hover focus:z-20 focus:outline-offset-0 page-link">2</a>
+                  <a class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 duration-200 ease-in-out ring-1 ring-inset ring-gray-300 hover:bg-commu-pagination-hover focus:z-20 focus:outline-offset-0 page-link">3</a>
+                  <a class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 duration-200 ease-in-out ring-1 ring-inset ring-gray-300 hover:bg-commu-pagination-hover focus:z-20 focus:outline-offset-0 page-link">4</a>
+                  <a class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 duration-200 ease-in-out ring-1 ring-inset ring-gray-300 hover:bg-commu-pagination-hover focus:z-20 focus:outline-offset-0 page-link">5</a>
+                  <a class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 duration-200 ease-in-out ring-1 ring-inset ring-gray-300 hover:bg-commu-pagination-hover focus:z-20 focus:outline-offset-0 page-link">6</a>
+                    <a class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 duration-200 ease-in-out ring-1 ring-inset ring-gray-300 hover:bg-commu-pagination-hover focus:z-20 focus:outline-offset-0 page-link">7</a>
+                    <a class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 duration-200 ease-in-out ring-1 ring-inset ring-gray-300 hover:bg-commu-pagination-hover focus:z-20 focus:outline-offset-0 page-link">8</a>
+                  <a class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 duration-200 ease-in-out ring-1 ring-inset ring-gray-300 hover:bg-commu-pagination-hover focus:z-20 focus:outline-offset-0 page-link">9</a>
+                  <a class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 duration-200 ease-in-out ring-1 ring-inset ring-gray-300 hover:bg-commu-pagination-hover focus:z-20 focus:outline-offset-0 page-link">10</a>
+                  <a class="relative inline-flex items-center px-2 py-2 text-gray-400 rounded-r-md ring-1 ring-inset ring-gray-300 hover:bg-commu-pagination-hover focus:z-20 focus:outline-offset-0" id="nextPage">
                     <span class="sr-only">Next</span>
                     <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                       <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
@@ -137,31 +156,136 @@
           </div>
     </section>
     <script>
+        movePage(1); // 첫 화면은 1페이지를 보여줌
         document.getElementById("filterSelect").addEventListener("change", function () {
             var selectedOption = this.options[this.selectedIndex];
             var optionValue = selectedOption.value;
 
             if (optionValue === "notice") {
                 document.getElementById("filterSelect").value = "notice";
-                window.location.href = "/post/notice"; // 원하는 경로로 이동=
+                window.location.href = "/post/notice"; // 공지사항으로 이동
             } else if (optionValue === "free") {
                 document.getElementById("filterSelect").value = "free";
-                window.location.href = "/post/free"; // 다른 경로로 이동
+                window.location.href = "/post/free"; // 자유게시판으로 이동
             } else if (optionValue === "qa") {
                 document.getElementById("filterSelect").value = "qa";
-                window.location.href = "/post/qa"; // 또 다른 경로로 이동
+                window.location.href = "/post/qa"; // 질문답변으로 이동
+            }else if (optionValue === "nono") {
+                document.getElementById("filterSelect").value = "nono";
+                window.location.href = "/post/nono"; // 전국노노자랑으로 이동
             }else if (optionValue === "all") {
                 document.getElementById("filterSelect").value = "all";
-                window.location.href = "/post"; // 또 다른 경로로 이동
+                window.location.href = "/post"; // 전체로 이동하려고 했으나 왜인지 안됨. 추후 수정필요
             }
         });
         function searchOnEnter(event) {
-        if (event.key === 'Enter') {
+        if (event.key === 'Enter') { //검색하고 엔터키 눌렀을 시에 동작
                 const searchValue = document.getElementById("search").value;
                 const searchUrl = `/search?keyword=${encodeURIComponent(searchValue)}`;
                 window.location.href = searchUrl;
             }
         }
+        document.addEventListener("DOMContentLoaded", function() {
+            let currentPage = 1; // 초기 페이지 번호
+            let itemsPerPage = 12; // 페이지당 항목 수
+            let totalPages = Math.ceil(document.querySelectorAll(".post-item").length / itemsPerPage); // 전체 페이지 수
+            // 페이지 번호를 클릭할 때 처리
+            document.querySelectorAll(".page-link").forEach(function(link) {
+                link.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    const pageNumber = parseInt(this.textContent); // 페이지 번호는 텍스트 내용으로부터 추출
+                    if (pageNumber <= totalPages) {
+                        movePage(pageNumber); // 페이지 이동 함수 호출
+                    }
+                });
+            });
+
+
+
+        // "이전" 버튼 클릭 이벤트 처리
+        document.getElementById("previousPage").addEventListener("click", function(event) {
+            event.preventDefault();
+            if (currentPage > 1) {
+                if(currentPage%10===1){
+                    // 페이지 버튼 엘리먼트를 선택
+                    const pageLinks = document.querySelectorAll(".page-link");
+
+                    // 각 페이지 버튼 엘리먼트의 내용을 수정
+                    pageLinks.forEach(function(link) {
+                        // 현재 내용 가져오기
+                        const currentContent = parseInt(link.textContent);
+
+                        // 현재 내용에 10을 더한 값으로 변경
+                        const newContent = currentContent - 10;
+
+                        // 새로운 내용으로 엘리먼트 내용 변경
+                        link.textContent = newContent;
+                    });
+
+                }
+                currentPage--; // 현재 페이지 번호를 1 줄여서 이전 페이지로 이동
+                movePage(currentPage);
+            }
+        });
+
+        // "다음" 버튼 클릭 이벤트 처리
+        document.getElementById("nextPage").addEventListener("click", function(event) {
+            event.preventDefault();
+            if (currentPage < totalPages) {
+                if(currentPage%10===0){
+                    // 페이지 버튼 엘리먼트를 선택
+                    const pageLinks = document.querySelectorAll(".page-link");
+
+                    // 각 페이지 버튼 엘리먼트의 내용을 수정
+                    pageLinks.forEach(function(link) {
+                        // 현재 내용 가져오기
+                        const currentContent = parseInt(link.textContent);
+
+                        // 현재 내용에 10을 더한 값으로 변경
+                        const newContent = currentContent + 10;
+
+                        // 새로운 내용으로 엘리먼트 내용 변경
+                        link.textContent = newContent;
+                    });
+
+                }
+                currentPage++; // 현재 페이지 번호를 1 증가시켜 다음 페이지로 이동
+                movePage(currentPage);
+            }
+        });
+
+        // 페이지 로드 시 초기 상태 설정
+        movePage(currentPage); // 페이지 로드 시 초기 페이지의 내용을 표시
+    });
+
+    function movePage(pageNumber) {
+        let itemsPerPage = 12; // 페이지당 항목 수
+        const startIndex = (pageNumber - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+
+        const postItems = document.querySelectorAll(".post-item");
+
+        // 모든 항목을 숨김
+        postItems.forEach(function(item) {
+            item.style.display = "none";
+        });
+
+        // 현재 페이지에 해당하는 항목 표시
+        for (let i = startIndex; i < endIndex && i < postItems.length; i++) {
+            postItems[i].style.display = "block";
+        }
+
+        // 이동한 페이지 버튼에 "aria-current" 속성 추가
+        const pageLinks = document.querySelectorAll(".page-link");
+        pageLinks.forEach(function(link) {
+            link.removeAttribute("aria-current"); // 모든 페이지 버튼의 "aria-current" 속성 제거
+            if (parseInt(link.textContent) === pageNumber) {
+                link.setAttribute("aria-current", "page"); // 이동한 페이지 버튼에 "aria-current" 속성 추가
+            }
+        });
+    }
+
+
     </script>
 </body>
 </th:block>

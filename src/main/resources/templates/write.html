@@ -26,12 +26,6 @@
             border: 2px solid #E2E0E0;
         }
     </style>
-    <script th:inline="javascript">
-        if (![[${session.value}]]){
-            alert("로그인이 필요한 기능입니다");
-            window.location.href = "/login";
-        }
-    </script>
 </head>
 <th:block layout:fragment="content">
 <body class="bg-back">
@@ -139,9 +133,9 @@
     </div>
 
     <div class="flex flex-row font-brr space-x-4 mt-3 ">
-        <button type="button" id="cancelButton" class="items-center px-9 py-2 text-md text-center text-black rounded-lg">
+        <a th:href="${ref}"><button type="button" id="cancelButton" class="items-center px-9 py-2 text-md text-center text-black rounded-lg">
             취소
-        </button>
+        </button></a>
         <button type="submit" id="submitButton" class="items-center px-9 py-2 text-md text-center text-white rounded-lg">
             등록
         </button>

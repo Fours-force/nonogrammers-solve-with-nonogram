@@ -16,13 +16,7 @@ public class UrlController {
     @RequestMapping("/forgot-password")
     public String forgotPassword(){return "forgot-password";}
 
-    @RequestMapping("/reset-password")
-    public String resetPassword(){return "reset-password";}
-
-    @RequestMapping("/write")
-    public String writePost(){return "write";}
-
-    @RequestMapping("/community")
-    public String getCommunity(){return "community";}
+    @RequestMapping("/terms")
+    public String showTerms(){return "terms";}
 }
 

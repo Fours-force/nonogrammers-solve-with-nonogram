@@ -138,14 +138,9 @@ public class MainController {
         model.addAttribute("urlAry", urlAry);
         model.addAttribute("baekjoonUserIdStatus", "1");
         model.addAttribute("nonoId",unDTO.getNonoId());
-
-        System.out.println(totalRowList.get(1).size());
-            for(int i=0; i<row; i++){
-                for( int j = 0; j < totalRowList.get(0).size(); j++) {
-                    System.out.print(totalRowList.get(i).get(j).getColor()+" ,");
-                }
-            }
+        
         return "/nonodots";
+
     }
 
     // 문제번호 가져오기.

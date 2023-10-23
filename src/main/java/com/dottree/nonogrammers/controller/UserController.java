@@ -35,7 +35,7 @@ public class UserController {
             response.setMessage("비밀번호가 맞지 않습니다.. 다시 시도해주세요🥲");
             return response;
         }
-        dto.setProfileImgUrl("/images/kang.png");
+        dto.setProfileImgUrl("/images/pingu.jpg");
         try{
             boolean result = dao.insertAccount(dto);
             if (result){
