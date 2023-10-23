@@ -6,12 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Community page</title>
     <link rel="stylesheet" th:href="@{/css/dist/output.css}">
+    <style>
+        .rounded-image {
+            border-radius: 50%; /* 50%로 설정하여 이미지를 원형으로 만듭니다. */
+            width: 30px; /* 이미지의 너비를 설정합니다. */
+            height: 30px; /* 이미지의 높이를 설정합니다. */
+        }
+    </style>
 </head>
 <th:block layout:fragment="content">
 <body>
     <section>
         <div class="bg-back font-brr">
-            <div class="max-w-screen-xl px-4 py-16 mx-60 sm:px-6 sm:py-24 lg:max-w-6xl lg:px-8 font-brba">
+            <div class="max-w-screen-xl mx-auto px-4 py-16 mx-60 sm:px-6 sm:py-24 lg:max-w-6xl lg:px-8">
                 <div class="grid grid-cols-1 gap-y-16">
                     <div>
                         <div class="flex">
@@ -21,17 +28,25 @@
                             <p class="mt-0.5 ml-2 text-base font-semibold leading-7 text-main-blue" th:text="${pos.boardTypeStr}"></p>
                         </div>
                         <div class="flex">
-                            <img src="/images/new_post_1.png" class="w-3.5 mt-3.5 ml-3 mr-3 h-fit" alt="">
+                            <img src="/images/new_post_1.png" class="w-3.5 mt-3.5 ml-3 mr-3 h-fit profile-image" alt="">
                             <h1 class="mt-2 text-2xl font-bold tracking-tight text-nav-navy sm:text-2xl" th:text="${pos.title}"></h1>
                         </div>
                         <div class="flex items-center mt-3">
-                            <img src="/images/Ellipse 1.png" class="object-cover object-center h-8 mt-1 mr-1.5 w-fit" alt="">
-                            <div>
+                            <img th:src="${pos.imgSrc}" class="rounded-image ml-5" alt="">
+                            <div class="ml-3">
                                 <span class="text-sm text-nav-navy" th:text="${pos.nickName}"></span>
                                 <p class="text-xs text-commu-time-info" th:text="${pos.createdAt}"></p>
                             </div>
+                            <form th:if="${session.value != null and session.value.userId == pos.userId}" id="postDeleteForm" action="/postDelete" method="post">
+                                <input type="hidden" name="postId" id="pos_postId" th:value="${pos.postId}">
+                                <button type="submit" class="flex h-5 mt-2 duration-300 ease-in-out rounded-md w-9 ml-3 bg-main-skyblue hover:bg-main-blue">
+                                    <div class="mt-0.5 ml-2 text-xs text-white">삭제</div>
+                                </button>
+                            </form>
                         </div>
-
+                        <div th:each="fileUrl : ${pos.getFileUrls()}" class="ml-5 mt-5">
+                            <img th:src="@{${fileUrl}}" alt="">
+                        </div>
                         <p class="px-6 mt-6 text-lg leading-8 text-nav-navy" th:text="${pos.content}"></p>
                         <div class="flex mt-5">
                             <img src="/images/icon_eye_.png" class="object-cover object-center h-3 pl-3 mt-1.5" alt="">
@@ -49,9 +64,10 @@
                             댓글
                         </div>
                         <div th:each="vo : ${comm}">
-                            <div class="mb-5">
+                            <div class="mb-5" th:id="'comment-'+${vo.commentId}">
                                 <div class="flex mt-2 ml-5">
-                                    <img src="/images/Rectangle 28.png" class="object-cover object-center h-8 pl-3 mt-3 w-fit" alt="">
+                                    <img th:src="${vo.imgSrc}" class="rounded-image ml-3 mt-3" alt="">
+<!--                                    <img src="/images/Rectangle 28.png" class="object-cover object-center h-8 pl-3 mt-3 w-fit" alt="">-->
                                     <div class="mt-2 ml-3">
                                         <span class="text-sm" th:text="${vo.nickName}"></span>
                                         <p class="text-xs text-commu-time-info" th:text="${vo.createdAt}"></p>
@@ -63,21 +79,65 @@
                                     <button class="flex h-5 mt-2 duration-300 ease-in-out rounded-md w-9 ml-14 bg-main-skyblue hover:bg-main-blue"
                                             onclick="location.href='#'">
                                         <img src="/images/icon_thumbup_(1).png" class="object-cover object-center mt-1 ml-1.5" alt="">
-                                        <div class="mt-1 ml-1 text-xs text-white">3</div>
+                                        <div class="mt-1 ml-1 text-xs text-white">0</div>
                                     </button>
+                                        <button th:if="${session.value != null and session.value.userId == vo.userId}" class="flex h-5 mt-2 duration-300 ease-in-out rounded-md w-9 ml-3 bg-main-skyblue hover:bg-main-blue" th:onclick="editComment([[${vo.postId}]], [[${vo.commentId}]],[[${vo.content}]])">
+                                            <div class="mt-0.5 ml-2 text-xs text-white">수정</div>
+                                        </button>
+                                    <form th:if="${session.value != null and session.value.userId == vo.userId}" id="deleteCommentForm" action="/deleteComment" method="post">
+                                        <input type="hidden" name="commentId" id="commentId" th:value="${vo.commentId}">
+                                        <input type="hidden" name="postId" id="postId" th:value="${vo.postId}">
+                                        <button type="submit" class="flex h-5 mt-2 duration-300 ease-in-out rounded-md w-9 ml-3 bg-main-skyblue hover:bg-main-blue">
+                                            <div class="mt-0.5 ml-2 text-xs text-white">삭제</div>
+                                        </button>
+                                    </form>
+
                                 </div>
                             </div>
                         </div>
-                        <form class="px-5 pt-3" method="post" action="/detailComment">
+                        <form id="editCmtBox" class="px-5 pt-3" method="post" action="/editComment" style="display: none;">
+                            <div class="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+                                <div class="px-4 py-2 bg-white rounded-t-lg dark:bg-gray-800">
+                                    <input type="hidden" name="postId" th:value="${pos.postId}">
+                                    <input type="hidden" id="commId_edit" name="commentId">
+                                    <textarea id="content_edit" name="content" rows="4" class="w-full px-0 text-sm text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400" placeholder="댓글을 작성해보세요" required></textarea>
+                                </div>
+                                <div class="flex items-center justify-between px-3 py-2 border-t dark:border-gray-600">
+                                    <button type="submit" class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-main-blue rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-main-skyblue duration-300 ease-in-out">
+                                        수정
+                                    </button>
+                                    <div class="flex pl-0 space-x-1 sm:pl-2">
+                                        <button type="button" class="inline-flex items-center justify-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600">
+                                            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 20">
+                                                <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M1 6v8a5 5 0 1 0 10 0V4.5a3.5 3.5 0 1 0-7 0V13a2 2 0 0 0 4 0V6"/>
+                                            </svg>
+                                            <span class="sr-only">Attach file</span>
+                                        </button>
+                                        <button type="button" class="inline-flex items-center justify-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600">
+                                            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 20">
+                                                <path d="M8 0a7.992 7.992 0 0 0-6.583 12.535 1 1 0 0 0 .12.183l.12.146c.112.145.227.285.326.4l5.245 6.374a1 1 0 0 0 1.545-.003l5.092-6.205c.206-.222.4-.455.578-.7l.127-.155a.934.934 0 0 0 .122-.192A8.001 8.001 0 0 0 8 0Zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z"/>
+                                            </svg>
+                                            <span class="sr-only">Set location</span>
+                                        </button>
+                                        <button type="button" class="inline-flex items-center justify-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600">
+                                            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
+                                                <path d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z"/>
+                                            </svg>
+                                            <span class="sr-only">Upload image</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <form class="px-5 pt-3" method="post" action="/detailComment" id="writeCmtBox">
                             <div class="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
                                     <div class="px-4 py-2 bg-white rounded-t-lg dark:bg-gray-800">
                                         <input type="hidden" name="postId" th:value="${pos.postId}">
-                                        <input type="text" name="userId" id="userId" placeholder="userId" required>
-                                        <label for="userId" class="sr-only">Your comment</label>
+                                        <input type="hidden" name="userId" th:if="${session.value}" th:value="${session.value.userId}">
                                         <textarea id="content" name="content" rows="4" class="w-full px-0 text-sm text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400" placeholder="댓글을 작성해보세요" required></textarea>
                                     </div>
                                 <div class="flex items-center justify-between px-3 py-2 border-t dark:border-gray-600">
-                                    <button type="submit" class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-main-blue rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-main-skyblue duration-300 ease-in-out">
+                                    <button type="submit" class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-main-blue rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-main-skyblue duration-300 ease-in-out submitButton">
                                         작성
                                     </button>
                                     <div class="flex pl-0 space-x-1 sm:pl-2">
@@ -136,7 +196,59 @@
             xhr.open("POST", "/post/like", true);
             xhr.send(formData);
         }
+
     </script>
+<script>
+    // 현재 날짜와 시간을 가져오는 JavaScript Date 객체 생성
+        const currentDate = new Date();
+
+        // createdAt을 JavaScript Date 객체로 변환
+        const createdAtDate = new Date([[${pos.createdAt}]]); // 이 값을 createdAt로 대체
+
+        // 두 날짜 사이의 차이를 밀리초 단위로 계산
+        const timeDifference = currentDate - createdAtDate;
+
+        // 24시간(1일) * 60분 * 60초 * 1000밀리초 = 1일에 해당하는 밀리초 값
+        const oneDayInMillis = 24 * 60 * 60 * 1000;
+
+        if (timeDifference <= oneDayInMillis) {
+            // 이미지를 표시하도록 DOM 엘리먼트 변경
+            const profileImage = document.querySelector(".profile-image"); // 이미지를 포함하는 엘리먼트 선택
+            profileImage.style.display = "block"; // 이미지 표시
+        } else {
+            // 이미지를 숨기도록 DOM 엘리먼트 변경
+            const profileImage = document.querySelector(".profile-image"); // 이미지를 포함하는 엘리먼트 선택
+            profileImage.style.display = "none"; // 이미지 숨김
+        }
+
+</script>
+    <script th:inline="javascript">
+        const submitButton = document.querySelector(".submitButton");
+
+        submitButton.addEventListener("click", function (event) {
+            if (![[${session.value}]]){
+                event.preventDefault(); // 클릭 이벤트를 중지
+                alert("로그인이 필요한 기능입니다");
+                window.location.href = "/login";
+            }
+        });
+    </script>
+<script th:inline="javascript" th:if="${session.value != null}">
+    function editComment(postId, commentId, content) {
+        const commId = "comment-"+commentId;
+        const previousComment = document.getElementById(commId);
+        previousComment.style.display = "none";
+        const writeCommentBox = document.getElementById("writeCmtBox");
+        writeCommentBox.style.display = "none";
+        const editCommentBox = document.getElementById("editCmtBox");
+        editCommentBox.style.display = "block";
+        const editedContent = document.getElementById("content_edit");
+        editedContent.value = content;
+        const editedId = document.getElementById("commId_edit");
+        editedId.value = commentId;
+    }
+
+</script>
 </body>
 </th:block>
 </html>
