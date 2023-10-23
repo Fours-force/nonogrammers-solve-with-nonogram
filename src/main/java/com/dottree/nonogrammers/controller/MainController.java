@@ -60,34 +60,40 @@ public class MainController {
         StringBuilder sb = new StringBuilder();
         int nonoId = 1;
         DotDTO dDTO = new DotDTO();
+        String[] names = {"lodads","daram","Dogi","dottux","dragon","LisaSimpson"};
+        for(int i=6; i< names.length; i++) {
+            // Load the Excel file into Workbook to be converted to arrayC:\Users\COM\Downloads
+            System.out.println(names[i]);
+            FileInputStream fis = new FileInputStream("/Users/COM/Downloads/exlels/" + names[i] + ".xlsx");
+            Workbook excelWorkbookToArray = new XSSFWorkbook(fis);
 
-        // Load the Excel file into Workbook to be converted to array
-        FileInputStream fis = new FileInputStream("/Users/COM/Desktop/Looney Tunes.xlsx");
-        Workbook excelWorkbookToArray = new XSSFWorkbook(fis);
-        // Get the reference to the first sheet of the workbook for conversion to array
-        Sheet worksheet = excelWorkbookToArray.getSheetAt(0);
-        int rowCnt = worksheet.getLastRowNum() + 1; // getLastRowNum returns 0-based index, so we add 1.
-        int colCnt = worksheet.getRow(0).getLastCellNum(); // Assuming all rows have same number of columns.
-        System.out.println("rowCnt: " + rowCnt);
-        System.out.println("colCnt: " + colCnt);
-        for (int i = 0; i < rowCnt; i++) {
-            Row row = worksheet.getRow(i);
-            for (int j = 0; j < colCnt; j++) {
-                Cell cell = row.getCell(j); //i행의 j열 셀
-                Color color = cell.getCellStyle().getFillForegroundColorColor(); // 셀의
-                if (color instanceof XSSFColor) {
-                    XSSFColor xssfColor = (XSSFColor) color;
-                    String d = xssfColor.getARGBHex().substring(2);
-                    dDTO.setNonoId(nonoId);
-                    dDTO.setColor(d);
-                    mdao.insertDotsInDot(dDTO);
-                    System.out.print(d + ",");
+//        for (int i=0; i<3; i++){
+            // Get the reference to the first sheet of the workbook for conversion to array
+            Sheet worksheet = excelWorkbookToArray.getSheetAt(0);
+            int rowCnt = worksheet.getLastRowNum() + 1; // getLastRowNum returns 0-based index, so we add 1.
+            int colCnt = worksheet.getRow(0).getLastCellNum(); // Assuming all rows have same number of columns.
+            System.out.println("rowCnt: " + rowCnt);
+            System.out.println("colCnt: " + colCnt);
+            for (int j = 0; j < rowCnt; j++) {
+                Row row = worksheet.getRow(j);
+                for (int k = 0; k < colCnt; k++) {
+                    Cell cell = row.getCell(k); //i행의 j열 셀
+                    Color color = cell.getCellStyle().getFillForegroundColorColor(); // 셀의
+                    if (color instanceof XSSFColor) {
+                        XSSFColor xssfColor = (XSSFColor) color;
+                        String d = xssfColor.getARGBHex().substring(2);
+                        dDTO.setNonoId(i+1);
+                        dDTO.setColor(d);
+                        mdao.insertDotsInDot(dDTO);
+                       // System.out.print(d + ",");
+                    }
                 }
+                //System.out.println();
             }
-            System.out.println();
-        }
-        System.out.println("No. Of Rows Exported in array: " + rowCnt);
+            System.out.println("No. Of Rows Exported in array: " + rowCnt);
+//        }
         fis.close();
+        }
         return null;
     }
 
@@ -114,7 +120,7 @@ public class MainController {
 
         NonoDTO allUrls = mdao.selectAllallProblemToStr(unDTO.getNonoId()); // 모든 문제Url nono테이블에서 가져옴
         String [] urlAry = allUrls.getAllProblemToStr().split(","); // 쉼표 떼고 배열에 저장
-
+        System.out.println(urlAry[urlAry.length-1]);
         int row = nList.size()/32; // totalRowList에 모든 도트 정보 담음
         log.info("row : "+row);
         List<DotDTO> singleRowList = null;
@@ -147,9 +153,10 @@ public class MainController {
         mav.addObject("dotList", totalRowList);
         mav.addObject("urlAry", urlAry);
         mav.addObject("baekjoonUserIdStatus", "1");
+        mav.addObject("nonoId",unDTO.getNonoId());
 
         System.out.println(totalRowList.get(1).size());
-            for(int i=0; i<48; i++){
+            for(int i=0; i<row; i++){
                 for( int j = 0; j < totalRowList.get(0).size(); j++) {
                     System.out.print(totalRowList.get(i).get(j).getColor()+" ,");
                 }
@@ -360,12 +367,13 @@ public class MainController {
 
         return "/nonobox";
     }
-    @GetMapping("/nonobox/{levelType}")
+    @GetMapping(value = "/nonobox/{levelType}")
     public String getIngUserNono(@PathVariable(value = "levelType")int levelType, Model model) {
         List<UserNonoVO> userNonnolist = mdao.selectNonoByLevel(levelType);
+        log.info(userNonnolist.get(0).toString());
 //        List<UserNonoDTO> nonoList = mainMapper.selectUserNono(userId);
 //        System.out.println(userNonnolist.get(0).getUserNonoId());
-        model.addAttribute("nonoList", userNonnolist);
+          model.addAttribute("nonoList", userNonnolist);
 
         return "/nonobox";
     }
