@@ -15,5 +15,8 @@ public class UrlController {
 
     @RequestMapping("/forgot-password")
     public String forgotPassword(){return "forgot-password";}
+
+    @RequestMapping("/terms")
+    public String showTerms(){return "terms";}
 }
 

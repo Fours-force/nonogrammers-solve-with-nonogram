@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{./defaultLayout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {font-family: 'Nanum Gothic', sans-serif;}
+        h1 {margin-bottom : 10px;}
+        h2 {margin-top: 5px; margin-bottom : 5px; text-decoration: underline;  }
+        p {margin: 2px;}
+    </style>
+</head>
+<th:block layout:fragment="content">
+<body>
+<div class="mt-10 max-w-screen-xl mx-auto place-content-center w-screen items-center justify-center">
+    <h1 class="text-lg font-bold">이용약관 (Terms of Service)</h1>
+    <div>
+    <p>1.1 본 웹사이트를 이용하는 모든 사용자는 아래의 이용약관을 숙지하고 준수해야 합니다.</p>
+
+    <h2 class="text-md">정의</h2>
+    <p>2.1 "웹사이트"란 본 이용약관에 따라 제공되는 모든 온라인 서비스를 의미합니다.</p>
+    <p>2.2 "사용자"란 본 웹사이트를 이용하는 모든 개인 또는 단체를 의미합니다.</p>
+
+    <h2>서비스 이용</h2>
+    <p>3.1 웹사이트를 이용하려면 사용자는 인터넷에 액세스해야 합니다.</p>
+    <p>3.2 웹사이트를 이용하는 동안 사용자는 관련 법률 및 규정을 준수해야 합니다.</p>
+
+    <h2>계정 등록</h2>
+    <p>4.1 웹사이트의 일부 기능을 사용하려면 사용자가 계정을 등록해야 할 수 있습니다.</p>
+    <p>4.2 사용자는 등록 시 제공한 정보가 정확하고 최신 정보임을 보증해야 합니다.</p>
+
+    <h2>저작권</h2>
+    <p>5.1 웹사이트에 게시된 모든 콘텐츠, 로고, 디자인 및 기타 자산은 웹사이트 소유이거나 사용권을 보유한 자에게 저작권이 있습니다.</p>
+    <p>5.2 사용자는 웹사이트에서 제공되는 콘텐츠를 개인용 또는 비상업적 목적으로만 사용할 수 있으며, 상업적 이용 또는 변경, 재배포, 복제를 금지합니다.</p>
+    </div>
+    <div class="mt-10">
+        <h1 class="text-lg font-bold">개인정보 처리방침 (Privacy Policy)</h1>
+        <p>6.1 본 웹사이트의 개인정보 처리방침은 사용자의 개인정보 수집, 사용, 보관 및 보호에 관한 규정을 포함하고 있습니다.</p>
+        <p>6.2 사용자는 개인정보 처리방침을 참조하여 자신의 개인정보가 어떻게 처리되는지에 대해 이해해야 합니다.</p>
+
+        <h2>서비스 변경 및 중단</h2>
+        <p>7.1 웹사이트는 언제든지 서비스를 변경하거나 중단할 권리를 보유합니다.</p>
+        <p>7.2 사용자에게 통지하기 위해 웹사이트에서 사용되는 연락 수단을 통해 서비스 변경 또는 중단에 관한 정보를 제공할 수 있습니다.</p>
+    </div>
+    <div class="mt-10">
+        <h1 class="text-lg font-bold">책임 한계 </h1>
+        <p>8.1 웹사이트는 사용자가 웹사이트를 이용하거나 사용자에 의한 콘텐츠 사용으로 인해 발생한 어떠한 손해에 대해서도 책임을 지지 않습니다.</p>
+
+        <h2>약관 변경</h2>
+        <p>9.1 웹사이트는 필요한 경우 이용약관을 변경할 수 있으며, 변경 내용은 웹사이트 상에 게시됩니다.</p>
+        <p>9.2 변경된 약관은 게시 즉시 효력을 발생합니다.</p>
+
+        <h2>연락처</h2>
+        <p>10.1 본 이용약관 또는 개인정보 처리방침과 관련한 질문 또는 문의사항이 있으면 아래 연락처로 문의해 주십시오:</p>
+        <p>[노노그래머스]</p>
+        <p>주소: 서울특별시 서울특별시 송파구 가락동 78 IT벤처타워 12층</p>
+        <p>이메일: nonogrammers@nono.com</p>
+        <p>전화: 010-nono-nono</p>
+    </div>
+</div>
+</body>
+</th:block>
+</html>
