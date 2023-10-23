@@ -42,11 +42,11 @@ public interface MainMapper {
     public int selectSolvedNumber(UserDotDTO udDTO); // div태그에 대해서 count를 해야함. 지금은 모든 도트의 개수임. count를 32로 나누면 될듯?
 
     //userdot에서 dotId하나 조회 / dotId 중복 확인을 위해서 사용.
-    @Select("select dotId from userdot where userId = #{userId} and nonoId = #{nonoId} and dotId = #{dotId}")
+    @Select("select dotId-1 from userdot where userId = #{userId} and nonoId = #{nonoId} and dotId = #{dotId}")
     public UserDotDTO selectIsDotsSolved(UserDotDTO udDTO);
 
     //userdot에서 해결한 dotId 전체를 조회 / 색칠 해주기 위해서 사용.
-    @Select("select dotId from userdot where userId = #{userId} and nonoId = #{nonoId}")
+    @Select("select (dotId-1) as dotId from userdot where userId = #{userId} and nonoId = #{nonoId}")
     public List<UserDotDTO> selectSolvedDotId(UserDotDTO udDTO);
 
     //문제 해결시 userdot에 해당 행의 도트들 삽입
@@ -89,8 +89,4 @@ public interface MainMapper {
 
     @Select("SELECT nonoId, nonoImgUrl, levelType from nono")
     public List<UserNonoVO> selectAllNoNo();
-
-
-
-
 }

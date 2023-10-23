@@ -7,6 +7,7 @@ import com.dottree.nonogrammers.domain.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.ibatis.binding.BindingException;
@@ -20,15 +21,12 @@ import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -36,23 +34,9 @@ import java.util.List;
 @Slf4j
 public class MainController {
     final MainMapper mdao;
-    private final UserMapper userMapper;
     public MainController(MainMapper mdao, UserMapper userMapper) {
         this.mdao = mdao;
-        this.userMapper = userMapper;
     }
-
-    //사용자 아이디, 노노아이디로 노노 개방
-  /*  @RequestMapping("/api/nono/{userId}/{nonoId}")
-    public ModelAndView showNono(UserNonoDTO unDTO){
-        log.info("showNono start !!!!!!!");
-        ModelAndView mav = new ModelAndView();
-        if(mdao.selectUserFromUserNono(unDTO) == 0){
-            mdao.insertUserNono(unDTO,1);
-            mdao.insertUserSolvedCount(unDTO);
-        }
-        return mav;
-    }*/
 
     //엑셀파일 픽셀마다 데이터 뽑기
     @GetMapping("/api/dot")
@@ -60,14 +44,13 @@ public class MainController {
         StringBuilder sb = new StringBuilder();
         int nonoId = 1;
         DotDTO dDTO = new DotDTO();
-        String[] names = {"Looney Tunes","daram","Dogi","dottux","dragon","LisaSimpson","Mario2","minions","gara","curby","boo","krong","leo","papa","piyo","trapixel","cyon","bagi"};
-        for(int i=15; i< names.length; i++) {
+        String[] names = {"Looney Tunes","daram","Dogi","dottux","dragon","LisaSimpson","Mario2","minions","gara","curby","boo","krong","leo","papa","piyo","trapixel","cyon","bagi","testexcel","testexcel2"};
+        for(int i=19; i< names.length; i++) {
             // Load the Excel file into Workbook to be converted to arrayC:\Users\COM\Downloads
             System.out.println(names[i]);
             FileInputStream fis = new FileInputStream("/Users/COM/Downloads/exlels/" + names[i] + ".xlsx");
             Workbook excelWorkbookToArray = new XSSFWorkbook(fis);
 
-//        for (int i=0; i<3; i++){
             // Get the reference to the first sheet of the workbook for conversion to array
             Sheet worksheet = excelWorkbookToArray.getSheetAt(0);
             int rowCnt = worksheet.getLastRowNum() + 1; // getLastRowNum returns 0-based index, so we add 1.
@@ -91,7 +74,6 @@ public class MainController {
                 //System.out.println();
             }
             System.out.println("No. Of Rows Exported in array: " + rowCnt);
-//        }
         fis.close();
         }
         return null;
@@ -99,8 +81,12 @@ public class MainController {
 
     //화면에 노노 출력.
     @RequestMapping("/nonodots/{userId}/{nonoId}/{baekjoonId}")
-    public ModelAndView nonodots(UserNonoDTO unDTO,@PathVariable("baekjoonId")String beakjoonId){
+    public String nonodots(UserNonoDTO unDTO,@PathVariable("baekjoonId")String beakjoonId, HttpSession session, Model model){
         log.info("nonodots start!!!!!!!!");
+        String redirectLogin = isUserIdNullthenRedirect(session);
+        if(!redirectLogin.equals("")) {
+            return redirectLogin;
+        }
         log.info("노노 조회 시 백준 아이디 : " + beakjoonId);
         UserDotDTO udDTO = new UserDotDTO();
         udDTO.setUserId(unDTO.getUserId());
@@ -117,9 +103,6 @@ public class MainController {
         log.info("nonoId : " + unDTO.getNonoId());
         int cnt = 0;
         List<List<DotDTO>> totalRowList = new ArrayList<>(); // 모든 도트의 정보를 담을 이중ArrayList. 행,열로 나뉘어 있음.
-
-        ModelAndView mav = new ModelAndView(); // 모델 생성,nonodot으로 이동
-        mav.setViewName("nonodots");
 
         List<DotDTO> nList = mdao.selectAllDot(unDTO.getNonoId()); // 모든 도트 dot테이블에서 가져옴
 
@@ -148,21 +131,16 @@ public class MainController {
         log.info(getClass().getName() + ": 모든 도트의 수 : "+ ssn);
         log.info(getClass().getName()+": 해결한 도트의 수 : "+ sadc);
         log.info(getClass().getName() + ": 프로그래스 바 :" + progress);
-        mav.addObject("progress",progress);
+        model.addAttribute("progress",progress);
 
         ///////////////////////////////////////////////////////////////////////////////////////
-        mav.addObject("dotList", totalRowList);
-        mav.addObject("urlAry", urlAry);
-        mav.addObject("baekjoonUserIdStatus", "1");
-        mav.addObject("nonoId",unDTO.getNonoId());
+        model.addAttribute("dotList", totalRowList);
+        model.addAttribute("urlAry", urlAry);
+        model.addAttribute("baekjoonUserIdStatus", "1");
+        model.addAttribute("nonoId",unDTO.getNonoId());
+        
+        return "/nonodots";
 
-//        System.out.println(totalRowList.get(1).size());
-//            for(int i=0; i<48; i++){
-//                for( int j = 0; j < totalRowList.get(0).size(); j++) {
-//                    System.out.print(totalRowList.get(i).get(j).getColor()+" ,");
-//                }
-//            }
-        return mav;
     }
 
     // 문제번호 가져오기.
@@ -274,12 +252,10 @@ public class MainController {
                 log.info("중복된 userDotInsert 처리.");//뇌정지..
                 msg = "이미 푼 문제여서 실패~";
             }
-
-
         }catch (NullPointerException e){
             log.info("에러메세지 : " + e.getMessage());
             for (int i = 0; i < getNumJsonNode.size(); i++) {
-                udDTO.setDotId(getNumJsonNode.get(i).get("dotId").asInt());
+                udDTO.setDotId(getNumJsonNode.get(i).get("dotId").asInt()+1);
                 udDTO.setUserId(userId);
                 udDTO.setNonoId(nonoId);
                 mdao.insertUserDot(udDTO);
@@ -307,14 +283,6 @@ public class MainController {
         }catch (BindingException e){
             log.info(getClass().getName()+": BindingException 발생 : " + e.getMessage());
             mdao.insertUserSolvingRow(usrDTO);
-//            try {
-//                log.info(e.getMessage());
-//
-//
-//            }catch (SQLIntegrityConstraintViolationException e1){
-//                log.info(getClass().getName()+"유니크 중복 발생" + e1.getMessage());
-//            }
-
         }
 
         mdao.updateUserSolvingRow(usrDTO);
@@ -349,10 +317,13 @@ public class MainController {
         return udDTOList;
     }
 
-    @RequestMapping(value = ("/api/updateisSolved/{userId}/{nonoId}"), method = RequestMethod.POST)
+    @RequestMapping(value = ("/api/updateIsSolved/{userId}/{nonoId}"))
     @ResponseBody
     public String updateIsSolved(UserNonoDTO unDTO){
         log.info(getClass().getName() + ": updateIsSolved start!!!!!");
+        log.info(String.valueOf(unDTO.getNonoId()));
+        log.info(String.valueOf(unDTO.getUserId()));
+
         String msg ="";
         mdao.updateUserNonoIsSolved(unDTO);
         msg = "성공";
@@ -360,10 +331,12 @@ public class MainController {
     }
 
     @GetMapping("/nonobox")
-    public String getIngUserNono(Model model) {
-    List<UserNonoVO> userNonnolist = mdao.selectAllNoNo();
-//        List<UserNonoDTO> nonoList = mainMapper.selectUserNono(userId);
-//        System.out.println(userNonnolist.get(0).getUserNonoId());
+    public String getIngUserNono(Model model, HttpSession session) {
+        String redirectLogin = isUserIdNullthenRedirect(session);
+        if(!redirectLogin.equals("")) {
+            return redirectLogin;
+        }
+        List<UserNonoVO> userNonnolist = mdao.selectAllNoNo();
         model.addAttribute("nonoList", userNonnolist);
 
         return "/nonobox";
@@ -372,9 +345,7 @@ public class MainController {
     public String getIngUserNono(@PathVariable(value = "levelType")int levelType, Model model) {
         List<UserNonoVO> userNonnolist = mdao.selectNonoByLevel(levelType);
         log.info(userNonnolist.get(0).toString());
-//        List<UserNonoDTO> nonoList = mainMapper.selectUserNono(userId);
-//        System.out.println(userNonnolist.get(0).getUserNonoId());
-          model.addAttribute("nonoList", userNonnolist);
+        model.addAttribute("nonoList", userNonnolist);
 
         return "/nonobox";
     }
@@ -386,13 +357,14 @@ public class MainController {
         int proslen = pros.length;
         StringBuilder sb = new StringBuilder();
 
-        for(int i=0; i<48; i++){
+        for(int i=54; i<55; i++){
             sb.append(String.valueOf(pros[i])).append(",");
         }
 
 
         return sb.toString();
     }
+    ////////////////////////////////DB 노노 데이터 저장 함수들/////////////////////////////////////
     @GetMapping("/missionListBronze")
     @ResponseBody
     public String missionList(){
@@ -411,13 +383,13 @@ public class MainController {
 
     @GetMapping("/missionListSilver")
     @ResponseBody
-    public String missionListSilver(){//3개
+    public String missionListSilver(){//6개
         int [] pros = {1015, 1018, 1026, 1049, 1057, 1059, 1064, 1065, 1120, 1158, 1205, 1235, 1244, 1246, 1269, 1302, 1331, 1337, 1358, 1359, 1388, 1487, 1491, 1544, 1590, 1620, 1622, 1639, 1680, 1740, 1748, 1755, 1758, 1764, 1812, 1822, 1835, 1862, 1895, 1907, 1920, 1925, 1940, 1969, 1980, 1985, 2003, 2029, 2034, 2090, 2164, 2217, 2223, 2331, 2358, 2417, 2422, 2485, 2491, 2567, 2578, 2670, 2678, 2766, 2776, 2799, 2811, 2839, 2840, 2847, 2865, 2870, 2936, 2960, 2980, 3022, 3036, 3048, 3097, 3100, 3152, 3213, 3251, 3254, 3277, 3285, 3340, 3443, 3451, 3518, 3532, 3842, 3986, 4096, 4119, 4126, 4134, 4137, 4154, 4166, 4197, 4236, 4259, 4279, 4282, 4300, 4309, 4313, 4322, 4340, 4353, 4363, 4368, 4389, 4391, 4394, 4396, 4406, 4411, 4423, 4426, 4466, 4475, 4508, 4540, 4548, 4598, 4621, 4628, 4668, 4674, 4676, 4771, 4801, 4836, 4839, 4865, 4881, 4911, 4921, 4949, 4980, 4981, 4988, 4992, 5059, 5104, 5115, 5172, 5221, 5230, 5247, 5346, 5366, 5390, 5399, 5437, 5443, 5534, 5560, 5568, 5591, 5609, 5614, 5623, 5637, 5667, 5680, 5688, 5705, 5716, 5723, 5756, 5763, 5766, 5787, 5801, 5883, 5930, 5966, 5967, 5985, 5991, 6001, 6053, 6056, 6077, 6092, 6111, 6127, 6148, 6149, 6165, 6186, 6187, 6203, 6230, 6245, 6270, 6312, 6341, 6513, 6514, 6516, 6518, 6537, 6538, 6545, 6634, 6640, 6666, 6683, 6705, 6746, 6754, 6770, 6781, 6826, 6827, 6861, 6863, 6906, 6931, 6954, 6959, 6973, 7095, 7114, 7121, 7159, 7222, 7224, 7238, 7304, 7374, 7387, 7397, 7459, 7515, 7530, 7532, 7564, 7585, 7587, 7640, 7683, 7693, 7800, 7801, 7803, 7830, 7846, 7847, 7848, 8029, 8073, 8261, 8362, 8419, 8529, 8544, 8575, 8600, 8607, 8608, 8609, 8625, 8641, 8662, 8666, 8667, 8673, 8675, 8680, 8682, 8726, 8737, 8761, 8762, 8773, 8795, 8808, 8819, 8891, 8896, 8922, 8976, 9012, 9117, 9172, 9215, 9242, 9280, 9290, 9291, 9309, 9322, 9357, 9372, 9399, 9400, 9414, 9417, 9442, 9471, 9479, 9491, 9507, 9575, 9609, 9612, 9613, 9631, 9656, 9693, 9728, 9770, 9780, 9787, 9819, 9830, 9834, 9842, 9843, 9855, 9973, 9981, 10085, 10139, 10157, 10184, 10209, 10211, 10225, 10261, 10328, 10342, 10353, 10378, 10432, 10459, 10489, 10495, 10546, 10594, 10604, 10610, 10656, 10657, 10738, 10765, 10773, 10774, 10816, 10825, 10828, 10845, 10866, 10882, 10892, 10897, 10981, 10994, 11029, 11039, 11047, 11086, 11125, 11142, 11187, 11254, 11270, 11289, 11315, 11344, 11345, 11366, 11371, 11399, 11419, 11502, 11507, 11508, 11538, 11558, 11564, 11582, 11652, 11656, 11785, 11815, 11916, 11946, 11947, 11955, 11972, 12000, 12042, 12043, 12062, 12068, 12072, 12080, 12084, 12110, 12175, 12194, 12204, 12246, 12248, 12260, 12261, 12266, 12267, 12268, 12331, 12336, 12409, 12413, 12491, 12493, 12503, 12512, 12513, 12590, 12597, 12598, 12599, 12641, 12683, 12709, 12712, 12724, 12725, 12755, 12782, 12788, 12873, 12927, 12971, 12981, 13015, 13047, 13116, 13170, 13217, 13226, 13229, 13243, 13268, 13411, 13413, 13472, 13473, 13527, 13567, 13594, 13635, 13676, 13693, 13699, 13706, 13718, 13732, 13733, 13764, 13836, 13845, 13900, 13923, 13986, 14008, 14010, 14042, 14113, 14140, 14244, 14291, 14292, 14315, 14355, 14357, 14375, 14381, 14382, 14383, 14387, 14394, 14397, 14402, 14455, 14468, 14469, 14495, 14536, 14584, 14594, 14602, 14612, 14670, 14680, 14753, 14762, 14767, 14783, 14911, 14936, 14984, 15017, 15088, 15118, 15120, 15198, 15233, 15282, 15287, 15360, 15387, 15407, 15419, 15426, 15430, 15436, 15489, 15577, 15624, 15725, 15736, 15761, 15763, 15788, 15828, 15830, 15832, 15970, 16006, 16086, 16162, 16173, 16177, 16179, 16200, 16237, 16261, 16293, 16300, 16439, 16450, 16460, 16471, 16488, 16499, 16524, 16609, 16666, 16677, 16689, 16692, 16738, 16850, 16951, 16960, 17028, 17057, 17164, 17198, 17203, 17219, 17254, 17262, 17266, 17287, 17296, 17357, 17419, 17521, 17572, 17637, 17756, 17797, 17847, 17858, 17870, 17891, 17894, 17901, 17906, 17938, 17968, 17998, 18009, 18018, 18100, 18101, 18110, 18209, 18258, 18294, 18295, 18332, 18384, 18422, 18688, 18881, 18987, 19025, 19179, 19607, 19636, 19768, 19769, 19775, 19780, 19788, 19805, 19844, 19874, 19878, 19879, 19887, 19939, 19957, 19971, 19981, 20004, 20029, 20044, 20095, 20125, 20244, 20273, 20363, 20381, 20382, 20388, 20436, 20458, 20470, 20493, 20502, 20507, 20548, 20551, 20569, 20732, 20750, 20762, 20835, 20856, 20857, 20868, 20937, 21047, 21198, 21361, 21417, 21437, 21554, 21557, 21597, 21650, 21680, 21704, 21716, 21748, 21885, 21920, 22017, 22035, 22062, 22242, 22243, 22246, 22285, 22290, 22291, 22332, 22333, 22334, 22335, 22336, 22338, 22351, 22369, 22531, 22548, 22549, 22637, 22657, 22788, 22934, 22993, 23038, 23056, 23076, 23301, 23305, 23391, 23394, 23516, 23534, 23717, 23731, 23785, 23826, 23827, 23842, 23914, 23967, 24061, 24199, 24293, 24300, 24301, 24308, 24314, 24315, 24331, 24362, 24364, 24371, 24407, 24417, 24418, 24431, 24448, 24465, 24494, 24498, 24499, 24571, 24605, 24624, 24626, 24771, 24793, 24811, 24839, 24847, 24852, 24875, 24924, 24928, 24933, 25039, 25044, 25085, 25089, 25153, 25179, 25184, 25185, 25192, 25204, 25214, 25275, 25287, 25288, 25329, 25338, 25344, 25379, 25426, 25449, 25465, 25550, 25694, 25706, 25746, 25776, 25818, 25842, 25873, 25882, 25943, 25955, 25972, 26022, 26031, 26043, 26060, 26069, 26070, 26083, 26099, 26123, 26168, 26257, 26295, 26317, 26433, 26496, 26558, 26587, 26596, 26700, 26753, 26770, 26778, 26876};
         int proslen = pros.length;
         StringBuilder sb = new StringBuilder();
 
 
-        for(int i=71; i<122; i++){
+        for(int i=256; i<323; i++){
             sb.append(String.valueOf(pros[i])).append(",");
         }
 
@@ -518,15 +490,6 @@ public class MainController {
     //백준 사용자 푼 문제 수 가져오기.
     public int getUserBaekData(String baekjoonId) {
         log.info(getClass().getName() + "getUserBackData start!!!!!!!");
-//        String userId = "";
-        //Scanner sc = new Scanner(System.in);
-        //System.out.println("백준 아이디를 입력해주세요.");
-        //System.out.print("아이디 : ");
-
-        //userId = sc.next();
-        //System.out.println("3초정도 소요됩니다.");
-
-//        userId = "tmdgus5611";
         StringBuilder url = new StringBuilder();
 
         url.append("https://www.acmicpc.net/user/");
@@ -556,6 +519,15 @@ public class MainController {
             System.out.println(ie1.next().text());
         }
         return element.select("a").size();
+    }
+
+    public String isUserIdNullthenRedirect(HttpSession session) {
+        if(session.getAttribute("value") == null) {
+            System.out.println("************ userId is NULL ************");
+            return "redirect:/login";
+        } else {
+            return "";
+        }
     }
 }
 
