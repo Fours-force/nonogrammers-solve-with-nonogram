@@ -4,6 +4,7 @@ import com.dottree.nonogrammers.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -116,14 +117,17 @@ public class PostController {
         return "redirect:/detail?postId=" + postId;
     }
     @RequestMapping("/posting")
-    public String posting(){
+    public String posting(Model model, @RequestHeader String referer){
+        model.addAttribute("ref", referer);
         return "write";
     }
+
     @PostMapping("/postDelete")
     public String postDelete(PostDTO pd){
         boolean result= dao.deletePost(pd);
         return "redirect:/post";
     }
+
     @PostMapping("/post/write")
     public String writePost(PostDTO postDTO,
                             UploadImageVO vo,
