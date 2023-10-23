@@ -82,7 +82,7 @@ public interface MainMapper {
 
     // user_solved_count에서 solvedCount조회
     @Select("select solvedCount from user_solved_count where userId = #{userId}")
-    public int selectUserSolvedCount(UserDotDTO udDTO);
+    public Integer selectUserSolvedCount(UserDotDTO udDTO);
 
     @Select("SELECT nonoId, nonoImgUrl, levelType from nono where levelType = #{levelType}")
     public List<UserNonoVO> selectNonoByLevel(@Param("levelType")int levelType);
