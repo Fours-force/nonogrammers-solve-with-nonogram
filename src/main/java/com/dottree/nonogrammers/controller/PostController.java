@@ -1,18 +1,17 @@
 package com.dottree.nonogrammers.controller;
 import com.dottree.nonogrammers.dao.PostMapper;
-import com.dottree.nonogrammers.domain.CommentDTO;
-import com.dottree.nonogrammers.domain.FileDTO;
-import com.dottree.nonogrammers.domain.UploadImageVO;
+import com.dottree.nonogrammers.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import com.dottree.nonogrammers.domain.PostDTO;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -55,16 +54,25 @@ public class PostController {
         mav.setViewName("community");
         return mav;
     }
+    @GetMapping("/post/nono")
+    public ModelAndView nono(){
+        List<PostDTO> list= dao.listNN();
+        ModelAndView mav=new ModelAndView();
+        mav.addObject("list",list);
+        mav.setViewName("community");
+        return mav;
+    }
     @RequestMapping("/detail")
     public ModelAndView detail(String postId){
         ModelAndView mav=new ModelAndView();
-        PostDTO pos= dao.detailss(postId);
         dao.incrementViewCount(postId);
+        PostDTO pos= dao.detailss(postId);
         List<CommentDTO> list= dao.commList(postId);
         List<Integer> counts = dao.counting(postId);
         mav.addObject("pos", pos);
         mav.addObject("comm",list);
         mav.addObject("counts",counts);
+        mav.addObject("nav", "community" );
         mav.setViewName("detail");
         return mav;
     }
@@ -77,7 +85,7 @@ public class PostController {
         return mav;
     }
     @PostMapping("/detailComment")
-        public String detailComment(CommentDTO cd) {
+    public String detailComment(CommentDTO cd) {
         boolean result= dao.insertComm(cd);
         ModelAndView mav=new ModelAndView();
         PostDTO pos= dao.detailss(String.valueOf(cd.getPostId()));
@@ -86,6 +94,38 @@ public class PostController {
         mav.addObject("comm",list);
         System.out.println(cd.getPostId());
         return "redirect:/detail?postId=" + cd.getPostId();
+    }
+    @PostMapping("/deleteComment")
+    public String deleteComment(@RequestParam String postId,CommentDTO cd){
+        boolean result= dao.deleteComm(cd);
+        ModelAndView mav=new ModelAndView();
+        PostDTO pos= dao.detailss(postId);
+        List<CommentDTO> list=dao.commList(postId);
+        mav.addObject("pos", pos);
+        mav.addObject("comm",list);
+        return "redirect:/detail?postId=" + postId;
+    }
+    @PostMapping("/editComment")
+    public String editComment(@RequestParam String postId,CommentDTO cd){
+        boolean result= dao.editComm(cd);
+        ModelAndView mav=new ModelAndView();
+        PostDTO pos= dao.detailss(postId);
+        List<CommentDTO> list=dao.commList(postId);
+        mav.addObject("pos", pos);
+        mav.addObject("comm",list);
+        System.out.println(postId);
+        return "redirect:/detail?postId=" + postId;
+    }
+    @RequestMapping("/posting")
+    public String posting(Model model, @RequestHeader String referer){
+        model.addAttribute("ref", referer);
+        return "write";
+    }
+
+    @PostMapping("/postDelete")
+    public String postDelete(PostDTO pd){
+        boolean result= dao.deletePost(pd);
+        return "redirect:/post";
     }
 
     @PostMapping("/post/write")
@@ -134,4 +174,38 @@ public class PostController {
         return "redirect:/post";
     }
 
+    @RequestMapping(value = "/post/like", produces = "application/json; charset=utf-8", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseModel postLike(LikeDTO dto){
+
+        ResponseModel response = new ResponseModel();
+        int isLike = dao.getUserPostLike(dto); // 해당 유저가 해당 게시글을 좋아요 했는지 여부 조회
+
+        if (isLike == 0){ // 0이면, 이제 좋아요를 누른 것이므로 좋아요 등록
+            boolean result = dao.addPostLike(dto);
+            if (result){
+                response.setStatusCode(201);
+            }
+            else {
+                response.setStatusCode(500);
+            }
+        }
+        else { // 1이면, 이미 좋아요를 누른 것이므로 좋아요 취소
+            boolean result = dao.delPostLike(dto);
+            if (result){
+                response.setStatusCode(204);
+            }
+            else {
+                response.setStatusCode(500);
+            }
+        }
+        // 해당 게시글의 좋아요 수
+        int getPostLike = dao.getPostLike(dto.getPostId());
+        HashMap<String, Object> mapData = new HashMap<>();
+        mapData.put("data", getPostLike);
+
+        response.setTitle("Like");
+        response.setMapData(mapData);
+        return response;
+    }
 }

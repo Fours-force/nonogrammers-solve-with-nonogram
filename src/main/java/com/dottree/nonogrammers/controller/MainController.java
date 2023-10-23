@@ -156,12 +156,12 @@ public class MainController {
         mav.addObject("baekjoonUserIdStatus", "1");
         mav.addObject("nonoId",unDTO.getNonoId());
 
-        System.out.println(totalRowList.get(1).size());
-            for(int i=0; i<row; i++){
-                for( int j = 0; j < totalRowList.get(0).size(); j++) {
-                    System.out.print(totalRowList.get(i).get(j).getColor()+" ,");
-                }
-            }
+//        System.out.println(totalRowList.get(1).size());
+//            for(int i=0; i<48; i++){
+//                for( int j = 0; j < totalRowList.get(0).size(); j++) {
+//                    System.out.print(totalRowList.get(i).get(j).getColor()+" ,");
+//                }
+//            }
         return mav;
     }
 

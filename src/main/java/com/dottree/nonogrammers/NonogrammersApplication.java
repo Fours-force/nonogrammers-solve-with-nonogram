@@ -9,8 +9,8 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = {"com.dottree.nonogrammers", "templates"})
 @MapperScan(value={"com.dottree.nonogrammers.dao"})
 public class NonogrammersApplication {
-	public static void main(String[] args) {
-		SpringApplication.run(NonogrammersApplication.class, args);
+		public static void main(String[] args) {
+			SpringApplication.run(NonogrammersApplication.class, args);
 	}
 
 }
