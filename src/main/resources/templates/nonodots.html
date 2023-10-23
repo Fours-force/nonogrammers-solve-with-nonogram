@@ -16,10 +16,10 @@
 
 <body>
 <th:block layout:fragment="content">
-    <div id="wapper" class="mx-60 max-w-screen-xl h-auto min-h-full mb-5">
-        <div class="w-full mb-4 test flex md:flex-col lg:flex-row">
+    <div id="wapper" class="mx-auto max-w-screen-xl h-auto min-h-full mb-5">
+        <div class="w-full mb-4 test flex md:flex-col lg:flex-row h-6/6">
             <div class="font-super256 min-w-max movebtn eightbit-btn" onclick="goback()">BACK</div>
-            <div>
+            <div class="h-6/6">
                 <div class="w-full mt-4 bg-gray-50 rounded-full dark:bg-gray-700">
                     <div id="progressBar"
                         class=" text-xs font-medium bg-blue-300 text-center p-0.5 leading-none rounded-full memberCountCon"
@@ -29,7 +29,7 @@
                     </div>
                 </div>
                 <br>
-                <div id="nonoBoxBolder" class="mb-4">
+                <div id="nonoBoxBolder" class="mb-4 h-6/6">
                     <div id="NonoboxContainer">
                         <div th:each="row : ${dotList}">
                             <div class="rowContainer">
@@ -54,7 +54,6 @@
         let progressBar = document.getElementById("progressBar");
         let allDots = document.querySelectorAll(".nonoDot");
         let allRowDivs = document.querySelectorAll(".rowContainer");
-        let bar = 45;
         var dotcntt = 0;
         var dotList = [[${dotList}]];
         var urlAry = [[${urlAry}]];
@@ -82,7 +81,6 @@
                 //문제 링크 설정
                 allRowDivs[i].addEventListener("click", function () {
                     solvingRow = i+1;
-                    window.alert(solvingRow);
                     updateSolvingRow();
                     location.href = `https://www.acmicpc.net/problem/${urlAry[i]}`;
                 });
@@ -91,21 +89,14 @@
                     if (f.target !== f.currentTarget) {
                         return;
                     }
-                    console.log("변수 f : " + f);
-                    console.log("변수 f의 target : " + f.target);
-                    console.log("mouseover이벤트 발생!!~");
                     let temp = f.target;
                     temp.style.borderBottom = "10px solid blue";
-                    console.log("이벤트 발생 방지!!!");
                 }, false);
                 //mouseout 이벤트 설정
                 allRowDivs[i].addEventListener("mouseout", (f) => {
                     if (f.target !== f.currentTarget) {
                         return;
                     }
-                    console.log("변수 f : " + f);
-                    console.log("변수 f의 target : " + f.target);
-                    console.log("mousedown이벤트 발생!!~");
                     let temp = f.target;
                     temp.style.borderBottom = "none";
                 }, false);
@@ -123,7 +114,6 @@
             selectSolvingRow();
             selectUserSolvedDots();
         }
-
         function check(){
             const xhr = new XMLHttpRequest();
             xhr.onload = function () {
@@ -133,7 +123,6 @@
                     if(xhr.responseText === "1"){
                         window.alert("문제 추가하러 갑시다");
                         insertDots();
-                        window.location.reload();
                     }else{
                         window.alert("새로 푼 문제가 없습니다.");
 
@@ -148,7 +137,6 @@
             const xhr = new XMLHttpRequest();
             xhr.onload = function () {
                 if (xhr.status == 200) {
-                    window.prompt("풀고있는 행 확인하세요.");
                 }
             }
             xhr.open('GET', `/api/updateSolvingRow/${userId}/${nonoId}/${solvingRow}`);
@@ -172,20 +160,18 @@
         function insertDots(){
             window.alert("문제 추가 시작~~");
             var missionList = new Array();
-            allDotsInRow = allRowDivs[solvingRow].querySelectorAll(".nonoDot");
+            allDotsInRow = allRowDivs[solvingRow-1].querySelectorAll(".nonoDot");
             for(let element of allDotsInRow){
                 var data = new Object();
                 data.dotId = element.id.substring(3);
-
                 missionList.push(data);
             }
             var jsonData = JSON.stringify(missionList);
-            console.log(jsonData);
+           // console.log(jsonData);
 
             let xhr = new XMLHttpRequest();
             xhr.onload = function() {
                 if (xhr.status == 200) {
-
                     window.location.reload();
                 }
             };
@@ -200,9 +186,9 @@
             xhr.onload = () => {
                 if(xhr.status == 200) {
                     let jsonData = JSON.parse(xhr.responseText);
-                    //console.log("받아온 jsonData : "+jsonData);
+                    console.log("받아온 jsonData : "+jsonData);
                     for (let data of jsonData){
-                        //console.log("받아온 jsonData의 객체" + data.dotId);
+                        console.log("받아온 jsonData의 객체" + data.dotId);
                         allDots[Number(data.dotId)].style.opacity = "1";
                         // allDots[dotcntt].style.opacity = "0.2";
                     }
@@ -230,7 +216,11 @@
         }
 
         function goback(){
-            location.href=`/nonodots/${userId}/${nonoId-1}/${baekjoonId}`;
+            if(`${nono}`==1){
+                window.alert("가장 처음 노노입니다.")
+            }else{
+                location.href=`/nonodots/${userId}/${nonoId-1}/${baekjoonId}`;
+            }
         }
 
        /* window.onload = function createPicture() {
