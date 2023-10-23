@@ -25,12 +25,22 @@ nickName.addEventListener("blur", function (e) { removeBorder(e, "nickNameDiv") 
 function checkExists(e, type) {
     let inputElement = document.getElementById(`${type}`);
     var inputValue = inputElement.value; // input 요소의 값
+    var statusText = document.getElementById(`${type}Status`) // 인증 결과 메세지 출력
+
+    if (inputValue === ""){
+        statusText.innerText = '값을 입력하세요!';
+        return;
+    }
+
+    if (/\s/.test(inputValue)){
+        statusText.innerText = '공백은 허용하지 않아요!!';
+        return;
+    }
 
     xhr = new XMLHttpRequest();
     xhr.onload = function () {
         if (xhr.status === 200) {
             var response = JSON.parse(xhr.responseText); //{statusCode: 200, title: "email", data: null, message: "OK"}
-            var statusText = document.getElementById(`${type}Status`) // 인증 결과 메세지 출력
             if (response['statusCode'] == 200) {
                 statusText.innerText = '인증 완료!😀';
             } else {
@@ -84,7 +94,6 @@ function submitEventHandler(e) {
 
 function checkBlank(e){
     var type = e.target.name;
-    console.log(type);
     var hasSpaces = /\s/.test(e.target.value);
     if (hasSpaces){
         document.getElementById(`${type}Status`).innerText = "공백은 허용하지 않아요!"
