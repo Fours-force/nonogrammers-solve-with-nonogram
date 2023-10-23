@@ -228,7 +228,7 @@ public class MyPageController {
             return redirectLogin;
         }
 
-        List<UserNonoVO> userNonnolist = userMapper.selectUserNonoByIsSolved(userId, 0);
+        List<UserNonoVO> userNonnolist = userMapper.selectUserNonoByIsSolved(userId, 1);
         model.addAttribute("title", "내가 풀고 있는 노노들");
         model.addAttribute("isSolved", 0);
         model.addAttribute("nonoList", userNonnolist);
@@ -262,7 +262,7 @@ public class MyPageController {
         if(!redirectLogin.equals("")) {
             return redirectLogin;
         }
-        List<UserNonoVO> userNonnolist = userMapper.selectUserNonoByIsSolved(userId, 1);
+        List<UserNonoVO> userNonnolist = userMapper.selectUserNonoByIsSolved(userId, 2);
         model.addAttribute("title", "내가 푼 노노들");
         model.addAttribute("isSolved", 1);
         model.addAttribute("nonoList", userNonnolist);
