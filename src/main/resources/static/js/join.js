@@ -13,6 +13,14 @@ document.getElementById("nickName").addEventListener("input", checkBlank);
 document.getElementById("password").addEventListener("input", checkBlank);
 document.getElementById("baekjoonUserId").addEventListener("input", checkBlank);
 
+// border
+email = document.getElementById("email");
+nickName = document.getElementById("nickName");
+
+email.addEventListener("focus", function (e) { drawBorder(e, "emailDiv") });
+email.addEventListener("blur", function (e) { removeBorder(e, "emailDiv") });
+nickName.addEventListener("focus", function (e) { drawBorder(e, "nickNameDiv") });
+nickName.addEventListener("blur", function (e) { removeBorder(e, "nickNameDiv") });
 
 function checkExists(e, type) {
     let inputElement = document.getElementById(`${type}`);
@@ -85,3 +93,12 @@ function checkBlank(e){
     }
 }
 
+function drawBorder(e, type){
+    const divDom = document.getElementById(type);
+    divDom.style.outline = "2px solid #74DBEF";
+}
+
+function removeBorder(e, type){
+    const divDom = document.getElementById(type);
+    divDom.style.outline = "";
+}

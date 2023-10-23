@@ -19,18 +19,20 @@
           <!-- 이메일 입력 -->
           <div>
             <label for="email" class="block font-brr text-sm leading-6 text-gray-900">이메일</label>
-            <div class="mt-2 flex flex-wrap rounded-sm border border-main-skyblue bg-white p-1">
+            <div id="emailDiv" class="mt-2 flex flex-wrap rounded-sm border border-main-skyblue bg-white p-1">
               <input
                 name="email"
                 id="email"
                 type="email"
                 autocomplete="email"
-                placeholder="&nbsp;이메일을 입력해주세요"
+                placeholder="이메일을 입력해주세요"
                 required
-                class="outline:none basis-3/4 rounded-sm py-2 text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm sm:leading-6"
+                class="outline-none border-none basis-3/4 rounded-sm py-2 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white sm:text-sm sm:leading-6"
               />
               <!-- 이메일 존재 여부 확인 버튼 -->
-              <button id="btnEmailCheck" type="button" class="text-md border-black-800 basis-1/4 rounded-md border border-main-skyblue bg-main-skyblue font-brr text-white hover:bg-user-chk-btn">
+              <button id="btnEmailCheck" type="button" class="text-md
+
+              basis-1/4 rounded-md border border-main-skyblue bg-main-skyblue font-brr text-white hover:bg-user-chk-btn">
                 이메일 인증
               </button>
               <span id="emailStatus" class="text-xs text-red-500"></span>
@@ -40,17 +42,17 @@
           <!-- 닉네임 입력-->
           <div>
             <label for="nickName" class="block font-brr text-sm leading-6 text-gray-900">닉네임</label>
-            <div class="mt-2 flex flex-wrap rounded-sm border border-main-skyblue bg-white p-1">
+            <div id="nickNameDiv" class="mt-2 flex flex-wrap rounded-sm border border-main-skyblue bg-white p-1">
               <input
                 name="nickName"
                 id="nickName"
                 type="text"
-                placeholder="&nbsp;닉네임을 입력해주세요"
+                placeholder="닉네임을 입력해주세요"
                 required
-                class="outline:none basis-3/4 rounded-sm py-2 text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm sm:leading-6"
+                class="outline-none border-none basis-3/4 rounded-sm py-2 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white sm:text-sm sm:leading-6"
               />
               <!-- 닉네임 존재 여부 확인 버튼 -->
-              <button id="btnNicknameCheck" type="button" class="text-md border-black-800 basis-1/4 rounded-md border border-main-skyblue bg-main-skyblue font-brr text-white hover:bg-user-chk-btn">
+              <button id="btnNicknameCheck" type="button" class="text-md basis-1/4 rounded-md border border-main-skyblue bg-main-skyblue font-brr text-white hover:bg-user-chk-btn">
                 중복 확인
               </button>
               <span id="nickNameStatus" class="text-xs text-red-500"></span>
@@ -65,9 +67,9 @@
                 name="baekjoonUserId"
                 id="baekjoonUserId"
                 type="text"
-                placeholder="&nbsp;&nbsp;백준 ID를 입력해주세요"
+                placeholder="&nbsp;백준 ID를 입력해주세요"
                 required
-                class="block w-full rounded-sm border border-main-skyblue py-2 text-gray-900 focus:border-main-skyblue focus:outline-none focus:ring-2 focus:ring-main-skyblue sm:text-sm sm:leading-6"
+                class="block w-full rounded-sm border border-main-skyblue py-2 placeholder:text-gray-400 text-gray-900 focus:border-main-skyblue focus:outline-none focus:ring-2 focus:ring-main-skyblue sm:text-sm sm:leading-6"
               />
             </div>
             <span id="baekjoonUserIdStatus" class="text-xs text-red-500"></span>
@@ -81,9 +83,9 @@
                 name="password"
                 id="password"
                 type="password"
-                placeholder="&nbsp;&nbsp;영문자, 숫자, 특수문자 포함 최소 8~20자"
+                placeholder="&nbsp;영문자, 숫자, 특수문자 포함 최소 8~20자"
                 required
-                class="block w-full rounded-sm border border-main-skyblue py-2 text-gray-900 focus:border-main-skyblue focus:outline-none focus:ring-2 focus:ring-main-skyblue sm:text-sm sm:leading-6"
+                class="block w-full rounded-sm border border-main-skyblue py-2 placeholder:text-gray-400 text-gray-900 focus:border-main-skyblue focus:outline-none focus:ring-2 focus:ring-main-skyblue sm:text-sm sm:leading-6"
               />
               <span id="passwordStatus" class="text-xs text-red-500"></span>
             </div>
@@ -93,9 +95,9 @@
               <input
                 name="correctPassword"
                 type="password"
-                placeholder="&nbsp;&nbsp;비밀번호를 확인해주세요"
+                placeholder="&nbsp;비밀번호를 확인해주세요"
                 required
-                class="block w-full rounded-sm border border-main-skyblue py-2 text-gray-900 focus:border-main-skyblue focus:outline-none focus:ring-2 focus:ring-main-skyblue sm:text-sm sm:leading-6"
+                class="block w-full rounded-sm border border-main-skyblue py-2 placeholder:text-gray-400 text-gray-900 focus:border-main-skyblue focus:outline-none focus:ring-2 focus:ring-main-skyblue sm:text-sm sm:leading-6"
               />
             </div>
           </div>
