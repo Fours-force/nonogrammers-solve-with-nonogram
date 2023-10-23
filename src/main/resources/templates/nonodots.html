@@ -18,7 +18,7 @@
 <th:block layout:fragment="content">
     <div id="wapper" class="mx-60 max-w-screen-xl h-auto min-h-full mb-5">
         <div class="w-full mb-4 test flex md:flex-col lg:flex-row">
-            <div class="font-super256 min-w-max movebtn eightbit-btn">BACK</div>
+            <div class="font-super256 min-w-max movebtn eightbit-btn" onclick="goback()">BACK</div>
             <div>
                 <div class="w-full mt-4 bg-gray-50 rounded-full dark:bg-gray-700">
                     <div id="progressBar"
@@ -42,12 +42,12 @@
                 <div id="ListbtnContainer" class="flex">
                     <div class="font-super256 min-w-max movebtn eightbit-btn" onclick="check()">CHECK
                     </div>
-                    <div class="font-super256 min-w-max movebtn eightbit-btn" onclick="location.href='https://www.naver.com/'">LIST
+                    <div class="font-super256 min-w-max movebtn eightbit-btn" onclick="location.href='/nonobox'">LIST
                     </div>
                 </div>
                 <br>
             </div>
-            <div class="font-super256 min-w-max movebtn eightbit-btn">NEXT</div>
+            <div class="font-super256 min-w-max movebtn eightbit-btn" onclick="gonext()">NEXT</div>
         </div><br>
     </div>
     <script th:inline="javascript">
@@ -60,7 +60,7 @@
         var urlAry = [[${urlAry}]];
         let userId = [[${session.value.get("userId")}]];
         console.log("세션 유저 아이디 : " + userId);
-        let nonoId = 1;
+        let nonoId = [[${nonoId}]];
         let progress = [[${progress}]];
         if(progress == 100){
             updateSolvedStat();
@@ -223,6 +223,14 @@
             xhr.open('POST','/api/updateIsSolved/'+userId+'/'+nonoId);
             xhr.send("");
             window.location.reload();
+        }
+
+        function gonext(){
+            location.href=`/nonodots/${userId}/${nonoId+1}/${baekjoonId}`;
+        }
+
+        function goback(){
+            location.href=`/nonodots/${userId}/${nonoId-1}/${baekjoonId}`;
         }
 
        /* window.onload = function createPicture() {
