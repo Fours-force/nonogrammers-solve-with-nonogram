@@ -105,6 +105,7 @@ public class PostController {
         mav.addObject("comm",list);
         return "redirect:/detail?postId=" + postId;
     }
+
     @PostMapping("/editComment")
     public String editComment(@RequestParam String postId,CommentDTO cd){
         boolean result= dao.editComm(cd);
@@ -120,6 +121,62 @@ public class PostController {
     public String posting(Model model, @RequestHeader String referer){
         model.addAttribute("ref", referer);
         return "write";
+    }
+    @RequestMapping("/editing")
+    public ModelAndView editing(PostDTO pd){
+        ModelAndView mav=new ModelAndView();
+        PostDTO pos= dao.detailss(String.valueOf(pd.getPostId()));
+        mav.addObject("pos", pos);
+        mav.setViewName("editWrite");
+        return mav;
+    }
+//    @PostMapping("/editPosts")
+//    public String editPosts(@RequestParam String postId,PostDTO pd){
+//        boolean result= dao.editPost(pd);
+//        return "redirect:/detail?postId=" + postId;
+//    }
+    @PostMapping("/editPosts")
+    public String editPosts(PostDTO postDTO,
+                            UploadImageVO vo,
+                            FileDTO fileDTO,
+                            @RequestParam("category") String category){
+            try{
+                postDTO.setBoardType(dao.getBoardType(category));
+                boolean insertResult = dao.editPost(postDTO);
+                MultipartFile[] uploadImageFiles = vo.getUploadImageFiles();
+
+                if (insertResult && (!uploadImageFiles[0].isEmpty())) {
+                    String path = System.getProperty("user.dir") + "/src/main/resources/static/images/post/";
+                    fileDTO.setPostId(postDTO.getId());
+
+                    for (MultipartFile mfile : uploadImageFiles) {
+                        String filename = UUID.randomUUID().toString();
+                        System.out.println(mfile);
+                        try {
+                            // 파일 정보
+                            String originalFilename = mfile.getOriginalFilename();
+                            String contentType = mfile.getContentType(); // MIME ex) image/jpeg, image/png,
+                            String fileExtension = "." + (contentType.substring(contentType.indexOf("/") + 1));
+
+                            // 파일 저장
+                            File filepath = new File(path + filename + fileExtension);
+                            mfile.transferTo(filepath);
+
+                            // Insert - 파일 테이블
+                            fileDTO.setFilename(originalFilename.substring(0, originalFilename.indexOf("."))); // 클라이언트가 제공한 파일명
+                            fileDTO.setFileExtension(fileExtension);
+                            fileDTO.setFileUrl("/images/post/" + filename + fileExtension);
+                            boolean uploadResult = dao.updateUploadImage(fileDTO);
+
+                        } catch (IOException ioe) {
+                            ioe.printStackTrace();
+                        }
+                    }
+                }
+            } catch(Exception e){
+                e.printStackTrace();
+            }
+            return "redirect:/detail?postId=" + String.valueOf(postDTO.getPostId());
     }
 
     @PostMapping("/postDelete")
