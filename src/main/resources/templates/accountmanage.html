@@ -61,8 +61,6 @@
                                          class="w-40 h-40 transition duration-200 border-2 rounded-full border-nono-mypg-item-border hover:scale-110 hover:shadow-xl">
                                 </div>
                                 <form enctype="multipart/form-data" id="profileImgFile" class="flex flex-col justify-between items-center">
-<!--                                    th:action="|/api/change-profileimgurl/${userId}|" method="post"-->
-<!--                                    <input type="file" name="profileImg" multiple class="block rounded-md px-5 py-2.5 text-md font-medium"/>-->
                                     <input name="profileImg" class="block w-full mb-5 text-xs text-gray-900 rounded-lg cursor-pointer bg-white focus:outline-none" id="profileImgForm" type="file" accept=".jpg, .png, .jpeg">
                                     <button type="button" id="profileImgChgBtn"
                                         class="w-40 px-3 py-2.5 mt-2 mb-2 text-md font-medium text-gray-900 bg-white border border-gray-200 rounded-lg h-fit focus:outline-none hover:bg-gray-100 hover:text-main-blue focus:z-10 focus:ring-4 focus:ring-gray-100 ">
@@ -117,12 +115,9 @@
             </div>
         </div>
         <script th:inline="javascript">
-            //alert([[${userDTO.profileImgUrl}]]);
             const nickNameDupBtn = document.querySelector('#nickNameDupBtn');
             const nickNameDupData = function() {
                 let afterNickName = document.getElementById('nickName').value;
-
-
 
                 fetch("/api/isduplicated-nickname/"+[[${afterNickName}]], {
                     method: 'post',
@@ -191,7 +186,7 @@
                     .then((data) => {
 
                         if(data.result == 200) {
-                            location.reload();
+                            alert("프로필 이미지가 변경되었습니다.");
                         } else {
                             alert("선택된 이미지가 없습니다.");
                         }
@@ -209,6 +204,27 @@
                 };
                 reader.readAsDataURL(imgInput.files[0]);
             });
+
+            const withDrawUserBtn = document.querySelector('#withdraw-user-btn');
+            const withDrawUserPutData = function() {
+
+                fetch("/api/withdraw-user/"+[[${userId}]], {
+                    method: 'put',
+                    headers: {
+                        'content-type': 'application/json'
+                    }
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if(data.result == 200) {
+                            alert(data.msg);
+                            location.href = "/";
+                        } else {
+                            alert(data.msg);
+                        }
+                    });
+            };
+            withDrawUserBtn.addEventListener("click", withDrawUserPutData);
         </script>
     </th:block>
 </body>
