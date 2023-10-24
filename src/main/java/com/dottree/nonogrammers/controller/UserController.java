@@ -133,7 +133,8 @@ public class UserController {
     @PostMapping("/login")
     public String login(
             JoinDTO dto,
-            HttpServletRequest httpServletRequest
+            HttpServletRequest httpServletRequest,
+            Model model
             ){
         Integer userId = dao.getLogin(dto.getEmail(), dto.getPassword());
         if (userId != null){
@@ -151,18 +152,17 @@ public class UserController {
             }
             session = httpServletRequest.getSession(true);  // 새로운 세션을 생성
             session.setAttribute("value", sessionValue);
-
-
             return "redirect:/";
         } else{
             HttpSession session = httpServletRequest.getSession(false);
             if (session != null) {
                 session.invalidate();
             }
-            ResponseModel response = new ResponseModel();
-            response.setTitle("Login");
-            response.setStatusCode(404);
-            response.setMessage("이메일 주소나 비밀번호가 틀립니다");
+            model.addAttribute("message", "이메일 주소 혹은 비밀번호가 맞지 않습니다");
+//            ResponseModel response = new ResponseModel();
+//            response.setTitle("Login");
+//            response.setStatusCode(404);
+//            response.setMessage("이메일 주소나 비밀번호가 틀립니다");
             return "login";
         }
     }

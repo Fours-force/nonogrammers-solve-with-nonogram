@@ -31,7 +31,7 @@ public interface UserMapper {
     );
 
     // 로그인 - 이메일, 비밀번호 확인
-    @Select("select userId from user where email = #{email} and password = #{password}")
+    @Select("select userId from user where email = #{email} and password = #{password} and statusCode=1")
     public Integer getLogin(@Param("email") String email,
                         @Param("password") String password
     );
