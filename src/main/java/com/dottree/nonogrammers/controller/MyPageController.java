@@ -68,11 +68,16 @@ public class MyPageController {
 //        isUserIdNullthenRedirect(userId);
         boolean result = postMapper.updatePostByPostIdAndUserId(postDTO.getTitle(), postDTO.getContent(), postId, userId);
 //        postDTO = postMapper.detailss(String.valueOf(postId));
+        UserDTO userDTO = userMapper.selectUserByUserId(userId);
         List<PostDTO> postDtoList = postMapper.selectPostList(userId);
         userPostVO.setUserPostList(postDtoList);
+        userPostVO.setUserDTO(userDTO);
         userPostVO.setUserId(userId);
         if(result) {
+            model.addAttribute("msg", "게시글이 수정되었습니다.");
             model.addAttribute(userPostVO);
+        } else {
+            model.addAttribute("msg", "게시글 수정이 실패했습니다.");
         }
 
         return "mypost";
@@ -132,18 +137,20 @@ public class MyPageController {
     @PutMapping(value = "/api/withdraw-user/{userId}", produces = "application/json; charset=utf-8")
     @ResponseBody
     public HashMap<String, Object> withDrawUser(@PathVariable("userId") Integer userId,
-                                                @RequestBody UserDTO userDTO) {
+                                                HttpSession session) {
 
         HashMap<String, Object> map = new HashMap<>();
         //session에 로그인되어 있는 사용자로 select 해오고
         UserDTO user = userMapper.selectUserByUserId(userId); // session.getUserId()
         //사용자가 입력한 email과 같으면 delete
-        UserDTO inputUser = userMapper.selectUserByUserId(userDTO.getUserId());
+        UserDTO inputUser = userMapper.selectUserByUserId(user.getUserId());
         if(user != null && user.getEmail().equals(inputUser.getEmail())) {
             userMapper.updateStatusCode(user.getEmail(), 0);
             //session.removeAttribute();
             map.put("result", 200);
             map.put("msg", "탈퇴가 정상적으로 처리되었습니다."); //logout처리? session remove처리?
+            session.removeAttribute("value");
+
         } else {
             map.put("result", 404);
             map.put("msg", "유저 정보를 찾을 수 없습니다.");
