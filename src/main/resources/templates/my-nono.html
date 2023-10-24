@@ -36,7 +36,7 @@
                 class="grid grid-cols-1 gap-y-2 gap-x-2 lg:gap-y-1 lg:gap-x-1 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-3 xl:gap-y-2">
                 <th:block th:if="${isSolved eq 0}" th:each="nono : ${nonoList}">
                     <div class="w-6/6 bg-white p-6 mx-auto h-60 border-4 border-nono-mypg-item-border rounded-lg transition duration-200 hover:scale-105">
-                        <a th:href="@{|/nonodots/${userId}/${nono.nonoId}|}"
+                        <a th:href="@{|/nonodots/${session.value.get('userId')}/${nono.nonoId}/${session.value.get('baekjoonUserId')}|}"
                             class="mx-auto bg-white h-full">
                             <img th:src="@{${nono.getNonoImgUrl()}}"
                                 alt="" class="w-80 h-80 xl:h-48 xl:w-56 lg:h-72 lg:w-72 md:h-80 md:w-80 object-contain">
@@ -45,7 +45,7 @@
                 </th:block>
                 <th:block th:if="${isSolved eq 1}" th:each="nono : ${nonoList}">
                     <div class="w-6/6 bg-white p-6 mx-auto h-60 border-4 border-nono-mypg-item-border rounded-lg transition duration-200 hover:scale-105">
-                        <a th:href="@{|/nonodots/${userId}/${nono.nonoId}|}"
+                        <a th:href="@{|/nonodots/${session.value.get('userId')}/${nono.nonoId}/${session.value.get('baekjoonUserId')}|}"
                            class="mx-auto bg-white">
                             <img th:src="@{${nono.getNonoImgUrl()}}"
                                  alt="" class="w-80 h-80 xl:h-48 xl:w-56 lg:h-72 lg:w-72 md:h-80 md:w-80 object-contain">
