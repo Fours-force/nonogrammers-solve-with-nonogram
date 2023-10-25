@@ -4,7 +4,8 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-
+package-lock.json
+package.json
 ### STS ###
 .apt_generated
 .classpath
@@ -187,6 +188,7 @@ replay_pid*
 **/build/
 !src/**/build/
 src/main/resources/application.yml
+src/main/resources/application.yaml
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -273,4 +275,9 @@ $RECYCLE.BIN/
 node_modules/
 src/main/resources/static/css/dist/
 src/main/resources/application.properties
+src/main/resources/application.yaml
+
 # End of https://www.toptal.com/developers/gitignore/api/intellij,java,gradle,dbeaver
+
+src/main/java/com/dottree/nonogrammers/MyConfig.java
+

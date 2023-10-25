@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{./defaultLayout.html}">
+<body class="bg-back" >
+<th:block layout:fragment="content"> <!-- session 타임리프 변수에 저장 -->
+    <div class="flex justify-center w-screen h-full max-w-screen-xl mx-auto sm:px-6 lg:px-8 gap-x-2 ">
+        <!-- 우측 contents -->
+        <div class="w-8/12 mt-2 max:w-full font-brr min-w-max">
+            <div class="flex justify-between mb-10">
+                <div><a href="/nonobox/1"><img src="/images/Bronze.png" alt="" class="transition duration-200 hover:scale-105 imgs" /></a></div>
+                <div><a href="/nonobox/2"><img src="/images/Silver.png" alt="" class="transition duration-200 hover:scale-105 imgs" /></a></div>
+                <div><a href="/nonobox/3"><img src="/images/Gold.png" alt="" class="transition duration-200 hover:scale-105 imgs" /></a></div>
+                <div><a href="/nonobox/4"><img src="/images/Platinum.png" alt="" class="transition duration-200 hover:scale-105 imgs" /></a></div>
+            </div>
+            <article id="NonoListContainer"
+                class="grid grid-cols-1 gap-y-2 gap-x-2 lg:gap-y-1 lg:gap-x-1 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-3 xl:gap-y-2 mb-5">
+                <th:block th:each="nono : ${nonoList}">
+                    <div class="w-6/6 p-6 mx-auto h-6/6 border-4 border-nono-mypg-item-border rounded-lg transition duration-200 hover:scale-105 bg-white">
+                        <a th:href="@{|/nonodots/${session.value.get('userId')}/${nono.nonoId}/${session.value.get('baekjoonUserId')}|}"
+                           class="mx-auto bg-white">
+                            <img th:src="@{${nono.getNonoImgUrl()}}"
+                                 alt="" class="w-80 h-80 xl:h-56 xl:w-56 lg:h-72 lg:w-72 md:h-80 md:w-80 object-contain">
+                        </a>
+                    </div>
+                </th:block>
+
+            </article>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        let cnt = 1;
+        console.log("hello");
+        // let nono = [[${session.value.get('userId')}]];
+        // console.log(nono);
+        // let nonoList = [[${nonoList}]];
+        // console.log(nonoList.get(0).get('nonoId'));
+        // let imgs = document.getElementsByClassName("imgs");
+        // let NonoListContainer = document.getElementById("NonoListContainer");
+        // console.log("imgs 의 돔객체" + imgs);
+        // for(let i =0; i<imgs.length; i++){
+        //     console.log(imgs[i].classList);
+        //     imgs[i].addEventListener("click",function () {
+        //         getNonoListByLevel(i+1);
+        //     })
+        //     cnt++;
+        // }
+        // function getNonoListByLevel(level){
+        //    console.log("clicked!");
+        //     const xhr = new XMLHttpRequest();
+        //     xhr.onload = () => {
+        //         if(xhr.status == 200){
+        //             console.log(xhr.response);
+        //             NonoListContainer.replaceWith(xhr.response);
+        //         }
+        //     }
+        //     xhr.open('Get','/nonobox/'+level);
+        //     xhr.send();
+        // }
+    </script>
+</th:block>
+
+</body>
+
+</html>

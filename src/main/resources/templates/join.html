@@ -1,0 +1,143 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link th:href="@{/css/dist/output.css}" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+      <!-- 헤더이미지 -->
+      <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+        <a href="/"><img class="mx-auto h-auto w-auto" src="/images/user.png" alt="NONOgrammers" /></a>
+      </div>
+
+      <!-- 사용자 정보 입력 -->
+      <div class="mt-6 rounded-lg bg-cmt-user-div-bg px-3.5 py-3.5 sm:mx-auto sm:w-full sm:max-w-sm">
+        <form id="joinForm" class="space-y-6" action="#" method="POST">
+          <!-- 이메일 입력 -->
+          <div>
+            <label for="email" class="block font-brr text-sm leading-6 text-gray-900">이메일</label>
+            <div id="emailDiv" class="mt-2 flex flex-wrap rounded-sm border border-main-skyblue bg-white p-1">
+              <input
+                name="email"
+                id="email"
+                type="email"
+                autocomplete="email"
+                placeholder="이메일을 입력해주세요"
+                required
+                class="outline-none border-none basis-3/4 rounded-sm py-2 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white sm:text-sm sm:leading-6"
+              />
+              <!-- 이메일 존재 여부 확인 버튼 -->
+              <button id="btnEmailCheck" type="button" class="text-md
+
+              basis-1/4 rounded-md border border-main-skyblue bg-main-skyblue font-brr text-white hover:bg-user-chk-btn">
+                이메일 인증
+              </button>
+              <span id="emailStatus" class="text-xs text-red-500"></span>
+            </div>
+          </div>
+
+          <!-- 닉네임 입력-->
+          <div>
+            <label for="nickName" class="block font-brr text-sm leading-6 text-gray-900">닉네임</label>
+            <div id="nickNameDiv" class="mt-2 flex flex-wrap rounded-sm border border-main-skyblue bg-white p-1">
+              <input
+                name="nickName"
+                id="nickName"
+                type="text"
+                placeholder="닉네임을 입력해주세요"
+                required
+                class="outline-none border-none basis-3/4 rounded-sm py-2 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white sm:text-sm sm:leading-6"
+              />
+              <!-- 닉네임 존재 여부 확인 버튼 -->
+              <button id="btnNicknameCheck" type="button" class="text-md basis-1/4 rounded-md border border-main-skyblue bg-main-skyblue font-brr text-white hover:bg-user-chk-btn">
+                중복 확인
+              </button>
+              <span id="nickNameStatus" class="text-xs text-red-500"></span>
+            </div>
+          </div>
+
+          <!-- 백준 ID 입력 -->
+          <div>
+            <label for="baekjoonUserId" class="block font-brr text-sm leading-6 text-gray-900">백준 ID</label>
+            <div class="mt-2">
+              <input
+                name="baekjoonUserId"
+                id="baekjoonUserId"
+                type="text"
+                placeholder="&nbsp;백준 ID를 입력해주세요"
+                required
+                class="block w-full rounded-sm border border-main-skyblue py-2 placeholder:text-gray-400 text-gray-900 focus:border-main-skyblue focus:outline-none focus:ring-2 focus:ring-main-skyblue sm:text-sm sm:leading-6"
+              />
+            </div>
+            <span id="baekjoonUserIdStatus" class="text-xs text-red-500"></span>
+          </div>
+
+          <!-- 비밀번호 입력 -->
+          <div>
+            <label for="password" class="block font-brr text-sm leading-6 text-gray-900">비밀번호</label>
+            <div class="mt-2">
+              <input
+                name="password"
+                id="password"
+                type="password"
+                placeholder="&nbsp;영문자, 숫자, 특수문자 포함 최소 8~20자"
+                required
+                class="block w-full rounded-sm border border-main-skyblue py-2 placeholder:text-gray-400 text-gray-900 focus:border-main-skyblue focus:outline-none focus:ring-2 focus:ring-main-skyblue sm:text-sm sm:leading-6"
+              />
+              <span id="passwordStatus" class="text-xs text-red-500"></span>
+            </div>
+
+            <!-- 비밀번호 확인 -->
+            <div class="mt-2">
+              <input
+                name="correctPassword"
+                type="password"
+                placeholder="&nbsp;비밀번호를 확인해주세요"
+                required
+                class="block w-full rounded-sm border border-main-skyblue py-2 placeholder:text-gray-400 text-gray-900 focus:border-main-skyblue focus:outline-none focus:ring-2 focus:ring-main-skyblue sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+
+          <!-- 사용자 동의 -->
+          <div class="flex flex-col space-y-1">
+              <label class="font-brr text-sm"><input type="checkbox" id="checkboxAgree" name="isAgree" value="true" />&nbsp;개인정보 수집 및 이용 약관 동의<span class="text-red-500">*</span></label>
+              <label class="font-brr text-sm"><input type="checkbox" name="isNotify" value="true" />&nbsp;[선택]마케팅 활용 동의 및 광고 수신 동의</label>
+          </div>
+
+          <!-- 제출 버튼 -->
+          <div class="mt-2">
+            <button
+              id="btnSubmitJoin"
+              type="submit"
+              disabled
+              class="text-md flex w-full justify-center rounded-lg bg-user-home-btn px-3 py-2 font-brr leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              회원가입
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- OR -->
+      <div class="my-2 mt-4 flex flex-row space-x-4 text-center text-xs sm:mx-auto sm:w-full sm:max-w-sm">
+        <div class="border-blue mt-2 flex-1 border-t-2"></div>
+        <span class="mx-5 font-brr text-sm uppercase text-gray-500">or</span>
+        <div class="border-blue mt-2 flex-1 border-t-2"></div>
+      </div>
+    </div>
+
+    <!-- footer -->
+    <div class="mt-6 flex flex-row sm:mx-auto sm:w-full sm:max-w-sm">
+      <a href="/terms" class="mx-auto font-brr text-xs text-gray-700">이용약관</a>
+      <a href="/terms" class="mx-auto font-brr text-xs text-gray-700">개인정보 처리방침</a>
+      <a href="/terms" class="mx-auto font-brr text-xs text-gray-700">FAQ/문의</a>
+    </div>
+
+    <script type="text/javascript" th:src="@{/js/join.js}"></script>
+
+  </body>
+</html>

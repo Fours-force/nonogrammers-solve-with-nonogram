@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{./defaultLayout.html}">
+<body>
+<th:block layout:fragment="content" th:with="userId=${session.value.userId}"> <!-- session 타임리프 변수에 저장 -->
+    <div class="flex justify-center pt-10 min-h-screen h-[calc(100%-1rem)] w-screen mx-auto sm:px-6 lg:px-8 gap-x-2 bg-back mb-5">
+        <!-- 좌측 nav -->
+        <th:block th:replace="~{./my-activity-nav.html :: myactivitynavFragment}"></th:block>
+        <!-- 우측 contents -->
+        <div class="w-6/12 mt-2 max:w-8/12 font-brr min-w-min">
+            <h1 class="pb-5 pl-5 text-3xl border-b-2 mb-7 font-brr text-nav-navy" th:text="${title}"></h1>
+            <th:block th:if="${#lists.isEmpty(nonoList)}">
+                <script>
+                    window.onload = function () {
+
+                        const imgArray= new Array();
+                        imgArray[0]='/images/gif/zzang.gif';  //사진
+                        imgArray[1]='/images/gif/dgmon.gif'; //사진
+                        imgArray[2]='/images/gif/pinggu.gif';    //사진
+                        imgArray[3]='/images/gif/psyduck.gif';
+                        imgArray[4]='/images/gif/gom.gif';
+
+                        const rand = Math.floor(Math.random()*5);
+                        const objImg = document.querySelector("#gifImgBox");
+                        objImg.src = imgArray[rand];
+                    }
+
+                </script>
+                <div class="pt-5">
+                    <h1 class="text-center font-bold text-xl"> 텅 비었습니다. <span class="text-lg text-main-blue">노노</span>를 풀러가볼까요?</h1>
+                    <div class="inline rounded-full mt-4 flex justify-center">
+                        <a href="/nonobox"><img src="" id="gifImgBox" class=" w-60 h-60 rounded-full hover:scale-110 hover:shadow-xl transition duration-300" alt=""></a>
+                    </div>
+                </div>
+            </th:block>
+            <article
+                class="grid grid-cols-1 gap-y-2 gap-x-2 lg:gap-y-1 lg:gap-x-1 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-3 xl:gap-y-2">
+                <th:block th:if="${isSolved eq 0}" th:each="nono : ${nonoList}">
+                    <div class="w-6/6 bg-white p-6 mx-auto h-60 border-4 border-nono-mypg-item-border rounded-lg transition duration-200 hover:scale-105">
+                        <a th:href="@{|/nonodots/${session.value.get('userId')}/${nono.nonoId}/${session.value.get('baekjoonUserId')}|}"
+                            class="mx-auto bg-white h-full">
+                            <img th:src="@{${nono.getNonoImgUrl()}}"
+                                alt="" class="w-80 h-80 xl:h-48 xl:w-56 lg:h-72 lg:w-72 md:h-80 md:w-80 object-contain">
+                        </a>
+                    </div>
+                </th:block>
+                <th:block th:if="${isSolved eq 1}" th:each="nono : ${nonoList}">
+                    <div class="w-6/6 bg-white p-6 mx-auto h-60 border-4 border-nono-mypg-item-border rounded-lg transition duration-200 hover:scale-105">
+                        <a th:href="@{|/nonodots/${session.value.get('userId')}/${nono.nonoId}/${session.value.get('baekjoonUserId')}|}"
+                           class="mx-auto bg-white">
+                            <img th:src="@{${nono.getNonoImgUrl()}}"
+                                 alt="" class="w-80 h-80 xl:h-48 xl:w-56 lg:h-72 lg:w-72 md:h-80 md:w-80 object-contain">
+                        </a>
+                    </div>
+                </th:block>
+            </article>
+        </div>
+    </div>
+</th:block>
+
+</body>
+
+</html>
