@@ -41,13 +41,12 @@ public class MainController {
     //엑셀파일 픽셀마다 데이터 뽑기
     @GetMapping("/api/dot")
     public String dotView() throws IOException {
-        StringBuilder sb = new StringBuilder();
         int nonoId = 1;
         DotDTO dDTO = new DotDTO();
         String[] names = {"Looney Tunes","daram","Dogi","dottux","dragon","LisaSimpson","Mario2","minions","gara","curby","boo","krong","leo","papa","piyo","trapixel","cyon","bagi","testexcel","testexcel2"};
         for(int i=19; i< names.length; i++) {
             // Load the Excel file into Workbook to be converted to arrayC:\Users\COM\Downloads
-            System.out.println(names[i]);
+            log.info(names[i]);
             FileInputStream fis = new FileInputStream("/Users/COM/Downloads/exlels/" + names[i] + ".xlsx");
             Workbook excelWorkbookToArray = new XSSFWorkbook(fis);
 
@@ -93,6 +92,7 @@ public class MainController {
         udDTO.setNonoId(unDTO.getNonoId());
         //노노개방
         if(mdao.selectUserFromUserNono(unDTO) == 0){
+            log.info("mdao.selectUserFromUserNono(unDTO) == 0");
             log.info("insert UserNono start!!!!!!!!!");
             mdao.insertUserNono(unDTO);
         }
@@ -129,7 +129,7 @@ public class MainController {
         float sadc = mdao.selectSolvedNumber(udDTO);
         int progress = (int) (sadc*100/ssn);
         log.info(getClass().getName() + ": 모든 도트의 수 : "+ ssn);
-        log.info(getClass().getName()+": 해결한 도트의 수 : "+ sadc);
+        log.info(": 해결한 도트의 수 : "+ sadc);
         log.info(getClass().getName() + ": 프로그래스 바 :" + progress);
         model.addAttribute("progress",progress);
 
@@ -215,8 +215,8 @@ public class MainController {
         int userSolvedCnt = mdao.selectUserSolvedCount(udDTO);
         int baekjoonSolvedCnt = getUserBaekData(baekjoonId);
 
-        log.info(getClass().getName()+" 해결해온 문제의 수 "+userSolvedCnt);
-        log.info(getClass().getName()+" 지금 해결한 문제의 수 "+baekjoonSolvedCnt);
+        log.info(" 해결해온 문제의 수 "+userSolvedCnt);
+        log.info(" 지금 해결한 문제의 수 "+baekjoonSolvedCnt);
         if(userSolvedCnt < baekjoonSolvedCnt){
             result = 1;
             UserSolvedCountDTO uscDTO = new UserSolvedCountDTO();
@@ -281,7 +281,7 @@ public class MainController {
         try {
             mdao.selectUserSolvingRow(udDTO);
         }catch (BindingException e){
-            log.info(getClass().getName()+": BindingException 발생 : " + e.getMessage());
+            log.info(": BindingException 발생 : " + e.getMessage());
             mdao.insertUserSolvingRow(usrDTO);
         }
 
@@ -292,7 +292,7 @@ public class MainController {
     @RequestMapping("/api/selectSolvingRow/{userId}/{nonoId}")
     @ResponseBody
     public int selectSolvingRow(UserDotDTO udDTO){
-        log.info(getClass().getName()+"selectSolvingRow start!!");
+        log.info("selectSolvingRow start!!");
         int result = 0;
 
         try {
