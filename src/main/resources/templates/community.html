@@ -78,7 +78,7 @@
                                         </h3>
                                         <div class="flex">
 <!--                                            나중에 구현할 거 <img src="/images/new_post_1.png" class="w-3 mt-1.5 ml-3 h-fit profile-image" alt="">-->
-                                            <img th:if="${vo.fileUrls.isEmpty() == false}" src="/images/show_image.png" class="w-4 mt-1.5 ml-3 h-fit profile-image" alt="">
+                                            <img th:if="${vo.fileUrls.isEmpty() == false}" src="/images/show_image.png" class="w-4 mt-1.5 ml-3 h-4 profile-image" alt="">
                                             <p class="pl-3 pr-4 mt-0.5 text-base font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[[${vo.title}]]</p><!-- 제목 -->
                                         </div>
                                         <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[[${vo.content}]]</p><!-- 내용 -->

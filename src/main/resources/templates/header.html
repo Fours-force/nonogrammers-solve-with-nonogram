@@ -89,14 +89,18 @@
             <!-- Mobile menu, show/hide based on menu state. -->
             <div class="sm:hidden font-super256">
                 <div class="px-2 pt-2 pb-3 space-y-1">
-                    <a href="#"
+                    <a href="/nonobox"
                         class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">NONOBOX</a>
-                    <a href="#"
+                    <a href="https://github.com/Fours-force/nonogrammers-solve-with-nonogram"
                         class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">SOCIAL</a>
-                    <a href="#"
+                    <a href="/post"
                         class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">COMMUNITY</a>
-                    <a href="#"
-                        class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">MYPAGE</a>
+                    <div th:if="${session.value}">
+                        <a th:href="@{/user/{id}(id = ${session.value.userId})}"
+                            class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">MYPAGE</a>
+                    </div>
+                    <a href="/api/logout"
+                       class="block px-3 py-2 text-base font-medium rounded-md text-nav-navy hover:bg-gray-700 hover:text-white">LOGOUT</a>
                 </div>
             </div>
         </div>
