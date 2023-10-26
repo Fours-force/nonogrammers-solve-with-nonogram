@@ -247,24 +247,18 @@ public class MainController {
         udDTO.setUserId(userId);
         udDTO.setNonoId(nonoId);
         log.info(String.valueOf(udDTO.getDotId()));
-        try {
-            if(mdao.selectIsDotsSolved(udDTO).getDotId() == udDTO.getDotId()){
-                log.info("중복된 userDotInsert 처리.");//뇌정지..
-                msg = "이미 푼 문제여서 실패~";
-            }
-        }catch (NullPointerException e){
-            log.info("에러메세지 : " + e.getMessage());
+        if(mdao.selectIsDotsSolved(udDTO) == 0){
+            log.info("insertuserDot 시작 !!!");
             for (int i = 0; i < getNumJsonNode.size(); i++) {
-                udDTO.setDotId(getNumJsonNode.get(i).get("dotId").asInt()+1);
+                udDTO.setDotId(getNumJsonNode.get(i).get("dotId").asInt() + 1);
                 udDTO.setUserId(userId);
                 udDTO.setNonoId(nonoId);
                 mdao.insertUserDot(udDTO);
             }
-            mdao.resetUserSolvingRow(udDTO);
-            msg = "성공~";
+        }else {
+            log.info("중복된 userDotInsert 처리.");//뇌정지..}
+            msg = "이미 푼 문제여서 실패~";
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append("redirect:/nonodots/").append(userId).append("/").append(nonoId);
         return msg;
     }
     //사용자가 해결중인 문제의 행 설정
