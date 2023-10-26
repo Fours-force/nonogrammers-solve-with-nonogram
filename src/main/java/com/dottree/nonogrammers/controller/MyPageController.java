@@ -190,7 +190,7 @@ public class MyPageController {
         String fileName =  imgFile.getOriginalFilename();
         try {
             content = imgFile.getBytes();
-            Path directoryPath = Paths.get("/Users/jasonmilian/Downloads/nonogrammers/src/main/resources/static/images/profile/"+userId);
+            Path directoryPath = Paths.get(System.getProperty("user.dir") + "/src/main/resources/static/images/profile/"+userId);
             try {
                 // 디렉토리 생성
                 Files.createDirectory(directoryPath);
@@ -202,7 +202,7 @@ public class MyPageController {
             String ext = fileName.split("\\.")[1];
             fileName = uuid.toString() + "_" + user.getNickName() + "." + ext;
             File f = null;
-            f = new File("/Users/jasonmilian/Downloads/nonogrammers/src/main/resources/static/images/profile/"+userId+"/"+fileName);
+            f = new File(System.getProperty("user.dir") + "/src/main/resources/static/images/profile/"+userId+"/"+fileName);
 
             if ( f.exists() ) {
                 map.put("result", 404);
