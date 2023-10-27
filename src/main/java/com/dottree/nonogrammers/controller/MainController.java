@@ -77,25 +77,28 @@ public class MainController {
         }
         return null;
     }
-
     //화면에 노노 출력.
     @RequestMapping("/nonodots/{userId}/{nonoId}/{baekjoonId}")
     public String nonodots(UserNonoDTO unDTO,@PathVariable("baekjoonId")String beakjoonId, HttpSession session, Model model){
         log.info("nonodots start!!!!!!!!");
+        /////////////세션 처리///////////////////////////////////////
         String redirectLogin = isUserIdNullthenRedirect(session);
         if(!redirectLogin.equals("")) {
             return redirectLogin;
         }
-        log.info("노노 조회 시 백준 아이디 : " + beakjoonId);
-        UserDotDTO udDTO = new UserDotDTO();
-        udDTO.setUserId(unDTO.getUserId());
-        udDTO.setNonoId(unDTO.getNonoId());
-        //노노개방
+
+        /////////////노노개방//////////////////////////////////////
         if(mdao.selectUserFromUserNono(unDTO) == 0){
             log.info("mdao.selectUserFromUserNono(unDTO) == 0");
             log.info("insert UserNono start!!!!!!!!!");
             mdao.insertUserNono(unDTO);
         }
+
+        /////////////
+        log.info("노노 조회 시 백준 아이디 : " + beakjoonId);
+        UserDotDTO udDTO = new UserDotDTO();
+        udDTO.setUserId(unDTO.getUserId());
+        udDTO.setNonoId(unDTO.getNonoId());
         if(mdao.selectUserSolvedCount(udDTO) == null){
             mdao.insertUserSolvedCount(unDTO.getUserId(),getUserBaekData(beakjoonId)); // 백준 회원가입이 되어있어야함
         }
@@ -128,9 +131,9 @@ public class MainController {
         float ssn = mdao.selectAllDotCount(udDTO.getNonoId());
         float sadc = mdao.selectSolvedNumber(udDTO);
         int progress = (int) (sadc*100/ssn);
-        log.info(getClass().getName() + ": 모든 도트의 수 : "+ ssn);
-        log.info(": 해결한 도트의 수 : "+ sadc);
-        log.info(getClass().getName() + ": 프로그래스 바 :" + progress);
+        log.info("모든 도트의 수 : "+ ssn);
+        log.info("해결한 도트의 수 : "+ sadc);
+        log.info("프로그래스 바 :" + progress);
         model.addAttribute("progress",progress);
 
         ///////////////////////////////////////////////////////////////////////////////////////
@@ -320,7 +323,7 @@ public class MainController {
     @RequestMapping(value = ("/api/updateIsSolved/{userId}/{nonoId}"))
     @ResponseBody
     public String updateIsSolved(UserNonoDTO unDTO){
-        log.info(getClass().getName() + ": updateIsSolved start!!!!!");
+        log.info("updateIsSolved start!!!!!");
         log.info(String.valueOf(unDTO.getNonoId()));
         log.info(String.valueOf(unDTO.getUserId()));
 
@@ -330,6 +333,12 @@ public class MainController {
         return msg;
     }
 
+    /**
+     *
+     * @param model
+     * @param session
+     * @return
+     */
     @GetMapping("/nonobox")
     public String getIngUserNono(Model model, HttpSession session) {
         String redirectLogin = isUserIdNullthenRedirect(session);

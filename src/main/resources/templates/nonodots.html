@@ -58,22 +58,21 @@
         var dotList = [[${dotList}]];
         var urlAry = [[${urlAry}]];
         let userId = [[${session.value.get("userId")}]];
-        console.log("세션 유저 아이디 : " + userId);
         let nonoId = [[${nonoId}]];
         let progress = [[${progress}]];
+
         if(progress == 100){
             updateSolvedStat();
         }
-        console.log("progress : "+progress);
 
         let baekjoonId = [[${session.value.get("baekjoonUserId")}]];
-        console.log("세션 백준 아이디 : " + baekjoonId);
         let solvingRow = 0;
         let allDotsInRow;
 
+
         window.onload= function () {
             for (let i = 0; i < dotList.length; i++) {
-                //문제 링크 설정
+                //행 마다 문제 링크 설정
                 allRowDivs[i].addEventListener("click", function () {
                     solvingRow = i+1;
                     updateSolvingRow();
