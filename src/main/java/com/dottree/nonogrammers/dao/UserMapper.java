@@ -92,11 +92,10 @@ public interface UserMapper {
     })
     public List<UserNonoVO> selectUserNonoByIsSolved(@Param("userId") int userId, @Param("isSolved") int isSolved);
 
-
     /**
      * 유저가 풀고있는 노노(문제집) 조회
      * @param userId
-     * @return UserNonoDTO
+     * @return UserNonoVO
      */
     @Select("select userNonoId, userId, nonoId, createdAt, isSolved from usernono where userId = #{userId} and nonoId = #{nonoId} and isSolved = 0")
     public UserNonoVO selectIngUserNonoDetail(@Param("userId") int userId, @Param("nonoId") int nonoId);
@@ -105,7 +104,7 @@ public interface UserMapper {
      * 유저가 푼 노노들 보여주기
      * @param userId
      * @param nonoId
-     * @return
+     * @return UserNonoVO
      */
     @Select("select userNonoId, userId, nonoId, createdAt, isSolved from usernono where userId = #{userId} and nonoId = #{nonoId} and isSolved = 1")
     public UserNonoVO selectSolvedUserNonoDetail(@Param("userId") int userId, @Param("nonoId") int nonoId);
