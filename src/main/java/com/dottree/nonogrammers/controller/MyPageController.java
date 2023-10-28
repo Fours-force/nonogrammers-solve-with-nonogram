@@ -27,11 +27,9 @@ public class MyPageController {
     private final PostMapper postMapper;
     private final UserMapper userMapper;
 
-    private final MainMapper mainMapper;
     public MyPageController(PostMapper postMapper, UserMapper userMapper, MainMapper mainMapper) {
         this.postMapper = postMapper;
         this.userMapper = userMapper;
-        this.mainMapper = mainMapper;
     }
 
     /**
@@ -44,36 +42,42 @@ public class MyPageController {
     public String userPostView(@ModelAttribute("userPostVO") UserPostDTO userPostDTO,
                                @PathVariable("userId") Integer userId,
                                HttpSession session) {
-        UserDTO userDTO = userMapper.selectUserByUserId(userId);
         String redirectLogin = isUserIdNullthenRedirect(session);
         if(!redirectLogin.equals("")) {
             return redirectLogin;
         }
-//        isUserIdNullthenRedirect(userId);
+
+        UserDTO userDTO = userMapper.selectUserByUserId(userId);
         List<PostDTO> postDtoList = postMapper.selectPostList(userId);
         userPostDTO.setUserDTO(userDTO);
         userPostDTO.setUserId(userId);
         userPostDTO.setUserPostList(postDtoList);
+
         return "mypost";
     }
 
+    /**
+     * 유저의 게시글을 수정
+     * @param userPostDTO
+     * @param postDTO
+     * @param model
+     * @param postId
+     * @param userId
+     * @return mypost View
+     */
     @PutMapping(value = "/api/modify/{userId}/{postId}")
-//    @ResponseBody
     public String modifyUserPost(@ModelAttribute("userPostVO") UserPostDTO userPostDTO,
                                   @ModelAttribute PostDTO postDTO,
                                   Model model,
                                   @PathVariable("postId") Integer postId,
                                   @PathVariable("userId") Integer userId) {
-
-//        isUserIdNullthenRedirect(userId);
         boolean result = postMapper.updatePostByPostIdAndUserId(postDTO.getTitle(), postDTO.getContent(), postId, userId);
-//        postDTO = postMapper.detailss(String.valueOf(postId));
-        UserDTO userDTO = userMapper.selectUserByUserId(userId);
-        List<PostDTO> postDtoList = postMapper.selectPostList(userId);
-        userPostDTO.setUserPostList(postDtoList);
-        userPostDTO.setUserDTO(userDTO);
-        userPostDTO.setUserId(userId);
         if(result) {
+            UserDTO userDTO = userMapper.selectUserByUserId(userId);
+            List<PostDTO> postDtoList = postMapper.selectPostList(userId);
+            userPostDTO.setUserPostList(postDtoList);
+            userPostDTO.setUserDTO(userDTO);
+            userPostDTO.setUserId(userId);
             model.addAttribute("msg", "게시글이 수정되었습니다.");
             model.addAttribute(userPostDTO);
         } else {
@@ -81,7 +85,6 @@ public class MyPageController {
         }
 
         return "mypost";
-
     }
 
     /**
@@ -251,6 +254,7 @@ public class MyPageController {
         model.addAttribute("title", "내가 풀고 있는 노노들");
         model.addAttribute("isSolved", 0);
         model.addAttribute("nonoList", userNonnolist);
+
         return "my-nono";
     }
 
@@ -285,7 +289,7 @@ public class MyPageController {
         model.addAttribute("title", "내가 푼 노노들");
         model.addAttribute("isSolved", 1);
         model.addAttribute("nonoList", userNonnolist);
-//        System.out.println(userNonnolist.size());
+
         return "my-nono";
     }
 
@@ -300,7 +304,6 @@ public class MyPageController {
         }
         UserNonoVO userNonoVO = userMapper.selectSolvedUserNonoDetail(userId, nonoId);
         if(userNonoVO == null) {
-            // 유효성검사?
         }
         model.addAttribute("userNono", userNonoVO);
 
