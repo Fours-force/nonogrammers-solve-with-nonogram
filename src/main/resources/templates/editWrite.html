@@ -170,7 +170,7 @@
 </script>
 <script th:inline="javascript" th:if="${session.value != null}">
     window.onload = function() {
-        const editedOption = document.getElementById("optionSpace");
+        var editedOption = document.getElementById("optionSpace");
         editedOption.value = "자유게시판";
 <!--        var boardType =[[${pos.boardType}]];-->
 <!--        if(boardType===1){-->

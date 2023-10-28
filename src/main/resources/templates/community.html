@@ -284,7 +284,23 @@
             }
         });
     }
+    // 현재 URL 주소 가져오기
+    var currentUrl = window.location.href;
 
+    // 주소에 문자열이 포함되어 있는지 확인
+    if (currentUrl.includes("/post/notice")) {
+        // "/post/notice"이 포함되어 있으면 "notice" 옵션을 선택
+        document.getElementById("filterSelect").value = "notice";
+    }else if (currentUrl.includes("/post/free")) {
+        // "/post/free"이 포함되어 있으면 "free" 옵션을 선택
+        document.getElementById("filterSelect").value = "free";
+    }else if (currentUrl.includes("/post/qa")) {
+        // "/post/qa"이 포함되어 있으면 "qa" 옵션을 선택
+        document.getElementById("filterSelect").value = "qa";
+    }else if (currentUrl.includes("/post/nono")) {
+        // "/post/nono"이 포함되어 있으면 "nono" 옵션을 선택
+        document.getElementById("filterSelect").value = "nono";
+    }
 
     </script>
 </body>
