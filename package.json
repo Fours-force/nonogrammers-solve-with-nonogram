@@ -8,6 +8,11 @@
     "husky": "^8.0.3",
     "jira-prepare-commit-msg": "^1.7.2"
   },
+  "husky": {
+    "hooks": {
+      "prepare-commit-msg": "jira-prepare-commit-msg"
+    }
+  },
   "jira-prepare-commit-msg": {
     "messagePattern": "[$J] $M",
     "jiraTicketPattern": "([A-Z]+-\\\\d+)",
@@ -15,5 +20,9 @@
     "isConventionalCommit": false,
     "allowEmptyCommitMessage": false,
     "gitRoot": ""
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "scriptname": "husky install"
   }
 }
