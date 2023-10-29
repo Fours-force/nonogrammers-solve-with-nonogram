@@ -38,7 +38,11 @@ public class MainController {
         this.mdao = mdao;
     }
 
-    //엑셀파일 픽셀마다 데이터 뽑기
+    /**
+     * 엑셀파일 픽셀마다 데이터 뽑기
+     * @return
+     * @throws IOException
+     */
     @GetMapping("/api/dot")
     public String dotView() throws IOException {
         int nonoId = 1;
@@ -78,7 +82,16 @@ public class MainController {
         return null;
     }
 
-    //화면에 노노 출력.
+
+
+    /**
+     * 화면에 노노 출력.
+     * @param unDTO
+     * @param beakjoonId
+     * @param session
+     * @param model
+     * @return
+     */
     @RequestMapping("/nonodots/{userId}/{nonoId}/{baekjoonId}")
     public String nonodots(UserNonoDTO unDTO,@PathVariable("baekjoonId")String beakjoonId, HttpSession session, Model model){
         log.info("nonodots start!!!!!!!!");
@@ -86,41 +99,36 @@ public class MainController {
         if(!redirectLogin.equals("")) {
             return redirectLogin;
         }
-        log.info("노노 조회 시 백준 아이디 : " + beakjoonId);
-        UserDotDTO udDTO = new UserDotDTO();
-        udDTO.setUserId(unDTO.getUserId());
-        udDTO.setNonoId(unDTO.getNonoId());
         //노노개방
         if(mdao.selectUserFromUserNono(unDTO) == 0){
             log.info("mdao.selectUserFromUserNono(unDTO) == 0");
             log.info("insert UserNono start!!!!!!!!!");
             mdao.insertUserNono(unDTO);
         }
+
+        //사용자가 푼 문제수 DB에 저장 안되있으면 초기값으로 백준 푼 문제수를 할당
+        UserDotDTO udDTO = new UserDotDTO();
+        udDTO.setUserId(unDTO.getUserId());
+        udDTO.setNonoId(unDTO.getNonoId());
         if(mdao.selectUserSolvedCount(udDTO) == null){
             mdao.insertUserSolvedCount(unDTO.getUserId(),getUserBaekData(beakjoonId)); // 백준 회원가입이 되어있어야함
         }
 
-        log.info("nonoId : " + unDTO.getNonoId());
+        //모든 도트 select
         int cnt = 0;
         List<List<DotDTO>> totalRowList = new ArrayList<>(); // 모든 도트의 정보를 담을 이중ArrayList. 행,열로 나뉘어 있음.
-
         List<DotDTO> nList = mdao.selectAllDot(unDTO.getNonoId()); // 모든 도트 dot테이블에서 가져옴
-
         NonoDTO allUrls = mdao.selectAllallProblemToStr(unDTO.getNonoId()); // 모든 문제Url nono테이블에서 가져옴
         String [] urlAry = allUrls.getAllProblemToStr().split(","); // 쉼표 떼고 배열에 저장
-        System.out.println(urlAry[urlAry.length-1]);
         int row = nList.size()/32; // totalRowList에 모든 도트 정보 담음
-        log.info("row : "+row);
         List<DotDTO> singleRowList = null;
+
         for(int i=0; i<row; i++){
             singleRowList = new ArrayList<>();
             for(int j=0; j<32; j++){
                 singleRowList.add(nList.get(cnt));
-//                    log.info(i + "행 " + j + "열");
-                //System.out.print(nList.get(cnt).getColor()+",");
                 cnt++;
             }
-            //System.out.println();
             totalRowList.add(singleRowList);
         }
 
@@ -142,8 +150,10 @@ public class MainController {
         return "/nonodots";
 
     }
-
-    // 문제번호 가져오기.
+    /**
+     * 문제번호 가져오기.
+     * @param nonoId
+     */
     @RequestMapping("/api/geturls/{nonoId}")
     @ResponseBody
     public void geturls(@PathVariable("nonoId")int nonoId){
@@ -154,8 +164,10 @@ public class MainController {
             System.out.println(urlAry[i]);
         }
     }
-
-    //사용자 검색해서 푼 문제수 출력
+    /**
+     * 사용자 검색해서 푼 문제수 출력
+     * @throws IOException
+     */
     @RequestMapping("/api/solvednum")
     @ResponseBody
     public void solvednum() throws IOException {
@@ -179,8 +191,11 @@ public class MainController {
         System.out.println(jsonNode.get("handle"));
 
     }
-
-    //문제 레벨 별 문제 번호들 저장 성공
+    /**
+     * 문제 레벨 별 문제 번호들 저장
+     * @param level
+     * @throws IOException
+     */
     @RequestMapping("/api/missionlevel/{level}")
     @ResponseBody
     public void solvednum(@PathVariable("level")int level) throws IOException {
@@ -195,16 +210,16 @@ public class MainController {
         System.out.println(totalProblemList);
     }
 
-    //사용자 문 문제들 가져오기
-//    @RequestMapping("/reloadinfo")
-//    @ResponseBody
-
-
-
-    //백준 아이디로 전적갱신  / 이전에 푼 문제 수 저장 필요함.
+    /**
+     * 백준 아이디로 전적갱신  / 이전에 푼 문제 수 저장 필요함.
+     * @param baekjoonId
+     * @param userId
+     * @param nonoId
+     * @return
+     */
     @RequestMapping("/api/updateCheck/{baekjoonId}/{userId}/{nonoId}")
     @ResponseBody
-        public int updateSolved(@PathVariable("baekjoonId")String baekjoonId, @PathVariable("userId")int userId, @PathVariable("nonoId")int nonoId){
+    public int updateSolved(@PathVariable("baekjoonId")String baekjoonId, @PathVariable("userId")int userId, @PathVariable("nonoId")int nonoId){
         log.info(getClass().getName() + "updateSolved 시작!!!!!!!!!!!!");
         int result = 0;
 
@@ -212,6 +227,7 @@ public class MainController {
         udDTO.setNonoId(nonoId);
         udDTO.setUserId(userId);
 
+        //
         int userSolvedCnt = mdao.selectUserSolvedCount(udDTO);
         int baekjoonSolvedCnt = getUserBaekData(baekjoonId);
 
