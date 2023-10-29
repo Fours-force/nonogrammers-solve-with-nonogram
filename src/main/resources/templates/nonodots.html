@@ -47,7 +47,7 @@
                 </div>
                 <br>
             </div>
-            <div class="font-super256 min-w-max movebtn eightbit-btn" onclick="gonext()">NEXT</div>
+            <div class="font-super256 min-w-max movebtn eightbit-btn" onclick="gonext()" >NEXT</div>
         </div><br>
     </div>
     <script th:inline="javascript">
@@ -60,11 +60,10 @@
         let userId = [[${session.value.get("userId")}]];
         let nonoId = [[${nonoId}]];
         let progress = [[${progress}]];
-
         if(progress == 100){
             updateSolvedStat();
         }
-
+        let lastNono = [[${lastNono}]];
         let baekjoonId = [[${session.value.get("baekjoonUserId")}]];
         let solvingRow = 0;
         let allDotsInRow;
@@ -207,12 +206,16 @@
         }
 
         function gonext(){
-            location.href=`/nonodots/${userId}/${nonoId+1}/${baekjoonId}`;
+            if (`${nonoId}`==`${lastNono}`)
+                window.alert("마지막 노노입니다.");
+            else{
+                location.href=`/nonodots/${userId}/${nonoId+1}/${baekjoonId}`;
+            }
         }
 
         function goback(){
             if(`${nonoId}`==1){
-                window.alert("가장 처음 노노입니다.")
+                window.alert("가장 처음 노노입니다.");
             }else{
                 location.href=`/nonodots/${userId}/${nonoId-1}/${baekjoonId}`;
             }
