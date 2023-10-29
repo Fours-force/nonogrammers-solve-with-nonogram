@@ -227,26 +227,29 @@ public class MainController {
         udDTO.setNonoId(nonoId);
         udDTO.setUserId(userId);
 
-        //
+        //DB에 저장된 푼 문제수, 백준에서 조회한 푼 문제수
         int userSolvedCnt = mdao.selectUserSolvedCount(udDTO);
         int baekjoonSolvedCnt = getUserBaekData(baekjoonId);
 
-        log.info(" 해결해온 문제의 수 "+userSolvedCnt);
-        log.info(" 지금 해결한 문제의 수 "+baekjoonSolvedCnt);
+        log.info(" DB에 저장된 푼 문제수 "+userSolvedCnt);
+        log.info(" 백준에서 조회한 푼 문제수 "+baekjoonSolvedCnt);
         if(userSolvedCnt < baekjoonSolvedCnt){
             result = 1;
             UserSolvedCountDTO uscDTO = new UserSolvedCountDTO();
             uscDTO.setUserId(userId);
             uscDTO.setSolvedCount(userSolvedCnt+1);
             mdao.updateUserSolvedCount(userId,baekjoonSolvedCnt);
-            mdao.selectUserSolvingRow(udDTO);
         }
-        log.info("해결한 문제의 수 " + userSolvedCnt);
-
         return result;
     }
-
-    //userdot에 해결한 dots들 삽입.
+    /**
+     * userdot에 해결한 dots들 삽입.
+     * @param jsonString
+     * @param userId
+     * @param nonoId
+     * @return
+     * @throws JsonProcessingException
+     */
     @ResponseBody
     @RequestMapping(value =("/api/updateUserDot/{userId}/{nonoId}"),method = RequestMethod.POST, produces = "application/json; charset=utf-8")
     public String updateUserDot(@RequestBody String jsonString, @PathVariable("userId") int userId, @PathVariable("nonoId")int nonoId) throws JsonProcessingException {
@@ -283,7 +286,10 @@ public class MainController {
         sb.append("redirect:/nonodots/").append(userId).append("/").append(nonoId);
         return msg;
     }
-    //사용자가 해결중인 문제의 행 설정
+    /**
+     * 사용자가 해결중인 문제의 행 설정
+     * @param usrDTO
+     */
     @RequestMapping("/api/updateSolvingRow/{userId}/{nonoId}/{solvingRow}")
     @ResponseBody
     public void updateSolvingRow(UserSolvingRowDTO usrDTO){
@@ -304,7 +310,12 @@ public class MainController {
         mdao.updateUserSolvingRow(usrDTO);
 
     }
-    //사용자가 현재 풀고있는 행 조회. 나중에 /nonodots랑 합쳐야 될 듯.
+
+    /**
+     * 사용자가 현재 풀고있는 행 조회. 나중에 /nonodots랑 합쳐야 될 듯.
+     * @param udDTO
+     * @return
+     */
     @RequestMapping("/api/selectSolvingRow/{userId}/{nonoId}")
     @ResponseBody
     public int selectSolvingRow(UserDotDTO udDTO){
@@ -322,8 +333,11 @@ public class MainController {
 
         return result;
     }
-
-    //사용자가 푼 dot들의 List 반환. / 색칠해주려고 사용.
+    /**
+     * 사용자가 푼 dot들의 List 반환. / 색칠해주려고 사용.
+     * @param udDTO
+     * @return
+     */
     @RequestMapping(value = ("/api/selectSolvedDotId/{userId}/{nonoId}"), produces = "application/json; charset=utf-8")
     @ResponseBody
     public List<UserDotDTO> selectSolvedDotId(UserDotDTO udDTO){
@@ -333,6 +347,11 @@ public class MainController {
         return udDTOList;
     }
 
+    /**
+     * progress
+     * @param unDTO
+     * @return
+     */
     @RequestMapping(value = ("/api/updateIsSolved/{userId}/{nonoId}"))
     @ResponseBody
     public String updateIsSolved(UserNonoDTO unDTO){
