@@ -68,6 +68,7 @@ public interface MainMapper {
     //user_solving_row에 slovingRow 갱신. / 현재 풀고있는 문제의 행 정보 갱신.
     @Update("update user_solving_row set solvingRow = #{solvingRow} where userId = #{userId} and nonoId = #{nonoId}")
     public void updateUserSolvingRow(UserSolvingRowDTO usrDTO);
+
     // user_solving_row의 solvingRow 0으로 초기화 / 문제 풀면 풀고있는 문제의 행 0으로 바꿈
     @Update("update user_solving_row set solvingRow=0 where userId = #{userId} and nonoId =#{nonoId}")
     public void resetUserSolvingRow(UserDotDTO udDTO);
@@ -89,4 +90,7 @@ public interface MainMapper {
 
     @Select("SELECT nonoId, nonoImgUrl, levelType from nono")
     public List<UserNonoVO> selectAllNoNo();
+
+    @Select("select isSolved from usernono where userId = #{userId} and nonoId = #{nonoId}")
+    public int selectUserNonoIsSolved(UserNonoDTO unDTO);
 }
