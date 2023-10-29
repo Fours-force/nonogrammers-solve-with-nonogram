@@ -10,7 +10,8 @@
   },
   "husky": {
     "hooks": {
-      "prepare-commit-msg": "jira-prepare-commit-msg"
+      "prepare-commit-msg": "jira-prepare-commit-msg",
+      "pre-push": "./huskyhooks/pre-push"
     }
   },
   "jira-prepare-commit-msg": {
