@@ -348,7 +348,7 @@ public class MainController {
     }
 
     /**
-     * progress
+     * progressBar 100%면 실행
      * @param unDTO
      * @return
      */
@@ -365,6 +365,12 @@ public class MainController {
         return msg;
     }
 
+    /**
+     * 모든 노노 리스트 가져오기
+     * @param model
+     * @param session
+     * @return
+     */
     @GetMapping("/nonobox")
     public String getIngUserNono(Model model, HttpSession session) {
         String redirectLogin = isUserIdNullthenRedirect(session);
@@ -373,10 +379,16 @@ public class MainController {
         }
         List<UserNonoVO> userNonnolist = mdao.selectAllNoNo();
         model.addAttribute("nonoList", userNonnolist);
-        model.addAttribute("nav", "nonobox" );
 
         return "/nonobox";
     }
+
+    /**
+     * 레벨 별 노노 리스트 가져오기
+     * @param levelType
+     * @param model
+     * @return
+     */
     @GetMapping(value = "/nonobox/{levelType}")
     public String getIngUserNono(@PathVariable(value = "levelType")int levelType, Model model) {
         List<UserNonoVO> userNonnolist = mdao.selectNonoByLevel(levelType);
@@ -386,6 +398,10 @@ public class MainController {
         return "/nonobox";
     }
 
+    /**
+     * solved.ac 기준으로 브론즈 5 문제 가져오기. 현재 55번 문제까지 사용함.
+     * @return
+     */
     @GetMapping("/missionListbuny")
     @ResponseBody
     public String missionListbuny(){
@@ -400,6 +416,11 @@ public class MainController {
 
         return sb.toString();
     }
+
+    /**
+     * solved.ac 기준으로 브론즈 3 문제 가져오기. 현재 177번째 문제까지 사용함.
+     * @return
+     */
     ////////////////////////////////DB 노노 데이터 저장 함수들/////////////////////////////////////
     @GetMapping("/missionListBronze")
     @ResponseBody
@@ -416,7 +437,10 @@ public class MainController {
 
         return sb.toString();
     }
-
+    /**
+     * solved.ac 기준으로 실버 3 문제 가져오기. 현재 322번 문제까지 사용함.
+     * @return
+     */
     @GetMapping("/missionListSilver")
     @ResponseBody
     public String missionListSilver(){//6개
@@ -432,7 +456,10 @@ public class MainController {
 
         return sb.toString();
     }
-
+    /**
+     * solved.ac 기준으로 골드 3 문제 가져오기. 현재 125번 문제까지 사용함
+     * @return
+     */
     @GetMapping("/missionListGold")
     @ResponseBody
     public String missionListGold(){//3개
@@ -448,7 +475,10 @@ public class MainController {
 
         return sb.toString();
     }
-
+    /**
+     * solved.ac 기준으로 플레티넘 3 문제 가져오기. 현재 127번 문제까지 사용함.
+     * @return
+     */
     @GetMapping("/missionListPlatinum")
     @ResponseBody
     public String missionListPlatinum(){//3개
@@ -468,30 +498,42 @@ public class MainController {
 
     ////////////////////////////////////////////내가 선언한 메서드/////////////////////////////////////////////////////////////
 
-    //레벨 의 문제 수
+
+    /**
+     * 레벨에 해당하는 문제의 수
+     * @param level
+     * @return
+     * @throws IOException
+     */
     public int getNumPerLevel(int level) throws IOException {
-        AsyncHttpClient getNumPerLevelClient = new DefaultAsyncHttpClient();
-        String[] getNumResponseBody = new String[1];
+        AsyncHttpClient getNumPerLevelClient = new DefaultAsyncHttpClient(); // 비동기HTTP통신
+        String[] getNumResponseBody = new String[1]; //참조형 변수로 만든 String 배열
         getNumPerLevelClient.prepare("GET", "https://solved.ac/api/v3/problem/level")
                 .setHeader("Accept", "application/json")
                 .execute()
                 .toCompletableFuture()
                 .thenAccept(response -> {
-                    getNumResponseBody[0] = response.getResponseBody();
+                    getNumResponseBody[0] = response.getResponseBody(); // Json 형식의 String 저장
                     //System.out.println(getNumResponseBody[0]);
                 })
                 .join();
         getNumPerLevelClient.close();
 
-        ObjectMapper getNumMapper = new ObjectMapper();
-        JsonNode getNumJsonNode = getNumMapper.readTree(getNumResponseBody[0]);
+        ObjectMapper getNumMapper = new ObjectMapper(); //Jackson 라이브러리 사용
+        JsonNode getNumJsonNode = getNumMapper.readTree(getNumResponseBody[0]); //Jackson 라이브러리에서 JSON데이터를 표현하는 데 사용되는 클래스
         System.out.println(getNumJsonNode.get(level).get("count"));
 
         return getNumJsonNode.get(level).get("count").asInt();
     }
 
-    //문제 레벨과 페이지 번호로 해당 레벨의 문제 번호,이름 뽑기
-    public List<String> insertproblems(int num,int level) throws IOException {
+    /**
+     * 문제 레벨과 페이지 번호로 해당 레벨의 문제 번호,이름 뽑기
+     * @param pageNum
+     * @param level
+     * @return
+     * @throws IOException
+     */
+    public List<String> insertproblems(int pageNum,int level) throws IOException {
         AsyncHttpClient getNumPerLevelClient = new DefaultAsyncHttpClient();
         String[] getNumResponseBody = new String[1];
         List<String> problemList = new ArrayList<>();
@@ -512,8 +554,8 @@ public class MainController {
         JsonNode getNumJsonNode = getNumMapper.readTree(getNumResponseBody[0]);
 
         for (int i=0; i<getNumJsonNode.get("items").size(); i++){
-//            System.out.println("문제 이름 : " + getNumJsonNode.get("items").get(i).get("titleKo"));
-//            System.out.println("문제 번호 : " + getNumJsonNode.get("items").get(i).get("problemId"));
+        //    System.out.println("문제 이름 : " + getNumJsonNode.get("items").get(i).get("titleKo"));
+        //    System.out.println("문제 번호 : " + getNumJsonNode.get("items").get(i).get("problemId"));
             problemList.add(getNumJsonNode.get("items").get(i).get("problemId").asText());
             sb.append(getNumJsonNode.get("items").get(i).get("problemId")).append(",");
         }
@@ -522,8 +564,11 @@ public class MainController {
         //System.out.println(problemList);
         return problemList;
     }
-
-    //백준 사용자 푼 문제 수 가져오기.
+    /**
+     * 백준 사용자 푼 문제 수 가져오기.
+     * @param baekjoonId
+     * @return
+     */
     public int getUserBaekData(String baekjoonId) {
         log.info(getClass().getName() + "getUserBackData start!!!!!!!");
         StringBuilder url = new StringBuilder();
@@ -556,7 +601,11 @@ public class MainController {
         }
         return element.select("a").size();
     }
-
+    /**
+     * 세션 체크
+     * @param session
+     * @return
+     */
     public String isUserIdNullthenRedirect(HttpSession session) {
         if(session.getAttribute("value") == null) {
             System.out.println("************ userId is NULL ************");
