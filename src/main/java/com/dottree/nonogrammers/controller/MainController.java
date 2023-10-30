@@ -538,7 +538,7 @@ public class MainController {
         String[] getNumResponseBody = new String[1];
         List<String> problemList = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
-        String url = "https://solved.ac/api/v3/search/problem?query=tier%3A"+level+"&page="+num;
+        String url = "https://solved.ac/api/v3/search/problem?query=tier%3A"+level+"&page="+pageNum;
         getNumPerLevelClient.prepare("GET", url)
                 .setHeader("Accept", "application/json")
                 .execute()
@@ -602,7 +602,7 @@ public class MainController {
         return element.select("a").size();
     }
     /**
-     * 세션 체크
+     *
      * @param session
      * @return
      */
