@@ -198,38 +198,28 @@ public class MyPageController {
                                                         @PathVariable Integer userId) {
         HashMap<String, Object> map = new HashMap<>();
         UserDTO user = userMapper.selectUserByUserId(userId);
-        if(imgFile != null) {
-            String fileName =  imgFile.getOriginalFilename();
+        if(user == null) {
+
+        }
+        byte[] content = null;
+        String fileName =  imgFile.getOriginalFilename();
+        try {
+            content = imgFile.getBytes();
+            Path directoryPath = Paths.get(System.getProperty("user.dir") + "/src/main/resources/static/images/profile/"+userId);
             try {
-                Path directoryPath = Paths.get("/Users/jasonmilian/Downloads/nonogrammers/src/main/resources/static/images/profile/"+userId);
-                try {
-                    // 디렉토리 생성
-                    Files.createDirectory(directoryPath);
-                } catch (FileAlreadyExistsException e) {
-                    System.out.println("디렉토리가 이미 존재합니다");
-                }
-                UUID uuid = UUID.randomUUID();
-                String ext = fileName.split("\\.")[1];
-                fileName = uuid.toString() + "_" + user.getNickName() + "." + ext;
+                // 디렉토리 생성
+                Files.createDirectory(directoryPath);
+            } catch (FileAlreadyExistsException e) {
+                System.out.println("디렉토리가 이미 존재합니다");
+            }
+            UUID uuid = UUID.randomUUID();
+            System.out.println(fileName);
+            String ext = fileName.split("\\.")[1];
+            fileName = uuid.toString() + "_" + user.getNickName() + "." + ext;
+            File f = null;
+            f = new File(System.getProperty("user.dir") + "/src/main/resources/static/images/profile/"+userId+"/"+fileName);
 
-                File f = null;
-                f = new File("/Users/jasonmilian/Downloads/nonogrammers/src/main/resources/static/images/profile/"+userId+"/"+fileName);
-
-                if ( f.exists() ) {
-                    map.put("result", 404);
-                    map.put("msg", "같은 프로필 사진입니다. 다른 사진을 선택해주세요.");
-                } else {
-                    userMapper.updateProfileImg(user.getEmail(), f.getAbsolutePath().split("static")[1]);
-                    userMapper.selectUserByUserId(user.getUserId());
-
-                    Path savePath = Paths.get(f.getAbsolutePath());
-                    imgFile.transferTo(savePath);
-
-                    map.put("result", 200);
-                    map.put("msg", "프로필 사진이 변경되었습니다.");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            if ( f.exists() ) {
                 map.put("result", 404);
                 map.put("msg", fileName + " : 파일이 이미 존재해요!!");
             }
