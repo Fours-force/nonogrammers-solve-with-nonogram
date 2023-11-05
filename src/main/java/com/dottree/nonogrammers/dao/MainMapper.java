@@ -152,4 +152,7 @@ public interface MainMapper {
      */
     @Select("SELECT nonoId, nonoImgUrl, levelType from nono")
     public List<UserNonoVO> selectAllNoNo();
+
+    @Select("select isSolved from usernono where userId = #{userId} and nonoId = #{nonoId}")
+    public int selectUserNonoIsSolved(UserNonoDTO unDTO);
 }

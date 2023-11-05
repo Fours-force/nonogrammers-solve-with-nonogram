@@ -360,7 +360,11 @@ public class MainController {
         log.info(String.valueOf(unDTO.getUserId()));
 
         String msg ="";
-        mdao.updateUserNonoIsSolved(unDTO);
+        if(mdao.selectUserNonoIsSolved(unDTO) == 2){
+            log.info("이미 isSolved가 2입니다");
+        }else{
+            mdao.updateUserNonoIsSolved(unDTO);
+        }
         msg = "성공";
         return msg;
     }
