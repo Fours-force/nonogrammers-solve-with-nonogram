@@ -13,7 +13,9 @@
         .page-link[aria-current="page"] {
             background-color: #74DBEF; /* 현재 페이지 버튼의 배경색을 변경 */
             color: #FFFFFF; /* 현재 페이지 버튼의 텍스트 색상을 변경 */
-            /* 다른 원하는 스타일 변경을 추가하세요 */
+        }
+        .page-link[aria-current="page_notSelect"] {
+            background-color: #74DAAA; /* 현재 페이지 버튼의 배경색을 변경 */
         }
         .rounded-image {
             border-radius: 50%; /* 50%로 설정하여 이미지를 원형으로 만듭니다. */
@@ -175,7 +177,7 @@
                 window.location.href = "/post/nono"; // 전국노노자랑으로 이동
             }else if (optionValue === "all") {
                 document.getElementById("filterSelect").value = "all";
-                window.location.href = "/post"; // 전체로 이동하려고 했으나 왜인지 안됨. 추후 수정필요
+                window.location.href = "/post"; // 전체로 이동
             }
         });
         function searchOnEnter(event) {
@@ -189,12 +191,24 @@
             let currentPage = 1; // 초기 페이지 번호
             let itemsPerPage = 12; // 페이지당 항목 수
             let totalPages = Math.ceil(document.querySelectorAll(".post-item").length / itemsPerPage); // 전체 페이지 수
+
             // 페이지 번호를 클릭할 때 처리
             document.querySelectorAll(".page-link").forEach(function(link) {
+                const pageNumber = parseInt(link.textContent);
+
+<!--                if (pageNumber <= totalPages && pageNumber!=currentPage) {-->
+<!--                    link.setAttribute("totalPages-current", "page");-->
+<!--                }-->
                 link.addEventListener("click", function(event) {
                     event.preventDefault();
+<!--                    if (pageNumber <= totalPages && pageNumber!=currentPage) {-->
+<!--                        link.setAttribute("totalPages-current", "page");-->
+<!--                    }-->
                     const pageNumber = parseInt(this.textContent); // 페이지 번호는 텍스트 내용으로부터 추출
                     if (pageNumber <= totalPages) {
+<!--                        if(pageNumber!=currentPage){-->
+<!--                            link.setAttribute("totalPages-current", "page");-->
+<!--                        }-->
                         movePage(pageNumber); // 페이지 이동 함수 호출
                     }
                 });
@@ -223,7 +237,7 @@
                     });
 
                 }
-                currentPage--; // 현재 페이지 번호를 1 줄여서 이전 페이지로 이동
+                --currentPage; // 현재 페이지 번호를 1 줄여서 이전 페이지로 이동
                 movePage(currentPage);
             }
         });
@@ -249,13 +263,13 @@
                     });
 
                 }
-                currentPage++; // 현재 페이지 번호를 1 증가시켜 다음 페이지로 이동
+                ++currentPage; // 현재 페이지 번호를 1 증가시켜 다음 페이지로 이동
                 movePage(currentPage);
             }
         });
 
         // 페이지 로드 시 초기 상태 설정
-        movePage(currentPage); // 페이지 로드 시 초기 페이지의 내용을 표시
+<!--        movePage(currentPage); // 페이지 로드 시 초기 페이지의 내용을 표시-->
     });
 
     function movePage(pageNumber) {
