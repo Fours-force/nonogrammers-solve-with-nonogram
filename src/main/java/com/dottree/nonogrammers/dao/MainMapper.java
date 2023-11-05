@@ -138,6 +138,9 @@ public interface MainMapper {
     @Select("select solvedCount from user_solved_count where userId = #{userId}")
     public Integer selectUserSolvedCount(UserDotDTO udDTO);
 
+    //nono의 개수 조회 / 마지막 페이지 확인용
+    @Select("select count(nonoId) from nono")
+    public int selectnonoCount();
     /**
      * noono에서 nonoId,nonoImgUrl,levelType조회 // 레벨 별 노노들 조회
      * @param levelType
@@ -145,7 +148,6 @@ public interface MainMapper {
      */
     @Select("SELECT nonoId, nonoImgUrl, levelType from nono where levelType = #{levelType}")
     public List<UserNonoVO> selectNonoByLevel(@Param("levelType")int levelType);
-
     /**
      * 모든 노노 조회
      * @return

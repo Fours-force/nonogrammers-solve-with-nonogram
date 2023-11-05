@@ -37,21 +37,20 @@ public class MainController {
     public MainController(MainMapper mdao, UserMapper userMapper) {
         this.mdao = mdao;
     }
-
     /**
-     * 엑셀파일 픽셀마다 데이터 뽑기
+     * 엑셀파일을 배열로 만들어서 dot 테이블에 저장
      * @return
      * @throws IOException
      */
     @GetMapping("/api/dot")
     public String dotView() throws IOException {
-        int nonoId = 1;
         DotDTO dDTO = new DotDTO();
         String[] names = {"Looney Tunes","daram","Dogi","dottux","dragon","LisaSimpson","Mario2","minions","gara","curby","boo","krong","leo","papa","piyo","trapixel","cyon","bagi","testexcel","testexcel2"};
         for(int i=19; i< names.length; i++) {
-            // Load the Excel file into Workbook to be converted to arrayC:\Users\COM\Downloads
-            log.info(names[i]);
+            //바이트 단위로 파일을 읽어옴
             FileInputStream fis = new FileInputStream("/Users/COM/Downloads/exlels/" + names[i] + ".xlsx");
+            //Apache POI 라이브러리. Workbook은 엑셀 파일의 최상위 컨테이너를 나타내는 인터페이스
+            //XSSFWorkbook는 .xlsx형식의 엑셀파일을 나타내는 클래스
             Workbook excelWorkbookToArray = new XSSFWorkbook(fis);
 
             // Get the reference to the first sheet of the workbook for conversion to array
@@ -81,9 +80,6 @@ public class MainController {
         }
         return null;
     }
-
-
-
     /**
      * 화면에 노노 출력.
      * @param unDTO
@@ -95,6 +91,7 @@ public class MainController {
     @RequestMapping("/nonodots/{userId}/{nonoId}/{baekjoonId}")
     public String nonodots(UserNonoDTO unDTO,@PathVariable("baekjoonId")String beakjoonId, HttpSession session, Model model){
         log.info("nonodots start!!!!!!!!");
+        /////////////세션 처리///////////////////////////////////////
         String redirectLogin = isUserIdNullthenRedirect(session);
         if(!redirectLogin.equals("")) {
             return redirectLogin;
@@ -105,8 +102,9 @@ public class MainController {
             log.info("insert UserNono start!!!!!!!!!");
             mdao.insertUserNono(unDTO);
         }
-
+        log.info("노노 조회 시 백준 아이디 : " + beakjoonId);
         //사용자가 푼 문제수 DB에 저장 안되있으면 초기값으로 백준 푼 문제수를 할당
+  
         UserDotDTO udDTO = new UserDotDTO();
         udDTO.setUserId(unDTO.getUserId());
         udDTO.setNonoId(unDTO.getNonoId());
@@ -136,9 +134,9 @@ public class MainController {
         float ssn = mdao.selectAllDotCount(udDTO.getNonoId());
         float sadc = mdao.selectSolvedNumber(udDTO);
         int progress = (int) (sadc*100/ssn);
-        log.info(getClass().getName() + ": 모든 도트의 수 : "+ ssn);
-        log.info(": 해결한 도트의 수 : "+ sadc);
-        log.info(getClass().getName() + ": 프로그래스 바 :" + progress);
+        log.info("모든 도트의 수 : "+ ssn);
+        log.info("해결한 도트의 수 : "+ sadc);
+        log.info("프로그래스 바 :" + progress);
         model.addAttribute("progress",progress);
 
         ///////////////////////////////////////////////////////////////////////////////////////
@@ -146,6 +144,7 @@ public class MainController {
         model.addAttribute("urlAry", urlAry);
         model.addAttribute("baekjoonUserIdStatus", "1");
         model.addAttribute("nonoId",unDTO.getNonoId());
+        model.addAttribute("lastNono",mdao.selectnonoCount());
         
         return "/nonodots";
 
@@ -355,7 +354,7 @@ public class MainController {
     @RequestMapping(value = ("/api/updateIsSolved/{userId}/{nonoId}"))
     @ResponseBody
     public String updateIsSolved(UserNonoDTO unDTO){
-        log.info(getClass().getName() + ": updateIsSolved start!!!!!");
+        log.info("updateIsSolved start!!!!!");
         log.info(String.valueOf(unDTO.getNonoId()));
         log.info(String.valueOf(unDTO.getUserId()));
 
