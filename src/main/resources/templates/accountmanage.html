@@ -147,7 +147,7 @@
                 let afterNickName = document.getElementById('nickName').value;
 
                 fetch("/api/reset-nickname/"+[[${userId}]], {
-                    method: 'put',
+                    method: 'patch',
                     headers: {
                         'content-type': 'application/json'
                     },
