@@ -38,7 +38,11 @@ public class MainController {
         this.mdao = mdao;
     }
 
-    //엑셀파일 픽셀마다 데이터 뽑기
+    /**
+     * 엑셀파일 픽셀마다 데이터 뽑기
+     * @return
+     * @throws IOException
+     */
     @GetMapping("/api/dot")
     public String dotView() throws IOException {
         int nonoId = 1;
@@ -78,7 +82,16 @@ public class MainController {
         return null;
     }
 
-    //화면에 노노 출력.
+
+
+    /**
+     * 화면에 노노 출력.
+     * @param unDTO
+     * @param beakjoonId
+     * @param session
+     * @param model
+     * @return
+     */
     @RequestMapping("/nonodots/{userId}/{nonoId}/{baekjoonId}")
     public String nonodots(UserNonoDTO unDTO,@PathVariable("baekjoonId")String beakjoonId, HttpSession session, Model model){
         log.info("nonodots start!!!!!!!!");
@@ -86,41 +99,36 @@ public class MainController {
         if(!redirectLogin.equals("")) {
             return redirectLogin;
         }
-        log.info("노노 조회 시 백준 아이디 : " + beakjoonId);
-        UserDotDTO udDTO = new UserDotDTO();
-        udDTO.setUserId(unDTO.getUserId());
-        udDTO.setNonoId(unDTO.getNonoId());
         //노노개방
         if(mdao.selectUserFromUserNono(unDTO) == 0){
             log.info("mdao.selectUserFromUserNono(unDTO) == 0");
             log.info("insert UserNono start!!!!!!!!!");
             mdao.insertUserNono(unDTO);
         }
+
+        //사용자가 푼 문제수 DB에 저장 안되있으면 초기값으로 백준 푼 문제수를 할당
+        UserDotDTO udDTO = new UserDotDTO();
+        udDTO.setUserId(unDTO.getUserId());
+        udDTO.setNonoId(unDTO.getNonoId());
         if(mdao.selectUserSolvedCount(udDTO) == null){
             mdao.insertUserSolvedCount(unDTO.getUserId(),getUserBaekData(beakjoonId)); // 백준 회원가입이 되어있어야함
         }
 
-        log.info("nonoId : " + unDTO.getNonoId());
+        //모든 도트 select
         int cnt = 0;
         List<List<DotDTO>> totalRowList = new ArrayList<>(); // 모든 도트의 정보를 담을 이중ArrayList. 행,열로 나뉘어 있음.
-
         List<DotDTO> nList = mdao.selectAllDot(unDTO.getNonoId()); // 모든 도트 dot테이블에서 가져옴
-
         NonoDTO allUrls = mdao.selectAllallProblemToStr(unDTO.getNonoId()); // 모든 문제Url nono테이블에서 가져옴
         String [] urlAry = allUrls.getAllProblemToStr().split(","); // 쉼표 떼고 배열에 저장
-        System.out.println(urlAry[urlAry.length-1]);
         int row = nList.size()/32; // totalRowList에 모든 도트 정보 담음
-        log.info("row : "+row);
         List<DotDTO> singleRowList = null;
+
         for(int i=0; i<row; i++){
             singleRowList = new ArrayList<>();
             for(int j=0; j<32; j++){
                 singleRowList.add(nList.get(cnt));
-//                    log.info(i + "행 " + j + "열");
-                //System.out.print(nList.get(cnt).getColor()+",");
                 cnt++;
             }
-            //System.out.println();
             totalRowList.add(singleRowList);
         }
 
@@ -142,8 +150,10 @@ public class MainController {
         return "/nonodots";
 
     }
-
-    // 문제번호 가져오기.
+    /**
+     * 문제번호 가져오기.
+     * @param nonoId
+     */
     @RequestMapping("/api/geturls/{nonoId}")
     @ResponseBody
     public void geturls(@PathVariable("nonoId")int nonoId){
@@ -154,8 +164,10 @@ public class MainController {
             System.out.println(urlAry[i]);
         }
     }
-
-    //사용자 검색해서 푼 문제수 출력
+    /**
+     * 사용자 검색해서 푼 문제수 출력
+     * @throws IOException
+     */
     @RequestMapping("/api/solvednum")
     @ResponseBody
     public void solvednum() throws IOException {
@@ -179,8 +191,11 @@ public class MainController {
         System.out.println(jsonNode.get("handle"));
 
     }
-
-    //문제 레벨 별 문제 번호들 저장 성공
+    /**
+     * 문제 레벨 별 문제 번호들 저장
+     * @param level
+     * @throws IOException
+     */
     @RequestMapping("/api/missionlevel/{level}")
     @ResponseBody
     public void solvednum(@PathVariable("level")int level) throws IOException {
@@ -195,16 +210,16 @@ public class MainController {
         System.out.println(totalProblemList);
     }
 
-    //사용자 문 문제들 가져오기
-//    @RequestMapping("/reloadinfo")
-//    @ResponseBody
-
-
-
-    //백준 아이디로 전적갱신  / 이전에 푼 문제 수 저장 필요함.
+    /**
+     * 백준 아이디로 전적갱신  / 이전에 푼 문제 수 저장 필요함.
+     * @param baekjoonId
+     * @param userId
+     * @param nonoId
+     * @return
+     */
     @RequestMapping("/api/updateCheck/{baekjoonId}/{userId}/{nonoId}")
     @ResponseBody
-        public int updateSolved(@PathVariable("baekjoonId")String baekjoonId, @PathVariable("userId")int userId, @PathVariable("nonoId")int nonoId){
+    public int updateSolved(@PathVariable("baekjoonId")String baekjoonId, @PathVariable("userId")int userId, @PathVariable("nonoId")int nonoId){
         log.info(getClass().getName() + "updateSolved 시작!!!!!!!!!!!!");
         int result = 0;
 
@@ -212,25 +227,29 @@ public class MainController {
         udDTO.setNonoId(nonoId);
         udDTO.setUserId(userId);
 
+        //DB에 저장된 푼 문제수, 백준에서 조회한 푼 문제수
         int userSolvedCnt = mdao.selectUserSolvedCount(udDTO);
         int baekjoonSolvedCnt = getUserBaekData(baekjoonId);
 
-        log.info(" 해결해온 문제의 수 "+userSolvedCnt);
-        log.info(" 지금 해결한 문제의 수 "+baekjoonSolvedCnt);
+        log.info(" DB에 저장된 푼 문제수 "+userSolvedCnt);
+        log.info(" 백준에서 조회한 푼 문제수 "+baekjoonSolvedCnt);
         if(userSolvedCnt < baekjoonSolvedCnt){
             result = 1;
             UserSolvedCountDTO uscDTO = new UserSolvedCountDTO();
             uscDTO.setUserId(userId);
             uscDTO.setSolvedCount(userSolvedCnt+1);
             mdao.updateUserSolvedCount(userId,baekjoonSolvedCnt);
-            mdao.selectUserSolvingRow(udDTO);
         }
-        log.info("해결한 문제의 수 " + userSolvedCnt);
-
         return result;
     }
-
-    //userdot에 해결한 dots들 삽입.
+    /**
+     * userdot에 해결한 dots들 삽입.
+     * @param jsonString
+     * @param userId
+     * @param nonoId
+     * @return
+     * @throws JsonProcessingException
+     */
     @ResponseBody
     @RequestMapping(value =("/api/updateUserDot/{userId}/{nonoId}"),method = RequestMethod.POST, produces = "application/json; charset=utf-8")
     public String updateUserDot(@RequestBody String jsonString, @PathVariable("userId") int userId, @PathVariable("nonoId")int nonoId) throws JsonProcessingException {
@@ -267,7 +286,10 @@ public class MainController {
         sb.append("redirect:/nonodots/").append(userId).append("/").append(nonoId);
         return msg;
     }
-    //사용자가 해결중인 문제의 행 설정
+    /**
+     * 사용자가 해결중인 문제의 행 설정
+     * @param usrDTO
+     */
     @RequestMapping("/api/updateSolvingRow/{userId}/{nonoId}/{solvingRow}")
     @ResponseBody
     public void updateSolvingRow(UserSolvingRowDTO usrDTO){
@@ -288,7 +310,12 @@ public class MainController {
         mdao.updateUserSolvingRow(usrDTO);
 
     }
-    //사용자가 현재 풀고있는 행 조회. 나중에 /nonodots랑 합쳐야 될 듯.
+
+    /**
+     * 사용자가 현재 풀고있는 행 조회. 나중에 /nonodots랑 합쳐야 될 듯.
+     * @param udDTO
+     * @return
+     */
     @RequestMapping("/api/selectSolvingRow/{userId}/{nonoId}")
     @ResponseBody
     public int selectSolvingRow(UserDotDTO udDTO){
@@ -306,8 +333,11 @@ public class MainController {
 
         return result;
     }
-
-    //사용자가 푼 dot들의 List 반환. / 색칠해주려고 사용.
+    /**
+     * 사용자가 푼 dot들의 List 반환. / 색칠해주려고 사용.
+     * @param udDTO
+     * @return
+     */
     @RequestMapping(value = ("/api/selectSolvedDotId/{userId}/{nonoId}"), produces = "application/json; charset=utf-8")
     @ResponseBody
     public List<UserDotDTO> selectSolvedDotId(UserDotDTO udDTO){
@@ -317,6 +347,11 @@ public class MainController {
         return udDTOList;
     }
 
+    /**
+     * progressBar 100%면 실행
+     * @param unDTO
+     * @return
+     */
     @RequestMapping(value = ("/api/updateIsSolved/{userId}/{nonoId}"))
     @ResponseBody
     public String updateIsSolved(UserNonoDTO unDTO){
@@ -330,6 +365,12 @@ public class MainController {
         return msg;
     }
 
+    /**
+     * 모든 노노 리스트 가져오기
+     * @param model
+     * @param session
+     * @return
+     */
     @GetMapping("/nonobox")
     public String getIngUserNono(Model model, HttpSession session) {
         String redirectLogin = isUserIdNullthenRedirect(session);
@@ -338,10 +379,16 @@ public class MainController {
         }
         List<UserNonoVO> userNonnolist = mdao.selectAllNoNo();
         model.addAttribute("nonoList", userNonnolist);
-        model.addAttribute("nav", "nonobox" );
 
         return "/nonobox";
     }
+
+    /**
+     * 레벨 별 노노 리스트 가져오기
+     * @param levelType
+     * @param model
+     * @return
+     */
     @GetMapping(value = "/nonobox/{levelType}")
     public String getIngUserNono(@PathVariable(value = "levelType")int levelType, Model model) {
         List<UserNonoVO> userNonnolist = mdao.selectNonoByLevel(levelType);
@@ -351,6 +398,10 @@ public class MainController {
         return "/nonobox";
     }
 
+    /**
+     * solved.ac 기준으로 브론즈 5 문제 가져오기. 현재 55번 문제까지 사용함.
+     * @return
+     */
     @GetMapping("/missionListbuny")
     @ResponseBody
     public String missionListbuny(){
@@ -365,6 +416,11 @@ public class MainController {
 
         return sb.toString();
     }
+
+    /**
+     * solved.ac 기준으로 브론즈 3 문제 가져오기. 현재 177번째 문제까지 사용함.
+     * @return
+     */
     ////////////////////////////////DB 노노 데이터 저장 함수들/////////////////////////////////////
     @GetMapping("/missionListBronze")
     @ResponseBody
@@ -381,7 +437,10 @@ public class MainController {
 
         return sb.toString();
     }
-
+    /**
+     * solved.ac 기준으로 실버 3 문제 가져오기. 현재 322번 문제까지 사용함.
+     * @return
+     */
     @GetMapping("/missionListSilver")
     @ResponseBody
     public String missionListSilver(){//6개
@@ -397,7 +456,10 @@ public class MainController {
 
         return sb.toString();
     }
-
+    /**
+     * solved.ac 기준으로 골드 3 문제 가져오기. 현재 125번 문제까지 사용함
+     * @return
+     */
     @GetMapping("/missionListGold")
     @ResponseBody
     public String missionListGold(){//3개
@@ -413,7 +475,10 @@ public class MainController {
 
         return sb.toString();
     }
-
+    /**
+     * solved.ac 기준으로 플레티넘 3 문제 가져오기. 현재 127번 문제까지 사용함.
+     * @return
+     */
     @GetMapping("/missionListPlatinum")
     @ResponseBody
     public String missionListPlatinum(){//3개
@@ -433,35 +498,47 @@ public class MainController {
 
     ////////////////////////////////////////////내가 선언한 메서드/////////////////////////////////////////////////////////////
 
-    //레벨 의 문제 수
+
+    /**
+     * 레벨에 해당하는 문제의 수
+     * @param level
+     * @return
+     * @throws IOException
+     */
     public int getNumPerLevel(int level) throws IOException {
-        AsyncHttpClient getNumPerLevelClient = new DefaultAsyncHttpClient();
-        String[] getNumResponseBody = new String[1];
+        AsyncHttpClient getNumPerLevelClient = new DefaultAsyncHttpClient(); // 비동기HTTP통신
+        String[] getNumResponseBody = new String[1]; //참조형 변수로 만든 String 배열
         getNumPerLevelClient.prepare("GET", "https://solved.ac/api/v3/problem/level")
                 .setHeader("Accept", "application/json")
                 .execute()
                 .toCompletableFuture()
                 .thenAccept(response -> {
-                    getNumResponseBody[0] = response.getResponseBody();
+                    getNumResponseBody[0] = response.getResponseBody(); // Json 형식의 String 저장
                     //System.out.println(getNumResponseBody[0]);
                 })
                 .join();
         getNumPerLevelClient.close();
 
-        ObjectMapper getNumMapper = new ObjectMapper();
-        JsonNode getNumJsonNode = getNumMapper.readTree(getNumResponseBody[0]);
+        ObjectMapper getNumMapper = new ObjectMapper(); //Jackson 라이브러리 사용
+        JsonNode getNumJsonNode = getNumMapper.readTree(getNumResponseBody[0]); //Jackson 라이브러리에서 JSON데이터를 표현하는 데 사용되는 클래스
         System.out.println(getNumJsonNode.get(level).get("count"));
 
         return getNumJsonNode.get(level).get("count").asInt();
     }
 
-    //문제 레벨과 페이지 번호로 해당 레벨의 문제 번호,이름 뽑기
-    public List<String> insertproblems(int num,int level) throws IOException {
+    /**
+     * 문제 레벨과 페이지 번호로 해당 레벨의 문제 번호,이름 뽑기
+     * @param pageNum
+     * @param level
+     * @return
+     * @throws IOException
+     */
+    public List<String> insertproblems(int pageNum,int level) throws IOException {
         AsyncHttpClient getNumPerLevelClient = new DefaultAsyncHttpClient();
         String[] getNumResponseBody = new String[1];
         List<String> problemList = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
-        String url = "https://solved.ac/api/v3/search/problem?query=tier%3A"+level+"&page="+num;
+        String url = "https://solved.ac/api/v3/search/problem?query=tier%3A"+level+"&page="+pageNum;
         getNumPerLevelClient.prepare("GET", url)
                 .setHeader("Accept", "application/json")
                 .execute()
@@ -477,8 +554,8 @@ public class MainController {
         JsonNode getNumJsonNode = getNumMapper.readTree(getNumResponseBody[0]);
 
         for (int i=0; i<getNumJsonNode.get("items").size(); i++){
-//            System.out.println("문제 이름 : " + getNumJsonNode.get("items").get(i).get("titleKo"));
-//            System.out.println("문제 번호 : " + getNumJsonNode.get("items").get(i).get("problemId"));
+        //    System.out.println("문제 이름 : " + getNumJsonNode.get("items").get(i).get("titleKo"));
+        //    System.out.println("문제 번호 : " + getNumJsonNode.get("items").get(i).get("problemId"));
             problemList.add(getNumJsonNode.get("items").get(i).get("problemId").asText());
             sb.append(getNumJsonNode.get("items").get(i).get("problemId")).append(",");
         }
@@ -487,8 +564,11 @@ public class MainController {
         //System.out.println(problemList);
         return problemList;
     }
-
-    //백준 사용자 푼 문제 수 가져오기.
+    /**
+     * 백준 사용자 푼 문제 수 가져오기.
+     * @param baekjoonId
+     * @return
+     */
     public int getUserBaekData(String baekjoonId) {
         log.info(getClass().getName() + "getUserBackData start!!!!!!!");
         StringBuilder url = new StringBuilder();
@@ -521,7 +601,11 @@ public class MainController {
         }
         return element.select("a").size();
     }
-
+    /**
+     *
+     * @param session
+     * @return
+     */
     public String isUserIdNullthenRedirect(HttpSession session) {
         if(session.getAttribute("value") == null) {
             System.out.println("************ userId is NULL ************");
