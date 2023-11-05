@@ -47,7 +47,7 @@
                 </div>
                 <br>
             </div>
-            <div class="font-super256 min-w-max movebtn eightbit-btn" onclick="gonext()">NEXT</div>
+            <div class="font-super256 min-w-max movebtn eightbit-btn" onclick="gonext()" >NEXT</div>
         </div><br>
     </div>
     <script th:inline="javascript">
@@ -58,22 +58,20 @@
         var dotList = [[${dotList}]];
         var urlAry = [[${urlAry}]];
         let userId = [[${session.value.get("userId")}]];
-        console.log("세션 유저 아이디 : " + userId);
         let nonoId = [[${nonoId}]];
         let progress = [[${progress}]];
         if(progress == 100){
             updateSolvedStat();
         }
-        console.log("progress : "+progress);
-
+        let lastNono = [[${lastNono}]];
         let baekjoonId = [[${session.value.get("baekjoonUserId")}]];
-        console.log("세션 백준 아이디 : " + baekjoonId);
         let solvingRow = 0;
         let allDotsInRow;
 
+
         window.onload= function () {
             for (let i = 0; i < dotList.length; i++) {
-                //문제 링크 설정
+                //행 마다 문제 링크 설정
                 allRowDivs[i].addEventListener("click", function () {
                     solvingRow = i+1;
                     updateSolvingRow();
@@ -187,7 +185,6 @@
                     for (let data of jsonData){
                         console.log("받아온 jsonData의 객체" + data.dotId);
                         allDots[Number(data.dotId)].style.opacity = "1";
-                        // allDots[dotcntt].style.opacity = "0.2";
                     }
                 }
 
@@ -208,12 +205,16 @@
         }
 
         function gonext(){
-            location.href=`/nonodots/${userId}/${nonoId+1}/${baekjoonId}`;
+            if (`${nonoId}`==`${lastNono}`)
+                window.alert("마지막 노노입니다.");
+            else{
+                location.href=`/nonodots/${userId}/${nonoId+1}/${baekjoonId}`;
+            }
         }
 
         function goback(){
             if(`${nonoId}`==1){
-                window.alert("가장 처음 노노입니다.")
+                window.alert("가장 처음 노노입니다.");
             }else{
                 location.href=`/nonodots/${userId}/${nonoId-1}/${baekjoonId}`;
             }
