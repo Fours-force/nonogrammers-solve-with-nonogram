@@ -1,10 +1,11 @@
 package com.dottree.nonogrammers.repository;
 
-import com.dottree.nonogrammers.domain.UserDTO;
+import com.dottree.nonogrammers.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+import java.util.Optional;
 
-public interface MyPageRepository extends JpaRepository<UserDTO, Integer> {
+public interface MyPageRepository extends JpaRepository<User, Long> {
 
+    Optional<User> findByNickName(String nickName);
 }

@@ -1,30 +1,29 @@
 package com.dottree.nonogrammers.controller;
 
-import com.dottree.nonogrammers.dao.MainMapper;
-import com.dottree.nonogrammers.dao.PostMapper;
-import com.dottree.nonogrammers.dao.UserMapper;
 import com.dottree.nonogrammers.domain.*;
+import com.dottree.nonogrammers.entity.User;
 import com.dottree.nonogrammers.repository.MyPageRepository;
+import com.dottree.nonogrammers.service.MyPageService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
-@Controller
+@RestController
+@Slf4j
 public class MyPageController {
 //    private final PostMapper postMapper;
 //    private final UserMapper userMapper;
@@ -33,14 +32,17 @@ public class MyPageController {
 
     private final MyPageRepository myPageRepository;
 
+    private final MyPageService myPageService;
+
 //    public MyPageController(PostMapper postMapper, UserMapper userMapper, MainMapper mainMapper) {
 //        this.postMapper = postMapper;
 //        this.userMapper = userMapper;
 //        this.mainMapper = mainMapper;
 //    }
 
-    public MyPageController(MyPageRepository myPageRepository) {
+    public MyPageController(MyPageRepository myPageRepository, MyPageService myPageService) {
         this.myPageRepository = myPageRepository;
+        this.myPageService = myPageService;
     }
 
     /**
@@ -99,164 +101,94 @@ public class MyPageController {
      * @param model
      * @return accountmanageView
      */
-//    @GetMapping("/user/{userId}")
-//    public String userAccountManageView(@PathVariable("userId") Integer userId,
-//                                        Model model,
-//                                        HttpSession session) {
-//        String redirectLogin = isUserIdNullthenRedirect(session);
-//        if(!redirectLogin.equals("")) {
-//            return redirectLogin;
+    @GetMapping("/user/{userId}")
+    public ResponseEntity userAccountManageView(@PathVariable("userId") Long userId,
+                                                Model model,
+                                                HttpSession session) {
+
+
+
+//        Optional<User> userOpt = myPageRepository.findById(userId);
+//        if(userOpt.isPresent()) {
+//            User user = userOpt.get();
+//            map.put("code", 200);
+//            map.put("user", user);
+//        } else {
+//            map.put("code", 404);
 //        }
-//
-//        UserDTO userDTO = userMapper.selectUserByUserId(userId);
-//        model.addAttribute(userDTO);
-//
-//        return "accountmanage";
-//    }
+
+        return null;
+    }
 
     /**
      * 유저의 닉네임을 수정합니다.
      * @param userId
-     * @param userDTO
+     * @param user
      * @return accountmanageView
      */
-    @PatchMapping(value = "/api/reset-nickname/{userId}", produces = "application/json; charset=utf-8")
-    @ResponseBody
-    public HashMap<String, Object> changeUserNickname(@PathVariable("userId") Integer userId,
-                                                      @RequestBody UserDTO userDTO) {
+    @PatchMapping(value = "/user/nickname/{userId}")
+    public ResponseEntity changeUserNickname(@PathVariable("userId") Long userId,
+                                                      @RequestBody UserDTO user) {
+        try {
+            myPageService.updateNickName(userId, user);
 
-
-
-        HashMap<String, Object> map = new HashMap<>();
-        Optional<UserDTO> userOpt = myPageRepository.findById(userId);
-        if(userOpt.isPresent()) {
-            UserDTO user = userOpt.get();
-            user.setNickName(userDTO.getNickName());
-            myPageRepository.save(user);
+        } catch (IllegalArgumentException e) {
+            log.info(e.getMessage());
         }
-//        UserDTO user = userMapper.selectUserByUserId(userId); // session.getUserId()
-//        System.out.println(user.getUserId());
-//        if(user != null) {
-//            user.setNickName(userDTO.getNickName());
-//            userMapper.resetNickname(user.getEmail(), user.getNickName());
-//            user = userMapper.selectUserByUserId(user.getUserId());
-//            map.put("result", 200);
-//            map.put("obj", user);
-//        } else {
-//            map.put("result", 404);
-//            map.put("msg", "유저 정보를 찾을 수 없습니다.");
-//        }
 
-        return map;
+        return ResponseEntity.created(URI.create("/user/" + userId)).build();
+
     }
 
-//    @PutMapping(value = "/api/withdraw-user/{userId}", produces = "application/json; charset=utf-8")
-//    @ResponseBody
-//    public HashMap<String, Object> withDrawUser(@PathVariable("userId") Integer userId,
-//                                                HttpSession session) {
-//
-//        HashMap<String, Object> map = new HashMap<>();
-//        //session에 로그인되어 있는 사용자로 select 해오고
-//        UserDTO user = userMapper.selectUserByUserId(userId); // session.getUserId()
-//        //사용자가 입력한 email과 같으면 delete
-//        UserDTO inputUser = userMapper.selectUserByUserId(user.getUserId());
-//        if(user != null && user.getEmail().equals(inputUser.getEmail())) {
-//            userMapper.updateStatusCode(user.getEmail(), 0);
-//            //session.removeAttribute();
-//            map.put("result", 200);
-//            map.put("msg", "탈퇴가 정상적으로 처리되었습니다."); //logout처리? session remove처리?
-//            session.removeAttribute("value");
-//
-//        } else {
-//            map.put("result", 404);
-//            map.put("msg", "유저 정보를 찾을 수 없습니다.");
-//        }
-//
-//        return map;
-//    }
+    @PatchMapping(value = "/user/status/{userId}")
+    public ResponseEntity withDrawUser(@PathVariable("userId") Long userId,
+                                                HttpSession session) {
 
-//    @PostMapping(value = "/api/isduplicated-nickname/{nickName}", produces = "application/json; charset=utf-8")
-//    @ResponseBody
-//    public HashMap<String, Object> isDuplicatedNickName(@PathVariable("nickName") String nickName,
-//                                                        @RequestBody UserDTO userDTO) {
-//        HashMap<String, Object> map = new HashMap<>();
-//        int checkedVal = userMapper.getExists("nickName", userDTO.getNickName());
-//
-//        if(checkedVal < 1 && !userDTO.getNickName().equals("null")) {
-//            map.put("result", 200);
-//            map.put("msg", "사용가능한 닉네임입니다.");
-//        } else {
-//            map.put("result", 404);
-//            map.put("msg", "이미 있는 닉네임입니다.");
-//        }
-//
-//        return map;
-//    }
+        myPageService.updateStatusCode(userId);
+        session.removeAttribute("value");
 
-//    @RequestMapping(value = "/api/change-profileimgurl/{userId}", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE, consumes = "multipart/form-data")
-//    @ResponseBody
-//    public HashMap<String, Object> changeProfileImgUrl(@RequestParam("profileImg") MultipartFile imgFile,
-//                                                        @PathVariable Integer userId) {
-//        HashMap<String, Object> map = new HashMap<>();
-//        UserDTO user = userMapper.selectUserByUserId(userId);
-//        if(user == null) {
-//
-//        }
-//        byte[] content = null;
-//        String fileName =  imgFile.getOriginalFilename();
-//        try {
-//            content = imgFile.getBytes();
-//            Path directoryPath = Paths.get("/Users/jasonmilian/Downloads/nonogrammers/src/main/resources/static/images/profile/"+userId);
-//            try {
-//                // 디렉토리 생성
-//                Files.createDirectory(directoryPath);
-//            } catch (FileAlreadyExistsException e) {
-//                System.out.println("디렉토리가 이미 존재합니다");
-//            }
-//            UUID uuid = UUID.randomUUID();
-//            System.out.println(fileName);
-//            String ext = fileName.split("\\.")[1];
-//            fileName = uuid.toString() + "_" + user.getNickName() + "." + ext;
-//            File f = null;
-//            f = new File("/Users/jasonmilian/Downloads/nonogrammers/src/main/resources/static/images/profile/"+userId+"/"+fileName);
-//
-//            if ( f.exists() ) {
-//                map.put("result", 404);
-//                map.put("msg", "같은 프로필 사진입니다. 다른 사진을 선택해주세요.");
-//            } else {
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(value = "/user/isduplicated")
+    public ResponseEntity isDuplicatedNickName(@RequestBody UserDTO userDTO) {
+        try {
+            User user = myPageService.isDuplicatedNickName(userDTO);
+            if(user != null) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch(IllegalArgumentException e) {
+
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @RequestMapping(value = "/api/change-profileimgurl/{userId}", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE, consumes = "multipart/form-data")
+    @ResponseBody
+    public ResponseEntity changeProfileImgUrl(@PathVariable Long userId,
+                                                       @RequestParam("profileImg") MultipartFile imgFile) {
+        File file = myPageService.updateProfileImgUrl(userId, imgFile);
+
 //                userMapper.updateProfileImg(user.getEmail(), f.getAbsolutePath().split("static")[1]);
 //                userMapper.selectUserByUserId(user.getUserId());
-//                //FileOutputStream fos = new FileOutputStream(f);
-////                fos.write(content);
-////                fos.close();
-//                Path savePath = Paths.get(f.getAbsolutePath());
-//                imgFile.transferTo(savePath);
-//                map.put("result", 200);
-//                map.put("msg", "프로필 사진이 변경되었습니다.");
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            map.put("result", 404);
-//            map.put("msg", fileName + " : 파일이 이미 존재해요!!");
-//        }
-//        return map;
-//    }
+        try {
 
-//    @GetMapping("/ingnono/{userId}")
-//    public String getIngUserNono(@PathVariable("userId") Integer userId,
-//                                 Model model,
-//                                 HttpSession session) {
-//        String redirectLogin = isUserIdNullthenRedirect(session);
-//        if(!redirectLogin.equals("")) {
-//            return redirectLogin;
-//        }
-//
-//        List<UserNonoVO> userNonnolist = userMapper.selectUserNonoByIsSolved(userId, 1);
-//        model.addAttribute("title", "내가 풀고 있는 노노들");
-//        model.addAttribute("isSolved", 0);
-//        model.addAttribute("nonoList", userNonnolist);
-//        return "my-nono";
-//    }
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.info(e.getMessage());
+        }
+
+        return null;
+    }
+
+    @GetMapping("/ingnono/{userId}")
+    public String getIngUserNono(@PathVariable("userId") Integer userId,
+                                 HttpSession session) {
+
+        return "my-nono";
+    }
 
 //    @GetMapping("/ingnono/detail/{userId}/{nonoId}")
 //    public String getIngUsernono(@PathVariable("userId") Integer userId,

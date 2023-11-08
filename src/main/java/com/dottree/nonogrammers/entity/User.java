@@ -1,16 +1,20 @@
-package com.dottree.nonogrammers.domain;
+package com.dottree.nonogrammers.entity;
 
-import com.dottree.nonogrammers.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
 
 @Getter
-@Builder(toBuilder = true)
+@ToString
+@Entity
+@Table(name = "user")
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO {
+@Builder(toBuilder = true)
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
     private String email;
     private String password;
@@ -21,5 +25,11 @@ public class UserDTO {
     private LocalDate updatedAt;
     private LocalDate changedAt;
     private Integer statusCode;
+    private String townName;
 
+//    @Builder
+//    public User(Long userId, String nickName) {
+//        this.userId = userId;
+//        this.nickName = nickName;
+//    }
 }
