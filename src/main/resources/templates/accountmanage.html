@@ -157,8 +157,8 @@
                 })
                     .then((response) => response.json())
                     .then((data) => {
-                        if(data.result == 200) {
-                            document.getElementById("showNickName").textContent = `${data.obj.nickName}`;
+                        if(data.code == 200) {
+                            document.getElementById("showNickName").textContent = `${data.user.nickName}`;
                         } else {
                             alert(data.msg);
                         }

@@ -59,8 +59,8 @@ public class MyPageService {
     }
 
     public User isDuplicatedNickName(UserDTO userDTO) {
-        Optional<User> userOpt = myPageRepository.findByNickName(userDTO.getNickName());
-        return userOpt.orElse(null);
+        Optional<User> user = myPageRepository.findByNickName(userDTO.getNickName());
+        return user.orElse(null);
     }
 
     public void selectUserNoNO(Long userId) {
@@ -100,6 +100,7 @@ public class MyPageService {
 //            return file;
             if ( file.exists() ) {
 //                return ResponseEntity.notFound().build();
+                // exception 날려야하나..?
             } else {
                 String fileUrl = file.getAbsolutePath().split("static")[1];
                 user = user.toBuilder().profileImgUrl(fileUrl).build();
