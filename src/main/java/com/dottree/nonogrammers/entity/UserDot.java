@@ -23,8 +23,11 @@ public class UserDot {
 //    @ManyToOne
 //    @JoinColumn(name = "userId")
 //    private User user;
+    @Column(name = "nonoId")
     private int nonoId;
+    @Column(name = "dotId")
     private int dotId;
+    @Column(name = "userId")
     private int userId;
 
 }

@@ -70,6 +70,7 @@ public class MainService {
     public Integer selectUserSolvedCount(UserDotDTO udDTO){
         log.info("selectUserSolvedCount start !!!!!");
         UserSolvedCount userSolvedCount = uscRepository.findById(udDTO.getUserId()).get();
+        log.info(" 푼 문제수 : " + userSolvedCount);
         return userSolvedCount.getSolvedCount();
     }
 
@@ -102,7 +103,7 @@ public class MainService {
 
     public Long selectSolvedNumber(UserDotDTO udDTO){
         log.info("selectSolvedNumber start !!!!!");
-        return udRepository.countUserDotByUser_UserIdAndNono_NonoId(udDTO.getUserId(),udDTO.getNonoId());
+        return udRepository.countUserDotByUserIdAndNonoId(udDTO.getUserId(),udDTO.getNonoId());
     }
 
     public List<Long> selectSolvedDotId(UserDotDTO udDTO){
@@ -112,11 +113,15 @@ public class MainService {
 
     public Integer selectUserSolvingRow(UserDotDTO udDTO){
         log.info("selectUserSolvingRow start !!!!!");
-        return usrRepository.selectUserSolvingRow(udDTO);
+        Integer num = usrRepository.selectUserSolvingRow(udDTO);
+        log.info(" 갱신된 문제 수 : "+num);
+        return num;
     }
 
     public Integer selectIsDotsSolved(UserDotDTO udDTO){
-        return udRepository.selectIsDotsSolved(udDTO);
+        log.info("selectIsDotsSolved start !!!!!");
+        Integer num = udRepository.selectIsDotsSolved(udDTO);
+        return num;
     }
 
     public List<NonoResponseDTO> selectAllNoNo(){
@@ -215,16 +220,16 @@ public class MainService {
         JsonNode getNumJsonNode = getNumMapper.readTree(jsonString);
         User user = uRepository.findById(udDTO.getUserId()).orElseThrow(() -> new IllegalArgumentException());
         Nono nono = nRepository.findById(udDTO.getNonoId()).orElseThrow(() -> new IllegalArgumentException());
-        log.info(String.valueOf(getNumJsonNode.get(0).get("dotId")));
+        log.info("insertUserDot 받은 userId : "+user.toBuilder().build().getUserId());
+        log.info("insertUserDot 받은 nonoId : "+nono.toBuilder().build().getNonoId());
+
         for (int i = 0; i < getNumJsonNode.size(); i++) {
             Dot dot = dRepository.findById(getNumJsonNode.get(i).get("dotId").asInt()).orElseThrow(() -> new IllegalArgumentException());
-            log.info(String.valueOf(user.toBuilder().build().getUserId()));
             UserDot userDot = UserDot.builder()
                     .userId(user.toBuilder().build().getUserId())
                     .nonoId(nono.toBuilder().build().getNonoId())
                     .dotId(dot.toBuilder().build().getDotId())
                     .build();
-
             udRepository.save(userDot);
         }
     }
@@ -314,11 +319,11 @@ public class MainService {
 
         // System.out.println(element);
 
-        System.out.println("========" + baekjoonId + "님이 맞힌 문제========");
+        log.info("========" + baekjoonId + "님이 맞힌 문제========");
 
         //Iterator을 사용하여 하나씩 값 가져오기
         Iterator<Element> ie1 = element.select("a").iterator();
-        System.out.println("---맞힌 개수 : "+element.select("a").size());
+        log.info("---맞힌 개수 : "+element.select("a").size());
         while (ie1.hasNext()) {
             System.out.println(ie1.next().text());
         }
