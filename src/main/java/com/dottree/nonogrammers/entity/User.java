@@ -1,37 +1,35 @@
 package com.dottree.nonogrammers.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @ToString
 @Entity
 @Table(name = "user")
-@Builder(toBuilder = true)
+@NoArgsConstructor
 @AllArgsConstructor
+@Builder(toBuilder = true)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userId;
+    private Long userId;
     private String email;
     private String password;
-    private String profileImgUrl;
     private String nickName;
+    private String profileImgUrl;
     private String baekjoonUserId;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
+    private LocalDate changedAt;
+    private Integer statusCode;
     private String townName;
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 
-    public User() {
-
-    }
+//    @Builder
+//    public User(Long userId, String nickName) {
+//        this.userId = userId;
+//        this.nickName = nickName;
+//    }
 }

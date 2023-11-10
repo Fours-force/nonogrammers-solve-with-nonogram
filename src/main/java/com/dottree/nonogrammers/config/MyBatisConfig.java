@@ -9,6 +9,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import javax.sql.DataSource;
 
+
 @Configuration
 @MapperScan(value={"com.dottree.nonogrammers.dao"})
 public class MyBatisConfig {
@@ -22,3 +23,4 @@ public class MyBatisConfig {
         return sessionFactory.getObject();
     }
 }
+

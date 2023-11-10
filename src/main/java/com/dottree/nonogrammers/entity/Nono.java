@@ -1,16 +1,14 @@
 package com.dottree.nonogrammers.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @ToString
 @Entity
 @Table(name = "nono")
 @Builder(toBuilder = true)
+@NoArgsConstructor
 @AllArgsConstructor
 public class Nono {
     @Id
@@ -19,8 +17,5 @@ public class Nono {
     private int levelType;
     private String nonoImgUrl;
     private String allProblemToStr;
-
-    public Nono() {
-
-    }
 }
+
