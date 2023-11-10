@@ -1,12 +1,17 @@
 package com.dottree.nonogrammers.domain;
 
+import com.dottree.nonogrammers.entity.User;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
 
-@Data
+@Getter
+@Builder(toBuilder = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDTO {
-    private int userId;
+    private Long userId;
     private String email;
     private String password;
     private String nickName;
@@ -15,4 +20,6 @@ public class UserDTO {
     private LocalDate createdAt;
     private LocalDate updatedAt;
     private LocalDate changedAt;
+    private Integer statusCode;
+
 }

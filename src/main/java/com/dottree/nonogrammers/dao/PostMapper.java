@@ -56,8 +56,10 @@ public interface PostMapper {
     @Update("update post set title = #{title}, content = #{content}, updatedAt = now() where postId = #{postId} and userId = #{userId}")
     public boolean updatePostByPostIdAndUserId(@Param("title") String title, @Param("content") String content, @Param("postId") int postId, @Param("userId") int userId);
 
-//    @Update("UPDATE post SET viewCount = viewCount + 1 WHERE postId = #{postId}")
-//    public void incrementViewCount(String postId);
+    
+    @Update("UPDATE post SET viewCount = viewCount + 1 WHERE postId = #{postId}")
+    public void incrementViewCount(String postId);
+
 
     // boardName 으로 boardType 반환
 //    @Select("select boardType from board where boardName = #{category}")

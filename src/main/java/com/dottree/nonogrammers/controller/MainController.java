@@ -1,9 +1,9 @@
 package com.dottree.nonogrammers.controller;
 
-import com.dottree.nonogrammers.dao.MainMapper;
-import com.dottree.nonogrammers.dao.UserMapper;
 import com.dottree.nonogrammers.domain.*;
-
+import com.dottree.nonogrammers.entity.Dot;
+import com.dottree.nonogrammers.entity.Nono;
+import com.dottree.nonogrammers.service.MainService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,34 +11,27 @@ import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.ibatis.binding.BindingException;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+
 @Controller
 @Slf4j
 public class MainController {
-    final MainMapper mdao;
-    public MainController(MainMapper mdao, UserMapper userMapper) {
-        this.mdao = mdao;
+
+    private final MainService mainService;
+
+    public MainController(MainService mainService){
+        this.mainService=mainService;
     }
 
-    //엑셀파일 픽셀마다 데이터 뽑기
+    /*//엑셀파일 픽셀마다 데이터 뽑기
     @GetMapping("/api/dot")
     public String dotView() throws IOException {
         int nonoId = 1;
@@ -76,42 +69,43 @@ public class MainController {
         fis.close();
         }
         return null;
-    }
+    }*/
 
-    //화면에 노노 출력.
+
     @RequestMapping("/nonodots/{userId}/{nonoId}/{baekjoonId}")
-    public String nonodots(UserNonoDTO unDTO,@PathVariable("baekjoonId")String beakjoonId, HttpSession session, Model model){
+    public String nonodots(UserNonoDTO unDTO, @PathVariable("baekjoonId")String beakjoonId, HttpSession session, Model model){
         log.info("nonodots start!!!!!!!!");
-        String redirectLogin = isUserIdNullthenRedirect(session);
+      /*  String redirectLogin = mainService.isUserIdNullthenRedirect(session);
         if(!redirectLogin.equals("")) {
             return redirectLogin;
-        }
+        }*/
         log.info("노노 조회 시 백준 아이디 : " + beakjoonId);
         UserDotDTO udDTO = new UserDotDTO();
         udDTO.setUserId(unDTO.getUserId());
         udDTO.setNonoId(unDTO.getNonoId());
         //노노개방
-        if(mdao.selectUserFromUserNono(unDTO) == 0){
+        if(mainService.selectUserFromUserNono(unDTO) == 0){
             log.info("mdao.selectUserFromUserNono(unDTO) == 0");
             log.info("insert UserNono start!!!!!!!!!");
-            mdao.insertUserNono(unDTO);
+            mainService.insertUserNono(unDTO);
         }
-        if(mdao.selectUserSolvedCount(udDTO) == null){
-            mdao.insertUserSolvedCount(unDTO.getUserId(),getUserBaekData(beakjoonId)); // 백준 회원가입이 되어있어야함
+        if(mainService.selectUserSolvedCount(udDTO) == null){
+            mainService.insertUserSolvedCount(unDTO.getUserId(),mainService.getUserBaekData(beakjoonId)); // 백준 회원가입이 되어있어야함
         }
 
         log.info("nonoId : " + unDTO.getNonoId());
         int cnt = 0;
-        List<List<DotDTO>> totalRowList = new ArrayList<>(); // 모든 도트의 정보를 담을 이중ArrayList. 행,열로 나뉘어 있음.
+        List<List<Dot>> totalRowList = new ArrayList<>(); // 모든 도트의 정보를 담을 이중ArrayList. 행,열로 나뉘어 있음.
 
-        List<DotDTO> nList = mdao.selectAllDot(unDTO.getNonoId()); // 모든 도트 dot테이블에서 가져옴
+        List<Dot> nList = mainService.selectAllDot(unDTO.getNonoId()); // 모든 도트 dot테이블에서 가져옴
 
-        NonoDTO allUrls = mdao.selectAllallProblemToStr(unDTO.getNonoId()); // 모든 문제Url nono테이블에서 가져옴
-        String [] urlAry = allUrls.getAllProblemToStr().split(","); // 쉼표 떼고 배열에 저장
+        String allUrls = mainService.selectallProblemToStr(unDTO.getNonoId()); // 모든 문제Url nono테이블에서 가져옴
+        String [] urlAry = allUrls.split(","); // 쉼표 떼고 배열에 저장
         System.out.println(urlAry[urlAry.length-1]);
+
         int row = nList.size()/32; // totalRowList에 모든 도트 정보 담음
         log.info("row : "+row);
-        List<DotDTO> singleRowList = null;
+        List<Dot> singleRowList = null;
         for(int i=0; i<row; i++){
             singleRowList = new ArrayList<>();
             for(int j=0; j<32; j++){
@@ -125,8 +119,8 @@ public class MainController {
         }
 
         //Progress bar //////////////////////////////////////////////////////////////////////////////
-        float ssn = mdao.selectAllDotCount(udDTO.getNonoId());
-        float sadc = mdao.selectSolvedNumber(udDTO);
+        float ssn = mainService.selectAllDotCount(udDTO.getNonoId());
+        float sadc = mainService.selectSolvedNumber(udDTO);
         int progress = (int) (sadc*100/ssn);
         log.info(getClass().getName() + ": 모든 도트의 수 : "+ ssn);
         log.info(": 해결한 도트의 수 : "+ sadc);
@@ -136,26 +130,25 @@ public class MainController {
         ///////////////////////////////////////////////////////////////////////////////////////
         model.addAttribute("dotList", totalRowList);
         model.addAttribute("urlAry", urlAry);
-        model.addAttribute("baekjoonUserIdStatus", "1");
         model.addAttribute("nonoId",unDTO.getNonoId());
-        
+
         return "/nonodots";
 
     }
 
-    // 문제번호 가져오기.
+    /*// 문제번호 가져오기. Deprecated
     @RequestMapping("/api/geturls/{nonoId}")
     @ResponseBody
     public void geturls(@PathVariable("nonoId")int nonoId){
-        NonoDTO allUrls = mdao.selectAllallProblemToStr(nonoId);
-        String [] urlAry = allUrls.getAllProblemToStr().split(",");
+        String allUrls = mainService.selectallProblemToStr(nonoId);
+        String [] urlAry = allUrls.split(",");
 
         for (int i=0; i< urlAry.length; i++){
             System.out.println(urlAry[i]);
         }
-    }
+    }*/
 
-    //사용자 검색해서 푼 문제수 출력
+/*    //사용자 검색해서 푼 문제수 출력
     @RequestMapping("/api/solvednum")
     @ResponseBody
     public void solvednum() throws IOException {
@@ -178,18 +171,18 @@ public class MainController {
         System.out.println(jsonNode.get("solvedCount"));  // 출력: John
         System.out.println(jsonNode.get("handle"));
 
-    }
+    }*/
 
     //문제 레벨 별 문제 번호들 저장 성공
     @RequestMapping("/api/missionlevel/{level}")
     @ResponseBody
     public void solvednum(@PathVariable("level")int level) throws IOException {
         //레벨 별 문제수 가져오기, 리스트에 저장
-        int cntPerLevel = getNumPerLevel(level);
+        int cntPerLevel = mainService.getNumPerLevel(level);
         List<String> totalProblemList = new ArrayList<>();
         System.out.println(cntPerLevel);
         for (int i=1; i<cntPerLevel/50; i++){
-            totalProblemList.addAll(insertproblems(i, level));
+            totalProblemList.addAll(mainService.insertproblems(i, level));
 
         }
         System.out.println(totalProblemList);
@@ -204,7 +197,7 @@ public class MainController {
     //백준 아이디로 전적갱신  / 이전에 푼 문제 수 저장 필요함.
     @RequestMapping("/api/updateCheck/{baekjoonId}/{userId}/{nonoId}")
     @ResponseBody
-        public int updateSolved(@PathVariable("baekjoonId")String baekjoonId, @PathVariable("userId")int userId, @PathVariable("nonoId")int nonoId){
+    public int updateSolved(@PathVariable("baekjoonId")String baekjoonId, @PathVariable("userId")int userId, @PathVariable("nonoId")int nonoId){
         log.info(getClass().getName() + "updateSolved 시작!!!!!!!!!!!!");
         int result = 0;
 
@@ -212,8 +205,8 @@ public class MainController {
         udDTO.setNonoId(nonoId);
         udDTO.setUserId(userId);
 
-        int userSolvedCnt = mdao.selectUserSolvedCount(udDTO);
-        int baekjoonSolvedCnt = getUserBaekData(baekjoonId);
+        int userSolvedCnt = mainService.selectUserSolvedCount(udDTO);
+        int baekjoonSolvedCnt = mainService.getUserBaekData(baekjoonId);
 
         log.info(" 해결해온 문제의 수 "+userSolvedCnt);
         log.info(" 지금 해결한 문제의 수 "+baekjoonSolvedCnt);
@@ -222,8 +215,8 @@ public class MainController {
             UserSolvedCountDTO uscDTO = new UserSolvedCountDTO();
             uscDTO.setUserId(userId);
             uscDTO.setSolvedCount(userSolvedCnt+1);
-            mdao.updateUserSolvedCount(userId,baekjoonSolvedCnt);
-            mdao.selectUserSolvingRow(udDTO);
+            mainService.updateUserSolvedCount(userId,baekjoonSolvedCnt);
+            mainService.selectUserSolvingRow(udDTO);
         }
         log.info("해결한 문제의 수 " + userSolvedCnt);
 
@@ -248,19 +241,14 @@ public class MainController {
         udDTO.setNonoId(nonoId);
         log.info(String.valueOf(udDTO.getDotId()));
         try {
-            if(mdao.selectIsDotsSolved(udDTO).getDotId() == udDTO.getDotId()){
+            if(mainService.selectIsDotsSolved(udDTO) == null){
                 log.info("중복된 userDotInsert 처리.");//뇌정지..
                 msg = "이미 푼 문제여서 실패~";
             }
         }catch (NullPointerException e){
             log.info("에러메세지 : " + e.getMessage());
-            for (int i = 0; i < getNumJsonNode.size(); i++) {
-                udDTO.setDotId(getNumJsonNode.get(i).get("dotId").asInt()+1);
-                udDTO.setUserId(userId);
-                udDTO.setNonoId(nonoId);
-                mdao.insertUserDot(udDTO);
-            }
-            mdao.resetUserSolvingRow(udDTO);
+            mainService.insertUserDot(udDTO, jsonString);
+            mainService.resetUserSolvingRow(udDTO);
             msg = "성공~";
         }
         StringBuilder sb = new StringBuilder();
@@ -278,14 +266,14 @@ public class MainController {
         udDTO.setNonoId(usrDTO.getNonoId());
         log.info("풀고있는 행 변경 : UserId : " + usrDTO.getUserId());
         log.info("풀고있는 행 변경 : nonoId : " + udDTO.getNonoId());
-        try {
-            mdao.selectUserSolvingRow(udDTO);
-        }catch (BindingException e){
-            log.info(": BindingException 발생 : " + e.getMessage());
-            mdao.insertUserSolvingRow(usrDTO);
+        Integer sovingRow = mainService.selectUserSolvingRow(udDTO);
+        if(sovingRow != null){
+            mainService.updateUserSolvingRow(usrDTO);
+        }else {
+            mainService.insertUserSolvingRow(usrDTO);
         }
 
-        mdao.updateUserSolvingRow(usrDTO);
+
 
     }
     //사용자가 현재 풀고있는 행 조회. 나중에 /nonodots랑 합쳐야 될 듯.
@@ -295,24 +283,21 @@ public class MainController {
         log.info("selectSolvingRow start!!");
         int result = 0;
 
-        try {
-            String rowNullCheck = String.valueOf(mdao.selectUserSolvingRow(udDTO));
-            if(!(rowNullCheck.isEmpty())){
-                result = mdao.selectUserSolvingRow(udDTO);
-            }
-        }catch (BindingException e){
-            log.info(e.getMessage());
+        Integer rowNullCheck = mainService.selectUserSolvingRow(udDTO);
+        if(rowNullCheck != null){
+            result = rowNullCheck;
+        }else{
+            log.info("풀고있는 줄 없음");
         }
-
         return result;
     }
 
     //사용자가 푼 dot들의 List 반환. / 색칠해주려고 사용.
-    @RequestMapping(value = ("/api/selectSolvedDotId/{userId}/{nonoId}"), produces = "application/json; charset=utf-8")
+    @RequestMapping(value = ("/api/selectSolvedDotId/{userId}/{nonoId}"))
     @ResponseBody
-    public List<UserDotDTO> selectSolvedDotId(UserDotDTO udDTO){
-        List<UserDotDTO> udDTOList = new ArrayList<>();
-        udDTOList = mdao.selectSolvedDotId(udDTO);
+    public List<Long> selectSolvedDotId(UserDotDTO udDTO){
+        List<Long> udDTOList = new ArrayList<>();
+        udDTOList = mainService.selectSolvedDotId(udDTO);
 
         return udDTOList;
     }
@@ -325,31 +310,31 @@ public class MainController {
         log.info(String.valueOf(unDTO.getUserId()));
 
         String msg ="";
-        mdao.updateUserNonoIsSolved(unDTO);
+        mainService.updateUserNonoIsSolved(unDTO);
         msg = "성공";
         return msg;
     }
 
-    @GetMapping("/nonobox")
-    public String getIngUserNono(Model model, HttpSession session) {
-        String redirectLogin = isUserIdNullthenRedirect(session);
-        if(!redirectLogin.equals("")) {
-            return redirectLogin;
-        }
-        List<UserNonoVO> userNonnolist = mdao.selectAllNoNo();
-        model.addAttribute("nonoList", userNonnolist);
-        model.addAttribute("nav", "nonobox" );
-
-        return "/nonobox";
-    }
-    @GetMapping(value = "/nonobox/{levelType}")
-    public String getIngUserNono(@PathVariable(value = "levelType")int levelType, Model model) {
-        List<UserNonoVO> userNonnolist = mdao.selectNonoByLevel(levelType);
-        log.info(userNonnolist.get(0).toString());
-        model.addAttribute("nonoList", userNonnolist);
-
-        return "/nonobox";
-    }
+//    @GetMapping("/nonobox")
+//    public String getIngUserNono(Model model, HttpSession session) {
+//        String redirectLogin = mainService.isUserIdNullthenRedirect(session);
+//        if(!redirectLogin.equals("")) {
+//            return redirectLogin;
+//        }
+//        List<NonoResponseDTO> NonoReslist = mainService.selectAllNoNo();
+//        model.addAttribute("nonoList", NonoReslist);
+//        model.addAttribute("nav", "nonobox" );
+//
+//        return "/nonobox";
+//    }
+//    @GetMapping(value = "/nonobox/{levelType}")
+//    public String getIngUserNono(@PathVariable(value = "levelType")int levelType, Model model) {
+//        List<NonoResponseDTO> NonoReslist = mainService.selectNonoByLevel(levelType);
+//        log.info(NonoReslist.get(0).toString());
+//        model.addAttribute("nonoList", NonoReslist);
+//
+//        return "/nonobox";
+//    }
 
     @GetMapping("/missionListbuny")
     @ResponseBody
@@ -431,105 +416,8 @@ public class MainController {
     }
 
 
-    ////////////////////////////////////////////내가 선언한 메서드/////////////////////////////////////////////////////////////
 
-    //레벨 의 문제 수
-    public int getNumPerLevel(int level) throws IOException {
-        AsyncHttpClient getNumPerLevelClient = new DefaultAsyncHttpClient();
-        String[] getNumResponseBody = new String[1];
-        getNumPerLevelClient.prepare("GET", "https://solved.ac/api/v3/problem/level")
-                .setHeader("Accept", "application/json")
-                .execute()
-                .toCompletableFuture()
-                .thenAccept(response -> {
-                    getNumResponseBody[0] = response.getResponseBody();
-                    //System.out.println(getNumResponseBody[0]);
-                })
-                .join();
-        getNumPerLevelClient.close();
 
-        ObjectMapper getNumMapper = new ObjectMapper();
-        JsonNode getNumJsonNode = getNumMapper.readTree(getNumResponseBody[0]);
-        System.out.println(getNumJsonNode.get(level).get("count"));
-
-        return getNumJsonNode.get(level).get("count").asInt();
-    }
-
-    //문제 레벨과 페이지 번호로 해당 레벨의 문제 번호,이름 뽑기
-    public List<String> insertproblems(int num,int level) throws IOException {
-        AsyncHttpClient getNumPerLevelClient = new DefaultAsyncHttpClient();
-        String[] getNumResponseBody = new String[1];
-        List<String> problemList = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();
-        String url = "https://solved.ac/api/v3/search/problem?query=tier%3A"+level+"&page="+num;
-        getNumPerLevelClient.prepare("GET", url)
-                .setHeader("Accept", "application/json")
-                .execute()
-                .toCompletableFuture()
-                .thenAccept(response -> {
-                    getNumResponseBody[0] = response.getResponseBody();
-                    //System.out.println(getNumResponseBody[0]);
-                })
-                .join();
-        getNumPerLevelClient.close();
-
-        ObjectMapper getNumMapper = new ObjectMapper();
-        JsonNode getNumJsonNode = getNumMapper.readTree(getNumResponseBody[0]);
-
-        for (int i=0; i<getNumJsonNode.get("items").size(); i++){
-//            System.out.println("문제 이름 : " + getNumJsonNode.get("items").get(i).get("titleKo"));
-//            System.out.println("문제 번호 : " + getNumJsonNode.get("items").get(i).get("problemId"));
-            problemList.add(getNumJsonNode.get("items").get(i).get("problemId").asText());
-            sb.append(getNumJsonNode.get("items").get(i).get("problemId")).append(",");
-        }
-        System.out.println(sb);
-
-        //System.out.println(problemList);
-        return problemList;
-    }
-
-    //백준 사용자 푼 문제 수 가져오기.
-    public int getUserBaekData(String baekjoonId) {
-        log.info(getClass().getName() + "getUserBackData start!!!!!!!");
-        StringBuilder url = new StringBuilder();
-
-        url.append("https://www.acmicpc.net/user/");
-        url.append(baekjoonId);
-
-        //Document에는 페이지의 전체 소스가 저장된다
-        Document doc = null;
-
-        try {
-            doc = Jsoup.connect(url.toString()).get();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        //select를 이용하여 원하는 태그를 선택한다. select는 원하는 값을 가져오기 위한 중요한 기능이다.
-        Element element = doc.select("div.problem-list").first(); // 맞은 문제
-        //Element element = doc.select("div.problem-list").last(); // 시도했지만 맞지 못한 문제
-
-        // System.out.println(element);
-
-        System.out.println("========" + baekjoonId + "님이 맞힌 문제========");
-
-        //Iterator을 사용하여 하나씩 값 가져오기
-        Iterator<Element> ie1 = element.select("a").iterator();
-        System.out.println("---맞힌 개수 : "+element.select("a").size());
-        while (ie1.hasNext()) {
-            System.out.println(ie1.next().text());
-        }
-        return element.select("a").size();
-    }
-
-    public String isUserIdNullthenRedirect(HttpSession session) {
-        if(session.getAttribute("value") == null) {
-            System.out.println("************ userId is NULL ************");
-            return "redirect:/login";
-        } else {
-            return "";
-        }
-    }
 }
 
 

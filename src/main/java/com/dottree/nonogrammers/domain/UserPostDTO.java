@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class UserPostVO {
+public class UserPostDTO {
     private int userId;
     private UserDTO userDTO;
     private List<PostDTO> userPostList;
