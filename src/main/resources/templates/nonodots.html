@@ -59,7 +59,7 @@
         var urlAry = [[${urlAry}]];
 
 
-        let userId = 1;
+        let userId = [[${session.value.get('userId')}]];
         console.log("세션 유저 아이디 : " + userId);
         let nonoId = [[${nonoId}]];
         let progress = [[${progress}]];
@@ -68,7 +68,7 @@
         }
         console.log("progress : "+progress);
 
-        let baekjoonId = 'tjdtndlwkd';
+        let baekjoonId = [[${session.value.get('baekjoonUserId')}]];
         console.log("세션 백준 아이디 : " + baekjoonId);
         let solvingRow = 0;
         let allDotsInRow;
@@ -162,16 +162,18 @@
             allDotsInRow = allRowDivs[solvingRow-1].querySelectorAll(".nonoDot");
             for(let element of allDotsInRow){
                 var data = new Object();
-                data.dotId = element.id.substring(3)+1;
+                data.dotId = Number.parseInt(element.id.substring(3))+1;
                 missionList.push(data);
             }
             var jsonData = JSON.stringify(missionList);
-            // console.log(jsonData);
+            console.log("삽입할 도트들 : "+jsonData);
 
             let xhr = new XMLHttpRequest();
             xhr.onload = function() {
                 if (xhr.status == 200) {
                     window.location.reload();
+                }else{
+                    window.alert("삽입 실패!");
                 }
             };
             xhr.open('POST', `/api/updateUserDot/${userId}/${nonoId}`, true);

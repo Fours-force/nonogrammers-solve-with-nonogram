@@ -208,8 +208,6 @@ public class MainController {
         int userSolvedCnt = mainService.selectUserSolvedCount(udDTO);
         int baekjoonSolvedCnt = mainService.getUserBaekData(baekjoonId);
 
-        log.info(" 해결해온 문제의 수 "+userSolvedCnt);
-        log.info(" 지금 해결한 문제의 수 "+baekjoonSolvedCnt);
         if(userSolvedCnt < baekjoonSolvedCnt){
             result = 1;
             UserSolvedCountDTO uscDTO = new UserSolvedCountDTO();
@@ -218,7 +216,6 @@ public class MainController {
             mainService.updateUserSolvedCount(userId,baekjoonSolvedCnt);
             mainService.selectUserSolvingRow(udDTO);
         }
-        log.info("해결한 문제의 수 " + userSolvedCnt);
 
         return result;
     }
@@ -231,7 +228,7 @@ public class MainController {
         UserDotDTO udDTO = new UserDotDTO();
         String msg ="";
 
-        System.out.println("받아온 JSON 형식의 String : "+jsonString);
+        log.info("받아온 JSON 형식의 String : "+jsonString);
 
         ObjectMapper getNumMapper = new ObjectMapper();
         JsonNode getNumJsonNode = getNumMapper.readTree(jsonString);
@@ -242,15 +239,21 @@ public class MainController {
         log.info(String.valueOf(udDTO.getDotId()));
         try {
             if(mainService.selectIsDotsSolved(udDTO) == null){
+                log.info("푼 행의 도트들 삽입 시작!");
+
+                    mainService.insertUserDot(udDTO, jsonString);
+
+                mainService.resetUserSolvingRow(udDTO);
+                msg = "성공~";
+            }else {
                 log.info("중복된 userDotInsert 처리.");//뇌정지..
                 msg = "이미 푼 문제여서 실패~";
             }
-        }catch (NullPointerException e){
-            log.info("에러메세지 : " + e.getMessage());
-            mainService.insertUserDot(udDTO, jsonString);
-            mainService.resetUserSolvingRow(udDTO);
-            msg = "성공~";
+        } catch (Exception e){
+            log.info(e.getMessage());
         }
+
+
         StringBuilder sb = new StringBuilder();
         sb.append("redirect:/nonodots/").append(userId).append("/").append(nonoId);
         return msg;
