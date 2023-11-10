@@ -68,8 +68,8 @@
                 <h2 class="sr-only">Products</h2>
                 <div class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
                     <div th:each="vo, iterStat : ${list}" class="post-item" data-page="1">
-                        <a th:href="@{'/detail?postId=' + ${vo.postId}}" class="group">
-                                <div class="w-full h-40 overflow-hidden transition-transform duration-300 ease-in-out transform bg-white rounded-lg shadow-lg aspect-h-1 aspect-w-1 xl:aspect-h-8 xl:aspect-w-7 group-hover:scale-110 group-hover:opacity-85">
+                        <a th:href="@{/detail(postId=${vo.postId})}" class="group">
+                        <div class="w-full h-40 overflow-hidden transition-transform duration-300 ease-in-out transform bg-white rounded-lg shadow-lg aspect-h-1 aspect-w-1 xl:aspect-h-8 xl:aspect-w-7 group-hover:scale-110 group-hover:opacity-85">
                                     <div class="object-cover object-center w-full h-full">
                                         <h3 class="pl-6 mt-4 text-sm font-bold text-main-blue" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                             <!-- boardType에 따라 게시판 종류 나누기 -->
@@ -80,7 +80,7 @@
                                         </h3>
                                         <div class="flex">
 <!--                                            나중에 구현할 거 <img src="/images/new_post_1.png" class="w-3 mt-1.5 ml-3 h-fit profile-image" alt="">-->
-                                            <img th:if="${vo.fileUrls.isEmpty() == false}" src="/images/show_image.png" class="w-4 mt-1.5 ml-3 h-4 profile-image" alt="">
+<!--                                            <img th:if="${vo.fileUrls.isEmpty() == false}" src="/images/show_image.png" class="w-4 mt-1.5 ml-3 h-4 profile-image" alt="">-->
                                             <p class="pl-3 pr-4 mt-0.5 text-base font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[[${vo.title}]]</p><!-- 제목 -->
                                         </div>
                                         <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[[${vo.content}]]</p><!-- 내용 -->
