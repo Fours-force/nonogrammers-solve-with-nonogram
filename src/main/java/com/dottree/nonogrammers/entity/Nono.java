@@ -18,3 +18,4 @@ public class Nono {
     private String nonoImgUrl;
     private String allProblemToStr;
 }
+
