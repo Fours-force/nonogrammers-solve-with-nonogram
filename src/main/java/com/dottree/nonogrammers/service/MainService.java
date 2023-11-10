@@ -196,7 +196,7 @@ public class MainService {
 
     @Transactional
     public void insertUserNono(UserNonoDTO unDTO){
-
+        log.info("insertUserNono start !!!!!");
         User user = uRepository.findById(unDTO.getUserId()).get();
         Nono nono = nRepository.findById(unDTO.getNonoId()).get();
 
@@ -210,18 +210,21 @@ public class MainService {
 
     @Transactional
     public void insertUserDot(UserDotDTO udDTO, String jsonString) throws JsonProcessingException {
+        log.info("insertUserDot start !!!!!");
         ObjectMapper getNumMapper = new ObjectMapper();
         JsonNode getNumJsonNode = getNumMapper.readTree(jsonString);
-        User user = uRepository.findById(udDTO.getUserId()).get();
-        Nono nono = nRepository.findById(udDTO.getNonoId()).get();
+        User user = uRepository.findById(udDTO.getUserId()).orElseThrow(() -> new IllegalArgumentException());
+        Nono nono = nRepository.findById(udDTO.getNonoId()).orElseThrow(() -> new IllegalArgumentException());
+        log.info(String.valueOf(getNumJsonNode.get(0).get("dotId")));
         for (int i = 0; i < getNumJsonNode.size(); i++) {
-            Dot dot = dRepository.findById(getNumJsonNode.get(i).get("dotId").asInt()).get();
-
+            Dot dot = dRepository.findById(getNumJsonNode.get(i).get("dotId").asInt()).orElseThrow(() -> new IllegalArgumentException());
+            log.info(String.valueOf(user.toBuilder().build().getUserId()));
             UserDot userDot = UserDot.builder()
-                    .user(user)
-                    .nono(nono)
-                    .dot(dot)
+                    .userId(user.toBuilder().build().getUserId())
+                    .nonoId(nono.toBuilder().build().getNonoId())
+                    .dotId(dot.toBuilder().build().getDotId())
                     .build();
+
             udRepository.save(userDot);
         }
     }

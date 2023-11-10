@@ -170,18 +170,17 @@
 </script>
 <script th:inline="javascript" th:if="${session.value != null}">
     window.onload = function() {
-        const editedOption = document.getElementById("optionSpace");
-        editedOption.value = "자유게시판";
-<!--        var boardType =[[${pos.boardType}]];-->
-<!--        if(boardType===1){-->
-<!--            editedOption.value = "공지사항";-->
-<!--        }else if(boardType===2){-->
-<!--            editedOption.value = "자유게시판";-->
-<!--        }else if(boardType===3){-->
-<!--            editedOption.value = "질문/답변";-->
-<!--        }else if(boardType===4){-->
-<!--            editedOption.value = "전국노노자랑";-->
-<!--        }-->
+        var editedOption = document.getElementById("optionSpace");
+        var boardType =[[${pos.boardType}]];
+        if(boardType==1){
+            editedOption.value = "공지사항";
+        }else if(boardType==2){
+            editedOption.value = "자유게시판";
+        }else if(boardType==3){
+            editedOption.value = "질문답변";
+        }else if(boardType==4){
+            editedOption.value = "전국노노자랑";
+        }
         const editedTitle = document.getElementById("titleSpace");
         editedTitle.value = [[${pos.title}]];
         const editedContent = document.getElementById("editor");

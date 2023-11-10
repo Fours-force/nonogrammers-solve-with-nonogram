@@ -315,26 +315,26 @@ public class MainController {
         return msg;
     }
 
-//    @GetMapping("/nonobox")
-//    public String getIngUserNono(Model model, HttpSession session) {
-//        String redirectLogin = mainService.isUserIdNullthenRedirect(session);
-//        if(!redirectLogin.equals("")) {
-//            return redirectLogin;
-//        }
-//        List<NonoResponseDTO> NonoReslist = mainService.selectAllNoNo();
-//        model.addAttribute("nonoList", NonoReslist);
-//        model.addAttribute("nav", "nonobox" );
-//
-//        return "/nonobox";
-//    }
-//    @GetMapping(value = "/nonobox/{levelType}")
-//    public String getIngUserNono(@PathVariable(value = "levelType")int levelType, Model model) {
-//        List<NonoResponseDTO> NonoReslist = mainService.selectNonoByLevel(levelType);
-//        log.info(NonoReslist.get(0).toString());
-//        model.addAttribute("nonoList", NonoReslist);
-//
-//        return "/nonobox";
-//    }
+    @GetMapping("/nonobox")
+    public String getIngUserNono(Model model, HttpSession session) {
+        String redirectLogin = mainService.isUserIdNullthenRedirect(session);
+        if(!redirectLogin.equals("")) {
+            return redirectLogin;
+        }
+        List<NonoResponseDTO> NonoReslist = mainService.selectAllNoNo();
+        model.addAttribute("nonoList", NonoReslist);
+        model.addAttribute("nav", "nonobox" );
+
+        return "/nonobox";
+    }
+    @GetMapping(value = "/nonobox/{levelType}")
+    public String getIngUserNono(@PathVariable(value = "levelType")int levelType, Model model) {
+        List<NonoResponseDTO> NonoReslist = mainService.selectNonoByLevel(levelType);
+        log.info(NonoReslist.get(0).toString());
+        model.addAttribute("nonoList", NonoReslist);
+
+        return "/nonobox";
+    }
 
     @GetMapping("/missionListbuny")
     @ResponseBody

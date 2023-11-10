@@ -3,19 +3,17 @@ package com.dottree.nonogrammers.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+@Entity
+@Setter
 @Getter
 @ToString
-@Entity
-@Table(name = "nono")
+@Table(name = "board")
 @Builder(toBuilder = true)
-@NoArgsConstructor
 @AllArgsConstructor
-public class Nono {
+@NoArgsConstructor
+public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer nonoId;
-    private int levelType;
-    private String nonoImgUrl;
-    private String allProblemToStr;
+    private int boardType;
+    private String boardName;
 }
-
