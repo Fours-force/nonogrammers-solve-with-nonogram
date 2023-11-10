@@ -2,7 +2,6 @@ package com.dottree.nonogrammers.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDate;
 
 @Getter
@@ -33,3 +32,4 @@ public class User {
 //        this.nickName = nickName;
 //    }
 }
+
