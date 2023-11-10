@@ -10,6 +10,5 @@ public class JoinDTO {
     private String nickName;
     private String password;
     private String correctPassword;
-    private String profileImgUrl;
     private String baekjoonUserId;
 }
