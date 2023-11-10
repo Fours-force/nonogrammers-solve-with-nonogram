@@ -13,7 +13,9 @@
         .page-link[aria-current="page"] {
             background-color: #74DBEF; /* 현재 페이지 버튼의 배경색을 변경 */
             color: #FFFFFF; /* 현재 페이지 버튼의 텍스트 색상을 변경 */
-            /* 다른 원하는 스타일 변경을 추가하세요 */
+        }
+        .page-link[aria-current="page_notSelect"] {
+            background-color: #74DAAA; /* 현재 페이지 버튼의 배경색을 변경 */
         }
         .rounded-image {
             border-radius: 50%; /* 50%로 설정하여 이미지를 원형으로 만듭니다. */
@@ -66,8 +68,8 @@
                 <h2 class="sr-only">Products</h2>
                 <div class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
                     <div th:each="vo, iterStat : ${list}" class="post-item" data-page="1">
-                        <a th:href="@{'/detail?postId=' + ${vo.postId}}" class="group">
-                                <div class="w-full h-40 overflow-hidden transition-transform duration-300 ease-in-out transform bg-white rounded-lg shadow-lg aspect-h-1 aspect-w-1 xl:aspect-h-8 xl:aspect-w-7 group-hover:scale-110 group-hover:opacity-85">
+                        <a th:href="@{/detail(postId=${vo.postId})}" class="group">
+                        <div class="w-full h-40 overflow-hidden transition-transform duration-300 ease-in-out transform bg-white rounded-lg shadow-lg aspect-h-1 aspect-w-1 xl:aspect-h-8 xl:aspect-w-7 group-hover:scale-110 group-hover:opacity-85">
                                     <div class="object-cover object-center w-full h-full">
                                         <h3 class="pl-6 mt-4 text-sm font-bold text-main-blue" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                             <!-- boardType에 따라 게시판 종류 나누기 -->
@@ -78,7 +80,7 @@
                                         </h3>
                                         <div class="flex">
 <!--                                            나중에 구현할 거 <img src="/images/new_post_1.png" class="w-3 mt-1.5 ml-3 h-fit profile-image" alt="">-->
-                                            <img th:if="${vo.fileUrls.isEmpty() == false}" src="/images/show_image.png" class="w-4 mt-1.5 ml-3 h-4 profile-image" alt="">
+<!--                                            <img th:if="${vo.fileUrls.isEmpty() == false}" src="/images/show_image.png" class="w-4 mt-1.5 ml-3 h-4 profile-image" alt="">-->
                                             <p class="pl-3 pr-4 mt-0.5 text-base font-bold text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[[${vo.title}]]</p><!-- 제목 -->
                                         </div>
                                         <p class="px-4 mt-1 text-sm text-gray-900" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[[${vo.content}]]</p><!-- 내용 -->
@@ -175,7 +177,7 @@
                 window.location.href = "/post/nono"; // 전국노노자랑으로 이동
             }else if (optionValue === "all") {
                 document.getElementById("filterSelect").value = "all";
-                window.location.href = "/post"; // 전체로 이동하려고 했으나 왜인지 안됨. 추후 수정필요
+                window.location.href = "/post"; // 전체로 이동
             }
         });
         function searchOnEnter(event) {
@@ -189,12 +191,24 @@
             let currentPage = 1; // 초기 페이지 번호
             let itemsPerPage = 12; // 페이지당 항목 수
             let totalPages = Math.ceil(document.querySelectorAll(".post-item").length / itemsPerPage); // 전체 페이지 수
+
             // 페이지 번호를 클릭할 때 처리
             document.querySelectorAll(".page-link").forEach(function(link) {
+                const pageNumber = parseInt(link.textContent);
+
+<!--                if (pageNumber <= totalPages && pageNumber!=currentPage) {-->
+<!--                    link.setAttribute("totalPages-current", "page");-->
+<!--                }-->
                 link.addEventListener("click", function(event) {
                     event.preventDefault();
+<!--                    if (pageNumber <= totalPages && pageNumber!=currentPage) {-->
+<!--                        link.setAttribute("totalPages-current", "page");-->
+<!--                    }-->
                     const pageNumber = parseInt(this.textContent); // 페이지 번호는 텍스트 내용으로부터 추출
                     if (pageNumber <= totalPages) {
+<!--                        if(pageNumber!=currentPage){-->
+<!--                            link.setAttribute("totalPages-current", "page");-->
+<!--                        }-->
                         movePage(pageNumber); // 페이지 이동 함수 호출
                     }
                 });
@@ -223,7 +237,7 @@
                     });
 
                 }
-                currentPage--; // 현재 페이지 번호를 1 줄여서 이전 페이지로 이동
+                --currentPage; // 현재 페이지 번호를 1 줄여서 이전 페이지로 이동
                 movePage(currentPage);
             }
         });
@@ -249,13 +263,13 @@
                     });
 
                 }
-                currentPage++; // 현재 페이지 번호를 1 증가시켜 다음 페이지로 이동
+                ++currentPage; // 현재 페이지 번호를 1 증가시켜 다음 페이지로 이동
                 movePage(currentPage);
             }
         });
 
         // 페이지 로드 시 초기 상태 설정
-        movePage(currentPage); // 페이지 로드 시 초기 페이지의 내용을 표시
+<!--        movePage(currentPage); // 페이지 로드 시 초기 페이지의 내용을 표시-->
     });
 
     function movePage(pageNumber) {
@@ -284,7 +298,23 @@
             }
         });
     }
+    // 현재 URL 주소 가져오기
+    var currentUrl = window.location.href;
 
+    // 주소에 문자열이 포함되어 있는지 확인
+    if (currentUrl.includes("/post/notice")) {
+        // "/post/notice"이 포함되어 있으면 "notice" 옵션을 선택
+        document.getElementById("filterSelect").value = "notice";
+    }else if (currentUrl.includes("/post/free")) {
+        // "/post/free"이 포함되어 있으면 "free" 옵션을 선택
+        document.getElementById("filterSelect").value = "free";
+    }else if (currentUrl.includes("/post/qa")) {
+        // "/post/qa"이 포함되어 있으면 "qa" 옵션을 선택
+        document.getElementById("filterSelect").value = "qa";
+    }else if (currentUrl.includes("/post/nono")) {
+        // "/post/nono"이 포함되어 있으면 "nono" 옵션을 선택
+        document.getElementById("filterSelect").value = "nono";
+    }
 
     </script>
 </body>

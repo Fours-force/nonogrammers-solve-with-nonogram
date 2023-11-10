@@ -1,5 +1,4 @@
-package com.dottree.nonogrammers.domain;
-
+package com.dottree.nonogrammers.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,9 +17,11 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
 @Table(name = "user")
 @EntityListeners(AuditingEntityListener.class)
+@Builder(toBuilder = true)
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,22 +74,35 @@ public class User implements UserDetails {
     }
 
     @Override
-    public String getUsername() {return email;}
+    public String getUsername() {
+        return email;
+    }
 
     @Override
-    public String getPassword() {return password;}
+    public String getPassword() {
+        return password;
+    }
 
     @Override
-    public boolean isAccountNonExpired() {return true;}
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
     @Override
-    public boolean isAccountNonLocked() {return true;}
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
     @Override
-    public boolean isCredentialsNonExpired() {return true;}
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
 
     @Override
-    public boolean isEnabled() {return true;}
+    public boolean isEnabled() {
+        return true;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("user"));
