@@ -1,5 +1,6 @@
 package com.dottree.nonogrammers.service;
 
+import com.dottree.nonogrammers.domain.NonoResponseDTO;
 import com.dottree.nonogrammers.domain.UserDotDTO;
 import com.dottree.nonogrammers.domain.UserNonoDTO;
 import com.dottree.nonogrammers.domain.UserSolvingRowDTO;

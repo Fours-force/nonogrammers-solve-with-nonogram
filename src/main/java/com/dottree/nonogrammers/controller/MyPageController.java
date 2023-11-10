@@ -186,50 +186,50 @@ public class MyPageController {
         return map;
     }
 
-    /**
-     * 프로필이미지 변경
-     * @param imgFile
-     * @param userId
-     * @return HashMap
-     */
-    @RequestMapping(value = "/api/change-profileimgurl/{userId}", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE, consumes = "multipart/form-data")
-    @ResponseBody
-    public HashMap<String, Object> changeProfileImgUrl(@RequestParam("profileImg") MultipartFile imgFile,
-                                                        @PathVariable Integer userId) {
-        HashMap<String, Object> map = new HashMap<>();
-        UserDTO user = userMapper.selectUserByUserId(userId);
-        if(user == null) {
-
-        }
-        byte[] content = null;
-        String fileName =  imgFile.getOriginalFilename();
-        try {
-            content = imgFile.getBytes();
-            Path directoryPath = Paths.get(System.getProperty("user.dir") + "/src/main/resources/static/images/profile/"+userId);
-            try {
-                // 디렉토리 생성
-                Files.createDirectory(directoryPath);
-            } catch (FileAlreadyExistsException e) {
-                System.out.println("디렉토리가 이미 존재합니다");
-            }
-            UUID uuid = UUID.randomUUID();
-            System.out.println(fileName);
-            String ext = fileName.split("\\.")[1];
-            fileName = uuid.toString() + "_" + user.getNickName() + "." + ext;
-            File f = null;
-            f = new File(System.getProperty("user.dir") + "/src/main/resources/static/images/profile/"+userId+"/"+fileName);
-
-            if ( f.exists() ) {
-                map.put("result", 404);
-                map.put("msg", fileName + " : 파일이 이미 존재해요!!");
-            }
-        } else {
-            map.put("result", 404);
-            map.put("msg", "파일이 선택되지 않았습니다.");
-        }
-
-        return map;
-    }
+//    /**
+//     * 프로필이미지 변경
+//     * @param imgFile
+//     * @param userId
+//     * @return HashMap
+//     */
+//    @RequestMapping(value = "/api/change-profileimgurl/{userId}", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE, consumes = "multipart/form-data")
+//    @ResponseBody
+//    public HashMap<String, Object> changeProfileImgUrl(@RequestParam("profileImg") MultipartFile imgFile,
+//                                                        @PathVariable Integer userId) throws IOException {
+//        HashMap<String, Object> map = new HashMap<>();
+//        UserDTO user = userMapper.selectUserByUserId(userId);
+//        if(user == null) {
+//
+//        }
+//        byte[] content = null;
+//        String fileName =  imgFile.getOriginalFilename();
+//        try {
+//            content = imgFile.getBytes();
+//            Path directoryPath = Paths.get(System.getProperty("user.dir") + "/src/main/resources/static/images/profile/"+userId);
+//            try {
+//                // 디렉토리 생성
+//                Files.createDirectory(directoryPath);
+//            } catch (FileAlreadyExistsException e) {
+//                System.out.println("디렉토리가 이미 존재합니다");
+//            }
+//            UUID uuid = UUID.randomUUID();
+//            System.out.println(fileName);
+//            String ext = fileName.split("\\.")[1];
+//            fileName = uuid.toString() + "_" + user.getNickName() + "." + ext;
+//            File f = null;
+//            f = new File(System.getProperty("user.dir") + "/src/main/resources/static/images/profile/"+userId+"/"+fileName);
+//
+//            if ( f.exists() ) {
+//                map.put("result", 404);
+//                map.put("msg", fileName + " : 파일이 이미 존재해요!!");
+//            }
+//        } else {
+//            map.put("result", 404);
+//            map.put("msg", "파일이 선택되지 않았습니다.");
+//        }
+//
+//        return map;
+//    }
 
     @GetMapping("/ingnono/{userId}")
     public String getIngUserNono(@PathVariable("userId") Integer userId,
