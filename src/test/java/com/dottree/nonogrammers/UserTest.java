@@ -1,6 +1,6 @@
 package com.dottree.nonogrammers;
 
-import com.dottree.nonogrammers.domain.User;
+import com.dottree.nonogrammers.entity.User;
 import com.dottree.nonogrammers.repository.UserRepository;
 import jakarta.persistence.EntityListeners;
 import org.junit.jupiter.api.Test;

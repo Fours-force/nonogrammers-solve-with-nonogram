@@ -1,18 +1,9 @@
 package com.dottree.nonogrammers.repository;
 
 import com.dottree.nonogrammers.domain.CommentDTO;
-import com.dottree.nonogrammers.domain.FileDTO;
 import com.dottree.nonogrammers.domain.PostDTO;
-import com.dottree.nonogrammers.entity.Comment;
 import com.dottree.nonogrammers.entity.Post;
-import com.dottree.nonogrammers.entity.File;
-import com.dottree.nonogrammers.entity.Likes;
-import com.dottree.nonogrammers.entity.User;
-import jakarta.transaction.Transactional;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

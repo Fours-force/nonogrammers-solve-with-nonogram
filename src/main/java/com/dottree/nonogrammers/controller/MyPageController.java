@@ -5,10 +5,7 @@ import com.dottree.nonogrammers.entity.User;
 import com.dottree.nonogrammers.repository.MyPageRepository;
 import com.dottree.nonogrammers.service.MyPageService;
 import jakarta.servlet.http.HttpSession;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Update;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -17,10 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.net.URI;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Optional;
 
 @RestController
 @Slf4j

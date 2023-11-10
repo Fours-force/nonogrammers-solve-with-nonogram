@@ -1,14 +1,10 @@
 package com.dottree.nonogrammers.service;
 
 import com.dottree.nonogrammers.domain.UserDTO;
-import com.dottree.nonogrammers.domain.UserNonoVO;
 import com.dottree.nonogrammers.entity.User;
 import com.dottree.nonogrammers.repository.MyPageRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Update;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

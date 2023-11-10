@@ -1,35 +1,68 @@
 package com.dottree.nonogrammers.entity;
 
+
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDate;
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-@Getter
-@ToString
+import java.time.LocalDateTime;
+
 @Entity
-@Table(name = "user")
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
+@Table(name = "user")
+@EntityListeners(AuditingEntityListener.class)
 @Builder(toBuilder = true)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    @Column(name = "userId")
+    private int userId;
+
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
     private String nickName;
+
+    @Column(columnDefinition = "text")
     private String profileImgUrl;
+
+    @ColumnDefault("1")
+    private int statusCode;
+
+    @Column(nullable = false, unique = true)
     private String baekjoonUserId;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
-    private LocalDate changedAt;
-    private Integer statusCode;
+
+    @CreatedDate
+    @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime updatedAt;
+
+    @CreatedDate
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime changedAt;
+
     private String townName;
 
-//    @Builder
-//    public User(Long userId, String nickName) {
-//        this.userId = userId;
-//        this.nickName = nickName;
-//    }
+    @Builder
+    public User(String email, String password, String nickName, String baekjoonUserId) {
+        this.email = email;
+        this.password = password;
+        this.nickName = nickName;
+        this.baekjoonUserId = baekjoonUserId;
+        this.profileImgUrl = "/images/default.png";
+        this.statusCode = 1;
+    }
 }
-
