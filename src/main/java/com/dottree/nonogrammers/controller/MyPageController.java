@@ -47,7 +47,7 @@ public class MyPageController {
 
     /**
      * 유저의 작성한 글 페이지를 보여줍니다.
-     * @param userPostVO
+     * @param userPostDTO
      * @param userId
      * @return mypostView
      */
@@ -94,6 +94,7 @@ public class MyPageController {
 //        return "mypost";
 //
 //    }
+ 
 
     /**
      * 유저의 계정관리 페이지를 보여줍니다.
@@ -134,10 +135,10 @@ public class MyPageController {
 
         } catch (IllegalArgumentException e) {
             log.info(e.getMessage());
+    
         }
 
         return ResponseEntity.created(URI.create("/user/" + userId)).build();
-
     }
 
     @PatchMapping(value = "/user/status/{userId}")
@@ -160,11 +161,17 @@ public class MyPageController {
                 return ResponseEntity.notFound().build();
             }
         } catch(IllegalArgumentException e) {
-
+   
             return ResponseEntity.notFound().build();
         }
     }
 
+    /**
+     * 프로필이미지 변경
+     * @param imgFile
+     * @param userId
+     * @return HashMap
+     */
     @RequestMapping(value = "/api/change-profileimgurl/{userId}", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE, consumes = "multipart/form-data")
     @ResponseBody
     public ResponseEntity changeProfileImgUrl(@PathVariable Long userId,
@@ -174,19 +181,17 @@ public class MyPageController {
 //                userMapper.updateProfileImg(user.getEmail(), f.getAbsolutePath().split("static")[1]);
 //                userMapper.selectUserByUserId(user.getUserId());
         try {
-
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             log.info(e.getMessage());
         }
-
+      
         return null;
     }
 
     @GetMapping("/ingnono/{userId}")
     public String getIngUserNono(@PathVariable("userId") Integer userId,
                                  HttpSession session) {
-
         return "my-nono";
     }
 
@@ -251,4 +256,5 @@ public class MyPageController {
 //            return "";
 //        }
 //    }
+
 }
