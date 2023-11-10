@@ -1,6 +1,6 @@
 package com.dottree.nonogrammers.service;
 
-import com.dottree.nonogrammers.domain.User;
+import com.dottree.nonogrammers.entity.User;
 import com.dottree.nonogrammers.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
