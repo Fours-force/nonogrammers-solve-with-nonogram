@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -165,8 +166,8 @@ public class MainService {
     @Transactional
     public void updateUserNonoIsSolved(UserNonoDTO unDTO){
         log.info("updateUserNonoIsSolved start !!!!!");
-        UserNono userNono = unRepository.findByUser_UserIdAndNono_NonoId(unDTO.getUserId(), unDTO.getNonoId());
-        userNono.update(2);
+        Optional<UserNono> userNono = unRepository.findByUser_UserIdAndNono_NonoId(unDTO.getUserId(), unDTO.getNonoId());
+        userNono.get().update(2);
     }
     @Transactional
     public void insertUserSolvedCount(int userId, int baekjoonSolvedCnt){
