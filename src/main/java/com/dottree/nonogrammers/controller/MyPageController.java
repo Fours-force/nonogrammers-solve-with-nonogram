@@ -2,10 +2,15 @@ package com.dottree.nonogrammers.controller;
 
 import com.dottree.nonogrammers.domain.*;
 import com.dottree.nonogrammers.entity.User;
+import com.dottree.nonogrammers.entity.UserNono;
 import com.dottree.nonogrammers.repository.MyPageRepository;
 import com.dottree.nonogrammers.service.MyPageService;
+import com.dottree.nonogrammers.service.PostService;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.NotFound;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -14,148 +19,130 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @Slf4j
 public class MyPageController {
-//    private final PostMapper postMapper;
-//    private final UserMapper userMapper;
-//
-//    private final MainMapper mainMapper;
-
-    private final MyPageRepository myPageRepository;
 
     private final MyPageService myPageService;
 
-//    public MyPageController(PostMapper postMapper, UserMapper userMapper, MainMapper mainMapper) {
-//        this.postMapper = postMapper;
-//        this.userMapper = userMapper;
-//        this.mainMapper = mainMapper;
-//    }
+    private final PostService postService;
 
-    public MyPageController(MyPageRepository myPageRepository, MyPageService myPageService) {
-        this.myPageRepository = myPageRepository;
+    public MyPageController(MyPageService myPageService, PostService postService) {
         this.myPageService = myPageService;
+        this.postService = postService;
     }
 
     /**
      * 유저의 작성한 글 페이지를 보여줍니다.
-     * @param userPostDTO
      * @param userId
      * @return mypostView
      */
-//    @GetMapping("/mypost/{userId}")
-//    public String userPostView(@ModelAttribute("userPostVO") UserPostVO userPostVO,
-//                               @PathVariable("userId") Integer userId,
-//                               HttpSession session) {
-//        UserDTO userDTO = userMapper.selectUserByUserId(userId);
-//        String redirectLogin = isUserIdNullthenRedirect(session);
-//        if(!redirectLogin.equals("")) {
-//            return redirectLogin;
-//        }
-////        isUserIdNullthenRedirect(userId);
-//        List<PostDTO> postDtoList = postMapper.selectPostList(userId);
-//        userPostVO.setUserDTO(userDTO);
-//        userPostVO.setUserId(userId);
-//        userPostVO.setUserPostList(postDtoList);
-//        return "mypost";
-//    }
+    @GetMapping("/post/{userId}")
+    public ResponseEntity userPostList(@PathVariable("userId") Integer userId) {
+        try {
+            return ResponseEntity.ok(postService.getUserPostList(userId));
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 유저의 게시물을 조회하는데 실패하였습니다.");
+        }
+    }
 
-//    @PutMapping(value = "/api/modify/{userId}/{postId}")
-////    @ResponseBody
-//    public String modifyUserPost(@ModelAttribute("userPostVO") UserPostVO userPostVO,
-//                                  @ModelAttribute PostDTO postDTO,
-//                                  Model model,
-//                                  @PathVariable("postId") Integer postId,
-//                                  @PathVariable("userId") Integer userId) {
-//
-////        isUserIdNullthenRedirect(userId);
-//        boolean result = postMapper.updatePostByPostIdAndUserId(postDTO.getTitle(), postDTO.getContent(), postId, userId);
-////        postDTO = postMapper.detailss(String.valueOf(postId));
-//        UserDTO userDTO = userMapper.selectUserByUserId(userId);
-//        List<PostDTO> postDtoList = postMapper.selectPostList(userId);
-//        userPostVO.setUserPostList(postDtoList);
-//        userPostVO.setUserDTO(userDTO);
-//        userPostVO.setUserId(userId);
-//        if(result) {
-//            model.addAttribute("msg", "게시글이 수정되었습니다.");
-//            model.addAttribute(userPostVO);
-//        } else {
-//            model.addAttribute("msg", "게시글 수정이 실패했습니다.");
-//        }
-//
-//        return "mypost";
-//
-//    }
- 
+    /**
+     * 유저의 게시물을 수정합니다.
+     * @param postId
+     * @param userId
+     * @param postDTO
+     * @return ResponseEntity
+     */
+    @PatchMapping(value = "/post/{userId}/{postId}")
+    public ResponseEntity userPostModify(@PathVariable("postId") Integer postId,
+                                         @PathVariable("userId") Integer userId,
+                                         @RequestBody PostDTO postDTO) {
+        try {
+            postService.changeUserPost(postDTO.getTitle(), postDTO.getContent(), postId, userId);
+            // TODO: 11/14/23 - 수정 후 리턴 할 객체 무엇 다시 Post 조회 후 list 반환? 아니면 변경된 Post만 반환?
+            return ResponseEntity.created(URI.create("/post/"+ userId)).body("게시물 수정에 성공하였습니다.");
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("게시물 수정에 실패하였습니다.");
+        }
+
+    }
 
     /**
      * 유저의 계정관리 페이지를 보여줍니다.
-     * @param userId
-     * @param model
-     * @return accountmanageView
+     * @param nickName
+     * @return ResponseEntity
      */
-    @GetMapping("/user/{userId}")
-    public ResponseEntity userAccountManageView(@PathVariable("userId") Long userId,
-                                                Model model,
-                                                HttpSession session) {
-
-
-
-//        Optional<User> userOpt = myPageRepository.findById(userId);
-//        if(userOpt.isPresent()) {
-//            User user = userOpt.get();
-//            map.put("code", 200);
-//            map.put("user", user);
-//        } else {
-//            map.put("code", 404);
-//        }
-
-        return null;
+    @GetMapping("/user/{nickName}")
+    public ResponseEntity userAccountManageView(@PathVariable("nickName") String nickName) {
+        try {
+            return ResponseEntity.ok(myPageService.getUser(nickName));
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 유저를 찾는데 실패하였습니다.");
+        }
     }
 
     /**
      * 유저의 닉네임을 수정합니다.
+     *
      * @param userId
-     * @param user
-     * @return accountmanageView
+     * @param userDTO
+     * @return ResponseEntity
      */
     @PatchMapping(value = "/user/nickname/{userId}")
-    public ResponseEntity changeUserNickname(@PathVariable("userId") Long userId,
-                                                      @RequestBody UserDTO user) {
+    public ResponseEntity<String> changeUserNickname(@PathVariable("userId") Integer userId,
+                                                     @RequestBody UserDTO userDTO) {
         try {
-            myPageService.updateNickName(userId, user);
+            myPageService.updateNickName(userId, userDTO);
+            return ResponseEntity.created(URI.create("/user/" + userId)).body("닉네임 수정에 성공하였습니다.");
 
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) { // IllegalArgumentException
             log.info(e.getMessage());
-    
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("닉네임 수정에 실패하였습니다.");
+        }
+    }
+
+    /**
+     * 유저의 탈퇴여부 코드를 변경합니다.
+     * @param userId
+     * @param session
+     * @return ResponseEntity
+     */
+    @PatchMapping(value = "/user/status/{userId}")
+    public ResponseEntity<String> withDrawUser(@PathVariable("userId") Integer userId,
+                                               HttpSession session) {
+        try {
+            myPageService.updateStatusCode(userId);
+            session.removeAttribute("value");
+            return ResponseEntity.ok("회원 상태코드 수정에 성공하였습니다.");
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원 상태코드 수정에 실패하였습니다.");
         }
 
-        return ResponseEntity.created(URI.create("/user/" + userId)).build();
     }
 
-    @PatchMapping(value = "/user/status/{userId}")
-    public ResponseEntity withDrawUser(@PathVariable("userId") Long userId,
-                                                HttpSession session) {
-
-        myPageService.updateStatusCode(userId);
-        session.removeAttribute("value");
-
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping(value = "/user/isduplicated")
+    /**
+     * 유저의 닉네임 중복여부를 확인합니다.
+     * @param userDTO
+     * @return ResponseEntity
+     */
+    @PostMapping(value = "/user/nickname/isduplicated")
     public ResponseEntity isDuplicatedNickName(@RequestBody UserDTO userDTO) {
         try {
             User user = myPageService.isDuplicatedNickName(userDTO);
-            if(user != null) {
-                return ResponseEntity.ok().build();
+            if (user == null) {
+                return ResponseEntity.ok("닉네임 중복검사에 성공하였습니다.");
             } else {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("닉네임 중복검사에 실패하였습니다.");
             }
-        } catch(IllegalArgumentException e) {
-   
-            return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("닉네임 중복검사에 실패하였습니다.");
         }
     }
 
@@ -165,89 +152,60 @@ public class MyPageController {
      * @param userId
      * @return HashMap
      */
-    @RequestMapping(value = "/api/change-profileimgurl/{userId}", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE, consumes = "multipart/form-data")
+    @RequestMapping(value = "/user/profileimg/{userId}", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE, consumes = "multipart/form-data")
     @ResponseBody
-    public ResponseEntity changeProfileImgUrl(@PathVariable Long userId,
-                                                       @RequestParam("profileImg") MultipartFile imgFile) {
-        File file = myPageService.updateProfileImgUrl(userId, imgFile);
-
-//                userMapper.updateProfileImg(user.getEmail(), f.getAbsolutePath().split("static")[1]);
-//                userMapper.selectUserByUserId(user.getUserId());
+    public ResponseEntity changeProfileImgUrl(@PathVariable Integer userId,
+                                              @RequestParam("profileImg") MultipartFile imgFile) {
+        File file = null;
         try {
-            return ResponseEntity.ok().build();
+            file = myPageService.updateProfileImgUrl(userId, imgFile);
+
+            if (file != null)
+                return ResponseEntity.ok("프로필 이미지 변경에 성공하였습니다.");
+            else
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("프로필 이미지 변경에 실패했습니다.");
         } catch (Exception e) {
             log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("프로필 이미지 변경에 실패했습니다.");
         }
-      
-        return null;
     }
 
-    @GetMapping("/ingnono/{userId}")
-    public String getIngUserNono(@PathVariable("userId") Integer userId,
-                                 HttpSession session) {
-        return "my-nono";
+    /**
+     * 유저의 노노들을 보여줍니다.
+     * @param userId
+     * @param isSolved
+     * @return ResponseEntity
+     */
+    @GetMapping("/nono/{userId}/{isSolved}")
+    public ResponseEntity getIngUserNono(@PathVariable("userId") Integer userId,
+                                         @PathVariable("isSolved") Integer isSolved) {
+        List<UserNono> userNonnolist = null;
+        try {
+            userNonnolist = myPageService.getUserNoNoList(userId, isSolved);
+            return ResponseEntity.ok(userNonnolist);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저의 NoNo들을 조회하는데 실패하였습니다.");
+        }
     }
 
-//    @GetMapping("/ingnono/detail/{userId}/{nonoId}")
-//    public String getIngUsernono(@PathVariable("userId") Integer userId,
-//                                 @PathVariable("nonoId") Integer nonoId,
-//                                 Model model,
-//                                 HttpSession session) {
-//        String redirectLogin = isUserIdNullthenRedirect(session);
-//        if(!redirectLogin.equals("")) {
-//            return redirectLogin;
-//        }
-//
-//        UserNonoVO userNonoVO = userMapper.selectIngUserNonoDetail(userId, nonoId);
-//        if(userNonoVO == null) {
-//            // 유효성검사?
-//        }
-//        model.addAttribute("userNono", userNonoVO);
-//
-//        return "usernono-detail";
-//    }
-
-//    @GetMapping("/solvednono/{userId}")
-//    public String getSolvedUserNono(@PathVariable("userId") Integer userId,
-//                                    Model model,
-//                                    HttpSession session) {
-//        String redirectLogin = isUserIdNullthenRedirect(session);
-//        if(!redirectLogin.equals("")) {
-//            return redirectLogin;
-//        }
-//        List<UserNonoVO> userNonnolist = userMapper.selectUserNonoByIsSolved(userId, 2);
-//        model.addAttribute("title", "내가 푼 노노들");
-//        model.addAttribute("isSolved", 1);
-//        model.addAttribute("nonoList", userNonnolist);
-////        System.out.println(userNonnolist.size());
-//        return "my-nono";
-//    }
-
-//    @GetMapping("/solvednono/detail/{userId}/{nonoId}")
-//    public String getSolvedUsernono(@PathVariable("userId") Integer userId,
-//                                    @PathVariable("nonoId") Integer nonoId,
-//                                    Model model,
-//                                    HttpSession session) {
-//        String redirectLogin = isUserIdNullthenRedirect(session);
-//        if(!redirectLogin.equals("")) {
-//            return redirectLogin;
-//        }
-//        UserNonoVO userNonoVO = userMapper.selectSolvedUserNonoDetail(userId, nonoId);
-//        if(userNonoVO == null) {
-//            // 유효성검사?
-//        }
-//        model.addAttribute("userNono", userNonoVO);
-//
-//        return "usernono-detail";
-//    }
-
-//    public String isUserIdNullthenRedirect(HttpSession session) {
-//        if(session.getAttribute("value") == null) {
-//            System.out.println("************ userId is NULL ************");
-//            return "redirect:/login";
-//        } else {
-//            return "";
-//        }
-//    }
-
+    /**
+     * 유저가 클릭한 노노를 보여줍니다.
+     * @param userId
+     * @param nonoId
+     * @return ResponseEntity
+     */
+    @GetMapping("/nono/detail/{userId}/{nonoId}/{isSolved}")
+    public ResponseEntity getIngUserNoNoDetail(@PathVariable("userId") Integer userId,
+                                               @PathVariable("nonoId") Integer nonoId,
+                                               @PathVariable("isSolved") Integer isSolved) {
+        UserNono userNono = null;
+        try {
+            userNono = myPageService.getUserNonoDetail(userId, nonoId, isSolved);
+            return ResponseEntity.ok(userNono);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저의 NoNo를 조회하는데 실패하였습니다.");
+        }
+    }
 }
