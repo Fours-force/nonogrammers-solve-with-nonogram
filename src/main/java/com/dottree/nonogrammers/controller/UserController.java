@@ -6,7 +6,8 @@ import com.dottree.nonogrammers.domain.ResponseModel;
 import com.dottree.nonogrammers.service.UserJoinService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,25 +15,30 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@Controller
+@RestController
+@RequestMapping("/api/v1/auth")
 public class UserController {
 
     private final UserJoinService userJoinService;
+
     public UserController(UserJoinService userJoinService) {
         this.userJoinService = userJoinService;
     }
+
     private final Map<String, String> emailTokenMap = new HashMap<>();
     @Autowired
     UserMapper dao;
 
-    @GetMapping("/join")
-    public String join(){
-        return "join";
+    // role 테스트용 End-point
+    @GetMapping("/user")
+    @PreAuthorize("hasAnyRole('USER', 'MANAGER', 'ADMIN')")
+    public String user(Authentication authentication) {
+        return "<h1>user</h1>";
     }
 
     @PostMapping(value = "/join", produces = "application/json; charset=utf-8")
     @ResponseBody
-    public ResponseEntity<Object> joinApi(JoinDTO joinDTO){
+    public ResponseEntity<Object> userJoin(@RequestBody JoinDTO joinDTO) {
         try {
             userJoinService.join(joinDTO);
             return ResponseEntity.ok("성공적으로 회원 가입이 진행되었습니다.");
@@ -46,16 +52,16 @@ public class UserController {
     public ResponseModel isValue(
             @PathVariable("checkValue") String checkValue,
             @RequestParam("value") String value
-    ){
+    ) {
 
         ResponseModel response = new ResponseModel();
         response.setTitle(String.format("%s", checkValue));
 
         int result = dao.getExists(checkValue, value);
-        if (result==0) {
+        if (result == 0) {
             response.setStatusCode(200);
             response.setMessage("OK");
-        } else{
+        } else {
             response.setStatusCode(404);
             response.setMessage("It exists");
         }
@@ -66,17 +72,17 @@ public class UserController {
     @ResponseBody
     public ResponseModel getEmailCheck(
             @RequestParam("email") String email
-    ){
+    ) {
         ResponseModel response = new ResponseModel();
         int result = dao.getEmail(email);
 
-        if (result!=0) {
+        if (result != 0) {
             response.setStatusCode(200);
             response.setMessage("이메일 전송");
             String token = UUID.randomUUID().toString();
             emailTokenMap.put(token, email);
-            response.setData("api/check-reset-password?token="+token);
-        } else{
+            response.setData("api/check-reset-password?token=" + token);
+        } else {
             response.setStatusCode(404);
             response.setMessage("등록된 이메일 주소가 아닙니다");
         }
@@ -84,9 +90,9 @@ public class UserController {
     }
 
     @GetMapping("/api/check-reset-password")
-    public String showResetPassword(@RequestParam("token") String token, Model model){
+    public String showResetPassword(@RequestParam("token") String token, Model model) {
         String email = emailTokenMap.get(token);
-        if (email != null){
+        if (email != null) {
             emailTokenMap.remove(token);
             model.addAttribute("email", email);
             return "reset-password";
@@ -97,18 +103,18 @@ public class UserController {
 
     @RequestMapping(value = "/api/reset-password", produces = "application/json; charset=utf-8", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseModel resetPassword(JoinDTO dto){
+    public ResponseModel resetPassword(JoinDTO dto) {
         ResponseModel response = new ResponseModel();
         response.setTitle("reset-password");
 
-        if (!dto.getPassword().equals(dto.getCorrectPassword())){
+        if (!dto.getPassword().equals(dto.getCorrectPassword())) {
             response.setStatusCode(400);
             response.setMessage("비밀번호가 맞지 않습니다.. 다시 시도해주세요🥲");
             return response;
         }
 
         boolean result = dao.updatePassword(dto);
-        if (result){
+        if (result) {
             response.setStatusCode(200);
             response.setMessage("비밀번호 변경이 완료되었습니다🎉");
         } else {

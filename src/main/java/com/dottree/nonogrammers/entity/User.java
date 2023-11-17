@@ -7,10 +7,11 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -37,11 +38,13 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String nickName;
 
+    @Builder.Default
     @Column(columnDefinition = "text")
-    private String profileImgUrl;
+    private String profileImgUrl = "/images/default.png";
 
+    @Builder.Default
     @ColumnDefault("1")
-    private int statusCode;
+    private int statusCode = 1;
 
     @Column(nullable = false, unique = true)
     private String baekjoonUserId;
@@ -62,15 +65,11 @@ public class User implements UserDetails {
 
     private String roles;
 
-    @Builder
-    public User(String email, String password, String nickName, String baekjoonUserId, String roles) {
-        this.email = email;
-        this.password = password;
-        this.nickName = nickName;
-        this.baekjoonUserId = baekjoonUserId;
-        this.roles = roles;
-        this.profileImgUrl = "/images/default.png";
-        this.statusCode = 1;
+    public List<String> getRoleList(){
+        if(!this.roles.isEmpty()){
+            return Arrays.asList(this.roles.split(","));
+        }
+        return new ArrayList<>();
     }
 
     @Override
@@ -105,6 +104,11 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("user"));
+        Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+        getRoleList().forEach(r -> {
+            System.out.println("role : " + r);
+            authorities.add(()->{ return r ;});
+        });
+        return authorities;
     }
 }
