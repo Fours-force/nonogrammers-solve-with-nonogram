@@ -23,13 +23,15 @@ public class UserJoinService {
     @Transactional(rollbackFor = Exception.class)
     public int join(JoinDTO joinDTO) throws Exception {
         validateDuplicateUser(joinDTO);
-        return ur.save(User.builder()
+        User user = User.builder()
                 .email(joinDTO.getEmail())
                 .password(bCryptPasswordEncoder.encode(joinDTO.getPassword()))
                 .nickName(joinDTO.getNickName())
                 .baekjoonUserId(joinDTO.getBaekjoonUserId())
-                .roles("user")
-                .build()).getUserId();
+                .roles("ROLE_USER")
+                .build();
+        System.out.println(user);
+        return ur.save(user).getUserId();
     }
 
     private void validateDuplicateUser(JoinDTO joinDTO) {
