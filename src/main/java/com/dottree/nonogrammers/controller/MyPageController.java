@@ -23,6 +23,7 @@ import java.util.List;
 
 @RestController
 @Slf4j
+@CrossOrigin(origins = "*")
 public class MyPageController {
 
     private final MyPageService myPageService;
@@ -87,18 +88,38 @@ public class MyPageController {
     }
 
     /**
+     * 유저의 닉네임 중복여부를 확인합니다.
+     * @param userDTO
+     * @return ResponseEntity
+     */
+    @PostMapping(value = "/user/nickname/isduplicated")
+    public ResponseEntity isDuplicatedNickName(@RequestBody UserDTO userDTO) {
+        try {
+            User user = myPageService.isDuplicatedNickName(userDTO.getNickName());
+            if (user == null) {
+                return ResponseEntity.ok(userDTO.getNickName());
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("닉네임 중복검사에 실패하였습니다.");
+            }
+        } catch (IllegalArgumentException e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("닉네임 중복검사에 실패하였습니다.");
+        }
+    }
+
+    /**
      * 유저의 닉네임을 수정합니다.
-     *
      * @param userId
      * @param userDTO
      * @return ResponseEntity
      */
     @PatchMapping(value = "/user/nickname/{userId}")
-    public ResponseEntity<String> changeUserNickname(@PathVariable("userId") Integer userId,
+    public ResponseEntity changeUserNickname(@PathVariable("userId") Integer userId,
                                                      @RequestBody UserDTO userDTO) {
+        System.out.println(userId + " , " + userDTO.getNickName());
         try {
             myPageService.updateNickName(userId, userDTO);
-            return ResponseEntity.created(URI.create("/user/" + userId)).body("닉네임 수정에 성공하였습니다.");
+            return ResponseEntity.created(URI.create("/user/" + userId)).body(myPageService.user(userId));
 
         } catch (Exception e) { // IllegalArgumentException
             log.info(e.getMessage());
@@ -127,43 +148,22 @@ public class MyPageController {
     }
 
     /**
-     * 유저의 닉네임 중복여부를 확인합니다.
-     * @param userDTO
-     * @return ResponseEntity
-     */
-    @PostMapping(value = "/user/nickname/isduplicated")
-    public ResponseEntity isDuplicatedNickName(@RequestBody UserDTO userDTO) {
-        try {
-            User user = myPageService.isDuplicatedNickName(userDTO);
-            if (user == null) {
-                return ResponseEntity.ok("닉네임 중복검사에 성공하였습니다.");
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("닉네임 중복검사에 실패하였습니다.");
-            }
-        } catch (IllegalArgumentException e) {
-            log.info(e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("닉네임 중복검사에 실패하였습니다.");
-        }
-    }
-
-    /**
      * 프로필이미지 변경
      * @param imgFile
      * @param userId
      * @return HashMap
      */
-    @RequestMapping(value = "/user/profileimg/{userId}", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE, consumes = "multipart/form-data")
-    @ResponseBody
-    public ResponseEntity changeProfileImgUrl(@PathVariable Integer userId,
-                                              @RequestParam("profileImg") MultipartFile imgFile) {
+    @PostMapping(value = "/user/profileimg/{userId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity changeProfileImgUrl(@PathVariable("userId") Integer userId,
+                                              @RequestParam(value="profileImg") MultipartFile imgFile) {
         File file = null;
         try {
-            file = myPageService.updateProfileImgUrl(userId, imgFile);
+            UserDTO userDTO = myPageService.updateProfileImgUrl(userId, imgFile);
+//            System.out.println(file.getAbsolutePath());
+            System.out.println(userDTO.getProfileImgUrl());
+//            return ResponseEntity.ok(file.getAbsolutePath().split("profile")[1]);
+            return ResponseEntity.ok(userDTO);
 
-            if (file != null)
-                return ResponseEntity.ok("프로필 이미지 변경에 성공하였습니다.");
-            else
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("프로필 이미지 변경에 실패했습니다.");
         } catch (Exception e) {
             log.info(e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("프로필 이미지 변경에 실패했습니다.");

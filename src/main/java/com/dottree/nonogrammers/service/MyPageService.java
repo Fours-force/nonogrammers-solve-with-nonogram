@@ -31,15 +31,16 @@ public class MyPageService {
         this.userNonoRepository = userNonoRepository;
     }
 
-    /* public User selectUser(Long userId) {
-        return myPageRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("user 찾을 수 없음 id : " +  userId));
-    } */
+    public UserDTO user(Integer userId) {
+        return myPageRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("user 찾을 수 없음 id : " +  userId)).toDto();
+    }
 
     /**
      * 유저의 정보를 불러옵니다.
      * @param nickName
      */
     public UserDTO getUser(String nickName) {
+        log.info(myPageRepository.findByNickName(nickName).get().getProfileImgUrl());
         return myPageRepository.findByNickName(nickName).orElseThrow(()
                 -> new IllegalArgumentException("user 찾을 수 없음 nickName : " + nickName)).toDto();
     }
@@ -60,8 +61,8 @@ public class MyPageService {
         user.changeStatusCode(0);
     }
 
-    public User isDuplicatedNickName(UserDTO userDTO) {
-        Optional<User> user = myPageRepository.findByNickName(userDTO.getNickName());
+    public User isDuplicatedNickName(String nickName) {
+        Optional<User> user = myPageRepository.findByNickName(nickName);
         return user.orElse(null);
     }
 
@@ -69,7 +70,8 @@ public class MyPageService {
         return myPageRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("user 찾을 수 없음 id : " +  userId));
     }
 
-    public File updateProfileImgUrl(Integer userId, MultipartFile imgFile) {
+    @Transactional
+    public UserDTO updateProfileImgUrl(Integer userId, MultipartFile imgFile) {
         User user = myPageRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("user 찾을 수 없음 id : " +  userId));
         String fileName =  imgFile.getOriginalFilename();
 
@@ -86,19 +88,21 @@ public class MyPageService {
             UUID uuid = UUID.randomUUID();
             String ext = fileName.split("\\.")[1];
             fileName = uuid + "_" + user.getNickName() + "." + ext;
-
+            //System.out.println(directoryPath);
             File file;
-            file = new File("/Users/jasonmilian/Downloads/nonogrammers/src/main/resources/static/images/profile/"+userId+"/"+fileName);
+            file = new File(directoryPath + "/" + fileName);
             if ( file.exists() ) {
                 return null;
             } else {
                 String fileUrl = file.getAbsolutePath().split("static")[1];
+                log.info("바뀌기 전 : " + user.getProfileImgUrl());
                 user.changeProfileImgUrl(fileUrl);
+                log.info("바뀐 후 : " + user.getProfileImgUrl());
 
                 Path savePath = Paths.get(file.getAbsolutePath());
                 imgFile.transferTo(savePath);
 
-                return file;
+                return user.toDto();
             }
         } catch (IOException e) {
             log.info(e.getMessage());
