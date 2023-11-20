@@ -1,5 +1,6 @@
 package com.dottree.nonogrammers.repository;
 
+import com.dottree.nonogrammers.entity.User;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
@@ -35,7 +36,6 @@ class MyPageRepositoryTest {
                     .password("pass")
                     .profileImgUrl("/images/profile")
                     .statusCode(1)
-                    .createdAt(dt)
                     .build();
         repo.save(user);
     }
@@ -44,7 +44,7 @@ class MyPageRepositoryTest {
     @Transactional
     @Order(1)
     public void 닉네임변경테스트() {
-        Optional<User> userOpt = repo.findById(1L);
+        Optional<User> userOpt = repo.findById(1);
         User user = userOpt.get();
         String oldNickname = user.getNickName();
 
@@ -62,7 +62,7 @@ class MyPageRepositoryTest {
     @Transactional
     @Order(2)
     public void 회원탈퇴테스트() {
-        Optional<User> userOpt = repo.findById(1L);
+        Optional<User> userOpt = repo.findById(1);
         User user = userOpt.get();
 
         int oldStatusCode = user.getStatusCode();
