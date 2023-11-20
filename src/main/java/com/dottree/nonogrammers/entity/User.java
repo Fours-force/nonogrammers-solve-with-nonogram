@@ -72,6 +72,9 @@ public class User {
         this.nickName = nickName;
     }
     public void changeStatusCode(int statusCode){
+        if(this.statusCode == 0)
+            //todo 이미 탈퇴하면 처리
+            return;
         this.statusCode = statusCode;
     }
 
