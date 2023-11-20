@@ -27,9 +27,8 @@ public class PostDTO {
     private int viewCount;
     private String nickName;
     private String imgSrc;
-    private String fileUrls; // 수정할 부분
+//    private String fileUrls; // 수정할 부분
     private String boardTypeStr;
-
     public Post toEntity() {
         return Post.builder()
                 .postId(postId)
