@@ -1,10 +1,10 @@
 package com.dottree.nonogrammers.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class FileDTO {
     private int fileId;
     private int postId;

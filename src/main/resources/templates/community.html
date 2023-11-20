@@ -63,11 +63,11 @@
                                 글 작성
                             </button>
                         </div>
-                    </div>
                 </div>
-                <h2 class="sr-only">Products</h2>
-                <div class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-                    <div th:each="vo, iterStat : ${list}" class="post-item" data-page="1">
+            </div>
+            <h2 class="sr-only">Products</h2>
+            <div class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+                <div th:each="vo, iterStat : ${list}" class="post-item" data-page="1">
                         <a th:href="@{/detail(postId=${vo.postId})}" class="group">
                         <div class="w-full h-40 overflow-hidden transition-transform duration-300 ease-in-out transform bg-white rounded-lg shadow-lg aspect-h-1 aspect-w-1 xl:aspect-h-8 xl:aspect-w-7 group-hover:scale-110 group-hover:opacity-85">
                                     <div class="object-cover object-center w-full h-full">
