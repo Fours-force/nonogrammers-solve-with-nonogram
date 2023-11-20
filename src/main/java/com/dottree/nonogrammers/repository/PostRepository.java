@@ -174,4 +174,8 @@ public interface PostRepository extends JpaRepository<Post,Integer> {
     // 업로드된 이미지 정보 작성
     @Query("insert into File (postId, filename, fileExtension, fileUrl) values(:postId, :filename,:fileExtension, :fileUrl)")
     public void insertUploadImage(@Param("postId") int postId,@Param("filename") String filename,@Param("fileExtension") String fileExtension,@Param("fileUrl") String fileUrl);
+
+    public Optional<List<Post>> findAllByUserId(Integer userId);
+
+    public Optional<Post> findByPostIdAndUserId(Integer postId, Integer userId);
 }

@@ -8,9 +8,13 @@ import com.dottree.nonogrammers.repository.CommentRepository;
 import com.dottree.nonogrammers.repository.PostRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -148,4 +152,33 @@ public class PostService {
 ////    public List<Integer> CountByPostId(int postId){
 ////        List<Integer> counts = postRepository.countByPostId(postId);
 ////    }
+
+    /**
+     * 유저의 게시물을 모두 조회합니다.
+     * @param userId
+     * @return List<PostDTO>
+     */
+    public List<PostDTO> getUserPostList(Integer userId) {
+        List<PostDTO> postDTOList = new ArrayList<>();
+
+        postRepository.findAllByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저의 게시물을 찾을 수 없음 userId" + userId))
+                .forEach(post -> postDTOList.add(post.toDto()));
+
+        return postDTOList;
+    }
+
+    /**
+     * 유저의 게시물을 수정합니다.
+     * @param title
+     * @param content
+     * @param postId
+     * @param userId
+     */
+    @Transactional
+    public void changeUserPost(String title, String content, Integer postId, Integer userId) {
+        Post post = postRepository.findByPostIdAndUserId(postId, userId)
+            .orElseThrow(() -> new IllegalArgumentException("해당 게시물을 찾을 수 없음 postId : " + postId + ", userId : " + userId));
+        post.changeTitleAndContentAndUpdatedAt(title, content, LocalDate.now());
+    }
 }

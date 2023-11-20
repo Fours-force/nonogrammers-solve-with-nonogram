@@ -75,11 +75,7 @@ function submitEventHandler(e) {
 
     xhr.onload = function () {
     if (xhr.status === 200) {
-        var response = JSON.parse(xhr.responseText);
-        window.alert(response['message'])
-        if (response['statusCode'] == 201){
-            window.location.href = "/login";
-        }
+        location.href = "/login";
     } else {
         window.alert("문제가 생겼어요! 회원가입이 진행되지 못했습니다.");
         console.error("API response is false or unexpected", xhr.status)
@@ -88,7 +84,7 @@ function submitEventHandler(e) {
     xhr.onerror = function () {
     console.error("Request failed");
     }
-    xhr.open("POST", "/api/join", true);
+    xhr.open("POST", "/join", true);
     xhr.send(formData);
 }
 
