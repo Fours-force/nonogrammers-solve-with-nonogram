@@ -48,6 +48,9 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.2'
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+	implementation 'org.mapstruct:mapstruct:1.4.2.Final' // 사용 가능한 최신 버전으로 변경
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final' // 사용 가능한 최신 버전으로 변경
+
 }
 
 tasks.named('test') {
