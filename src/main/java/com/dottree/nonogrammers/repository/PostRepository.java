@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post,Integer> {
     @Query("SELECT new com.dottree.nonogrammers.domain.PostDTO(p.postId AS postId, p.boardType AS boardType, p.title AS title, p.content AS content, p.userId AS userId, p.createdAt AS createdAt, " +
@@ -161,4 +162,8 @@ List<PostDTO> listNoticePosts();
 //    // 업로드된 이미지 정보 작성
 //    @Query("insert into file(postId, filename, fileExtension, fileUrl) values(:postId, :filename,:fileExtension, :fileUrl)")
 //    public boolean insertUploadImage(@Param("postId") int postId,@Param("filename") String filename,@Param("fileExtension") String fileExtension,@Param("fileUrl") String fileUrl);
+
+    public Optional<List<Post>> findAllByUserId(Integer userId);
+
+    public Optional<Post> findByPostIdAndUserId(Integer postId, Integer userId);
 }

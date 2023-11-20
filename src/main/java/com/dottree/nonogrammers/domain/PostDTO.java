@@ -1,5 +1,6 @@
 package com.dottree.nonogrammers.domain;
 
+import com.dottree.nonogrammers.entity.Post;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -12,6 +13,7 @@ import java.util.List;
 //@ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class PostDTO {
     private int postId;
     private int boardType;
@@ -28,7 +30,18 @@ public class PostDTO {
     private String fileUrls; // 수정할 부분
     private String boardTypeStr;
 
-
+    public Post toEntity() {
+        return Post.builder()
+                .postId(postId)
+                .userId(userId)
+                .boardType(boardType)
+                .title(title)
+                .content(content)
+                .createdAt(createdAt)
+                .updatedAt(updatedAt)
+                .viewCount(viewCount)
+                .build();
+    }
 //    public List<String> getFileUrls() {
 //        if (fileUrls != null && !fileUrls.isEmpty()) {
 //            return Arrays.asList(fileUrls.split(","));

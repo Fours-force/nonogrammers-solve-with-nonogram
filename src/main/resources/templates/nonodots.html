@@ -120,23 +120,22 @@
                 if (xhr.status == 200) {
                     console.log("int로 반환한 값의 Type : " + typeof (xhr.responseText));
                     console.log(xhr.responseText);
-                    if(xhr.responseText === "1"){
-                        window.alert("문제 풀이 성공!");
-                        insertDots();
-                    }else{
-                        window.alert("새로 푼 문제가 없습니다.");
-
-                    }
+                    window.alert("문제 풀이 성공!");
+                    insertDots();
+                }else{
+                    window.alert("새로 푼 문제가 없습니다.");
                 }
             }
             xhr.open('GET', `/api/updateCheck/${baekjoonId}/${userId}/${nonoId}`);
             xhr.send();
         }
-
         function updateSolvingRow(){
             const xhr = new XMLHttpRequest();
             xhr.onload = function () {
                 if (xhr.status == 200) {
+                    console.log("변경된 행 : "+xhr.response);
+                } else {
+                    window.alert(xhr.responseText);
                 }
             }
             xhr.open('GET', `/api/updateSolvingRow/${userId}/${nonoId}/${solvingRow}`);
@@ -158,22 +157,15 @@
 
 
         function insertDots(){
-            var missionList = new Array();
-            allDotsInRow = allRowDivs[solvingRow-1].querySelectorAll(".nonoDot");
-            for(let element of allDotsInRow){
-                var data = new Object();
-                data.dotId = Number.parseInt(element.id.substring(3))+1;
-                missionList.push(data);
-            }
-            var jsonData = JSON.stringify(missionList);
-            console.log("삽입할 도트들 : "+jsonData);
-
             let xhr = new XMLHttpRequest();
+            var jsonData = {"solvingRow":solvingRow-1}
             xhr.onload = function() {
                 if (xhr.status == 200) {
                     window.location.reload();
-                }else{
-                    window.alert("삽입 실패!");
+                }else if (xhr.status == 202){
+                    window.alert(xhr.responseText);
+                }else {
+                    window.alert("삽입 실패");
                 }
             };
             xhr.open('POST', `/api/updateUserDot/${userId}/${nonoId}`, true);
@@ -190,11 +182,10 @@
                     console.log("받아온 jsonData : "+jsonData);
                     for (let data of jsonData){
                         console.log("받아온 jsonData의 객체" + data);
-                        allDots[Number(data)-1].style.opacity = "1";
+                        allDots[Number(data)+1].style.opacity = "1";
                         // allDots[dotcntt].style.opacity = "0.2";
                     }
                 }
-
             }
             xhr.open('GET',`/api/selectSolvedDotId/${userId}/${nonoId}`);
             xhr.send();
@@ -204,7 +195,9 @@
             let xhr = new XMLHttpRequest();
             xhr.onload = () => {
                 if(xhr.status == 200) {
-                    console.log("isSolved 갱신 완료");
+                    console.log(xhr.responseText);
+                }else{
+                    console.log(xhr.responseText);
                 }
             }
             xhr.open('GET',`/api/updateIsSolved/${userId}/${nonoId}`);

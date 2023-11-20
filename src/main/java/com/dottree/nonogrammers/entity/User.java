@@ -1,5 +1,6 @@
 package com.dottree.nonogrammers.entity;
 
+import com.dottree.nonogrammers.domain.UserDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +29,7 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "userId")
-    private int userId;
+    private Integer userId;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -111,4 +113,32 @@ public class User implements UserDetails {
         });
         return authorities;
     }
+
+    public void changeNickName(String nickName){
+        this.nickName = nickName;
+    }
+    public void changeStatusCode(int statusCode){
+        if(this.statusCode == 0)
+            //todo 이미 탈퇴하면 처리
+            return;
+        this.statusCode = statusCode;
+    }
+
+    public void changeProfileImgUrl(String profileImgUrl) {
+        this.profileImgUrl = profileImgUrl;
+    }
+
+    public UserDTO toDto() {
+        return UserDTO.builder()
+                .userId(userId)
+                .email(email)
+                .nickName(nickName)
+                .profileImgUrl(profileImgUrl)
+                .baekjoonUserId(baekjoonUserId)
+                .statusCode(statusCode)
+                .changedAt(changedAt)
+                .build();
+    }
+
+
 }
