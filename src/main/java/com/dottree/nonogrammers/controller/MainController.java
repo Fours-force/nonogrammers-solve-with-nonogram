@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.binding.BindingException;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ import java.util.List;
 
 @Controller
 @Slf4j
+@CrossOrigin("*")
 public class MainController {
 
     private final MainService mainService;
@@ -73,7 +75,8 @@ public class MainController {
 
 
     @RequestMapping("/nonodots/{userId}/{nonoId}/{baekjoonId}")
-    public String nonodots(UserNonoDTO unDTO, @PathVariable("baekjoonId")String beakjoonId, HttpSession session, Model model){
+    @ResponseBody
+    public NonoDotResponseDTO nonodots(UserNonoDTO unDTO, @PathVariable("baekjoonId")String beakjoonId, HttpSession session, Model model){
         log.info("nonodots start!!!!!!!!");
       /*  String redirectLogin = mainService.isUserIdNullthenRedirect(session);
         if(!redirectLogin.equals("")) {
@@ -84,20 +87,20 @@ public class MainController {
         udDTO.setUserId(unDTO.getUserId());
         udDTO.setNonoId(unDTO.getNonoId());
         //노노개방
-        if(mainService.selectUserFromUserNono(unDTO) == 0){
+        if(mainService.getUserFromUserNono(unDTO) == 0){
             log.info("mdao.selectUserFromUserNono(unDTO) == 0");
             log.info("insert UserNono start!!!!!!!!!");
             mainService.insertUserNono(unDTO);
         }
-        if(mainService.selectUserSolvedCount(udDTO) == null){
-            mainService.insertUserSolvedCount(unDTO.getUserId(),mainService.getUserBaekData(beakjoonId)); // 백준 회원가입이 되어있어야함
+        if(mainService.getUserSolvedCount(udDTO) == null){
+            mainService.insertUserSolvedCount(unDTO.getUserId(),mainService. getUserBaekData(beakjoonId)); // 백준 회원가입이 되어있어야함
         }
 
         log.info("nonoId : " + unDTO.getNonoId());
         int cnt = 0;
         List<List<Dot>> totalRowList = new ArrayList<>(); // 모든 도트의 정보를 담을 이중ArrayList. 행,열로 나뉘어 있음.
 
-        List<Dot> nList = mainService.selectAllDot(unDTO.getNonoId()); // 모든 도트 dot테이블에서 가져옴
+        List<Dot> nList = mainService.getAllDot(unDTO.getNonoId()); // 모든 도트 dot테이블에서 가져옴
 
         String allUrls = mainService.selectallProblemToStr(unDTO.getNonoId()); // 모든 문제Url nono테이블에서 가져옴
         String [] urlAry = allUrls.split(","); // 쉼표 떼고 배열에 저장
@@ -119,61 +122,197 @@ public class MainController {
         }
 
         //Progress bar //////////////////////////////////////////////////////////////////////////////
-        float ssn = mainService.selectAllDotCount(udDTO.getNonoId());
-        float sadc = mainService.selectSolvedNumber(udDTO);
+        float ssn = mainService.getAllDotCount(udDTO.getNonoId());
+        float sadc = mainService.getSolvedNumber(udDTO);
         int progress = (int) (sadc*100/ssn);
-        log.info(getClass().getName() + ": 모든 도트의 수 : "+ ssn);
-        log.info(": 해결한 도트의 수 : "+ sadc);
-        log.info(getClass().getName() + ": 프로그래스 바 :" + progress);
-        model.addAttribute("progress",progress);
+        log.info(" 모든 도트의 수 : "+ ssn);
+        log.info(" 해결한 도트의 수 : "+ sadc);
+        log.info(" 프로그래스 바 :" + progress);
 
-        ///////////////////////////////////////////////////////////////////////////////////////
-        model.addAttribute("dotList", totalRowList);
-        model.addAttribute("urlAry", urlAry);
-        model.addAttribute("nonoId",unDTO.getNonoId());
+        NonoDotResponseDTO nresDTO = new NonoDotResponseDTO();
+        nresDTO.setProgress(progress);
+        nresDTO.setNonoId(unDTO.getNonoId());
+        nresDTO.setUrlAry(urlAry);
+        nresDTO.setTotalRowList(totalRowList);
 
-        return "/nonodots";
+//        model.addAttribute("progress",progress);
+//        ///////////////////////////////////////////////////////////////////////////////////////
+//        model.addAttribute("dotList", totalRowList);
+//        model.addAttribute("urlAry", urlAry);
+//        model.addAttribute("nonoId",unDTO.getNonoId());
+
+        return nresDTO;
 
     }
 
-    /*// 문제번호 가져오기. Deprecated
-    @RequestMapping("/api/geturls/{nonoId}")
-    @ResponseBody
-    public void geturls(@PathVariable("nonoId")int nonoId){
-        String allUrls = mainService.selectallProblemToStr(nonoId);
-        String [] urlAry = allUrls.split(",");
 
-        for (int i=0; i< urlAry.length; i++){
-            System.out.println(urlAry[i]);
+    //사용자 문 문제들 가져오기
+//    @RequestMapping("/reloadinfo")
+//    @ResponseBody
+
+
+
+    //백준 아이디로 전적갱신  / 이전에 푼 문제 수 저장 필요함.
+    @RequestMapping("/api/updateCheck/{baekjoonId}/{userId}/{nonoId}")
+    @ResponseBody
+    public ResponseEntity<Integer> updateSolved(@PathVariable("baekjoonId")String baekjoonId, @PathVariable("userId")int userId, @PathVariable("nonoId")int nonoId){
+        log.info("updateSolved 시작!!!!!!!!!!!!");
+        int result = 0;
+
+        UserDotDTO udDTO = new UserDotDTO();
+        udDTO.setNonoId(nonoId);
+        udDTO.setUserId(userId);
+
+        int userSolvedCnt = mainService.getUserSolvedCount(udDTO);
+        log.info("userSolvedCnt : "+userSolvedCnt);
+        int baekjoonSolvedCnt = mainService.getUserBaekData(baekjoonId);
+        log.info("baekjoonSolvedCnt : " + baekjoonSolvedCnt);
+        if(userSolvedCnt < baekjoonSolvedCnt){
+            UserSolvedCountDTO uscDTO = new UserSolvedCountDTO();
+            uscDTO.setUserId(userId);
+            uscDTO.setSolvedCount(userSolvedCnt+1);
+            mainService.updateUserSolvedCount(userId,baekjoonSolvedCnt);
+            mainService.getUserSolvingRow(udDTO);
+            result = 1;
+            return ResponseEntity.ok(result);
+        }else
+            return ResponseEntity.noContent().build();
+
+    }
+
+    //userdot에 해결한 dots들 삽입.
+    @ResponseBody
+    @RequestMapping(value =("/api/updateUserDot/{userId}/{nonoId}"),method = RequestMethod.POST, produces = "application/json; charset=utf-8")
+    public ResponseEntity<String> updateUserDot(@RequestBody String jsonString, @PathVariable("userId") int userId, @PathVariable("nonoId")int nonoId) throws JsonProcessingException {
+        log.info("updateUserDot 시작!!!!!!!");
+        UserDotDTO udDTO = new UserDotDTO();
+        String msg ="";
+
+        log.info("받아온 JSON 형식의 String : "+jsonString);
+
+        ObjectMapper getNumMapper = new ObjectMapper();
+        JsonNode getNumJsonNode = getNumMapper.readTree(jsonString);
+        int solvingRow = getNumJsonNode.get("solvingRow").asInt();
+        log.info(" 파싱한 solvongRow : "+solvingRow);
+        int problemNumber = 0;
+        if(solvingRow != 0){
+            problemNumber = solvingRow*32 - 1;
         }
-    }*/
-
-/*    //사용자 검색해서 푼 문제수 출력
-    @RequestMapping("/api/solvednum")
+        udDTO.setDotId(problemNumber);
+        udDTO.setUserId(userId);
+        udDTO.setNonoId(nonoId);
+        log.info(String.valueOf(udDTO.getDotId()));
+        try {
+            if(mainService.getIsDotsSolved(udDTO) == null){
+                log.info("푼 행의 도트들 삽입 시작!");
+                mainService.insertUserDot(udDTO);
+                mainService.resetUserSolvingRow(udDTO);
+                msg = "성공~";
+                return ResponseEntity.ok(msg);
+            }else {
+                log.info("중복된 userDotInsert 처리.");
+                msg = "이미 푼 문제여서 실패~";
+                return ResponseEntity.accepted().body(msg);
+            }
+        } catch (Exception e){
+            log.info(e.getMessage());
+            return ResponseEntity.noContent().build();
+        }
+    }
+    //사용자가 해결중인 문제의 행 설정
+    @RequestMapping("/api/updateSolvingRow/{userId}/{nonoId}/{solvingRow}")
     @ResponseBody
-    public void solvednum() throws IOException {
-        AsyncHttpClient client = new DefaultAsyncHttpClient();
-        String[] responseBody = new String[1];
-        client.prepare("GET", "https://solved.ac/api/v3/user/show?handle=tjdtndlwkd")
-                .setHeader("Accept", "application/json")
-                .execute()
-                .toCompletableFuture()
-                .thenAccept(response -> {
-                    responseBody[0] = response.getResponseBody();
-                    //System.out.println(responseBody[0]);
-                })
-                .join();
-        client.close();
+    public ResponseEntity<?> updateSolvingRow(UserSolvingRowDTO usrDTO){
+        log.info("updateSolvingRow start !!!");
+        log.info("userSolvingDTO solvingRow : " + usrDTO.getSolvingRow());
+        UserDotDTO udDTO = new UserDotDTO();
+        udDTO.setUserId(usrDTO.getUserId());
+        udDTO.setNonoId(usrDTO.getNonoId());
+        log.info("풀고있는 행 변경 : UserId : " + usrDTO.getUserId());
+        log.info("풀고있는 행 변경 : nonoId : " + udDTO.getNonoId());
+        Integer sovingRow = mainService.getUserSolvingRow(udDTO);
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(responseBody[0]);
+        try {
+            if(sovingRow != null){
+                mainService.updateUserSolvingRow(usrDTO);
+            }else {
+                mainService.insertUserSolvingRow(usrDTO);
+            }
+            return ResponseEntity.ok(sovingRow);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
 
-        System.out.println(jsonNode.get("solvedCount"));  // 출력: John
-        System.out.println(jsonNode.get("handle"));
+    }
+    //사용자가 현재 풀고있는 행 조회. 나중에 /nonodots랑 합쳐야 될 듯.
+    @RequestMapping("/api/selectSolvingRow/{userId}/{nonoId}")
+    @ResponseBody
+    public ResponseEntity<Integer> selectSolvingRow(UserDotDTO udDTO){
+        log.info("selectSolvingRow start!!");
 
-    }*/
+        Integer rowNullCheck = mainService.getUserSolvingRow(udDTO);
+        if(rowNullCheck != null){
+            return ResponseEntity.ok(rowNullCheck);
+        }else{
+            log.info("풀고있는 줄 없음");
+            return ResponseEntity.notFound().build();
+        }
+    }
 
-    //문제 레벨 별 문제 번호들 저장 성공
+    //사용자가 푼 dot들의 List 반환. / 색칠해주려고 사용.
+    @RequestMapping(value = ("/api/selectSolvedDotId/{userId}/{nonoId}"))
+    @ResponseBody
+    public ResponseEntity<List<Long>> selectSolvedDotId(UserDotDTO udDTO){
+
+        List<Long> dotNumList;
+        dotNumList = mainService.getSolvedDotId(udDTO);
+
+        return ResponseEntity.ok(dotNumList);
+    }
+
+    @RequestMapping(value = ("/api/updateIsSolved/{userId}/{nonoId}"))
+    @ResponseBody
+    public ResponseEntity<String> updateIsSolved(UserNonoDTO unDTO){
+        log.info(getClass().getName() + ": updateIsSolved start!!!!!");
+        log.info(String.valueOf(unDTO.getNonoId()));
+        log.info(String.valueOf(unDTO.getUserId()));
+        String msg ="";
+        try {
+            mainService.updateUserNonoIsSolved(unDTO);
+            msg = "isSolved 갱신 완료";
+            return ResponseEntity.ok(msg);
+        }catch (Exception e){
+            msg = e.getMessage();
+            return ResponseEntity.badRequest().body(msg);
+        }
+    }
+
+    @GetMapping("/nonobox")
+    @ResponseBody
+    public List<NonoResponseDTO> getIngUserNono(Model model, HttpSession session) {
+        List<NonoResponseDTO> NonoReslist = new ArrayList<>();
+        try {
+            NonoReslist = mainService.getAllNoNo();
+            model.addAttribute("nonoList", NonoReslist);
+//            return  ResponseEntity.ok(NonoReslist);
+        }catch (Exception e){
+//            return ResponseEntity.badRequest().build();
+        }
+
+        return NonoReslist;
+    }
+    @GetMapping(value = "/nonobox/{levelType}")
+    public String getIngUserNono(@PathVariable(value = "levelType")int levelType, Model model) {
+
+        List<NonoResponseDTO> NonoReslist = mainService.getNonoByLevel(levelType);
+        log.info(NonoReslist.get(0).toString());
+        model.addAttribute("nonoList", NonoReslist);
+
+        return "/nonobox";
+    }
+
+    ////////////////////////////////DB 노노 데이터 저장 함수들/////////////////////////////////////
+    //문제 레벨 별 문제 번호들 저장
     @RequestMapping("/api/missionlevel/{level}")
     @ResponseBody
     public void solvednum(@PathVariable("level")int level) throws IOException {
@@ -186,157 +325,6 @@ public class MainController {
 
         }
         System.out.println(totalProblemList);
-    }
-
-    //사용자 문 문제들 가져오기
-//    @RequestMapping("/reloadinfo")
-//    @ResponseBody
-
-
-
-    //백준 아이디로 전적갱신  / 이전에 푼 문제 수 저장 필요함.
-    @RequestMapping("/api/updateCheck/{baekjoonId}/{userId}/{nonoId}")
-    @ResponseBody
-    public int updateSolved(@PathVariable("baekjoonId")String baekjoonId, @PathVariable("userId")int userId, @PathVariable("nonoId")int nonoId){
-        log.info(getClass().getName() + "updateSolved 시작!!!!!!!!!!!!");
-        int result = 0;
-
-        UserDotDTO udDTO = new UserDotDTO();
-        udDTO.setNonoId(nonoId);
-        udDTO.setUserId(userId);
-
-        int userSolvedCnt = mainService.selectUserSolvedCount(udDTO);
-        int baekjoonSolvedCnt = mainService.getUserBaekData(baekjoonId);
-
-        if(userSolvedCnt < baekjoonSolvedCnt){
-            result = 1;
-            UserSolvedCountDTO uscDTO = new UserSolvedCountDTO();
-            uscDTO.setUserId(userId);
-            uscDTO.setSolvedCount(userSolvedCnt+1);
-            mainService.updateUserSolvedCount(userId,baekjoonSolvedCnt);
-            mainService.selectUserSolvingRow(udDTO);
-        }
-
-        return result;
-    }
-
-    //userdot에 해결한 dots들 삽입.
-    @ResponseBody
-    @RequestMapping(value =("/api/updateUserDot/{userId}/{nonoId}"),method = RequestMethod.POST, produces = "application/json; charset=utf-8")
-    public String updateUserDot(@RequestBody String jsonString, @PathVariable("userId") int userId, @PathVariable("nonoId")int nonoId) throws JsonProcessingException {
-        log.info("updateUserDot 시작!!!!!!!");
-        UserDotDTO udDTO = new UserDotDTO();
-        String msg ="";
-
-        log.info("받아온 JSON 형식의 String : "+jsonString);
-
-        ObjectMapper getNumMapper = new ObjectMapper();
-        JsonNode getNumJsonNode = getNumMapper.readTree(jsonString);
-
-        udDTO.setDotId(getNumJsonNode.get(0).get("dotId").asInt());
-        udDTO.setUserId(userId);
-        udDTO.setNonoId(nonoId);
-        log.info(String.valueOf(udDTO.getDotId()));
-        try {
-            if(mainService.selectIsDotsSolved(udDTO) == null){
-                log.info("푼 행의 도트들 삽입 시작!");
-
-                    mainService.insertUserDot(udDTO, jsonString);
-
-                mainService.resetUserSolvingRow(udDTO);
-                msg = "성공~";
-            }else {
-                log.info("중복된 userDotInsert 처리.");//뇌정지..
-                msg = "이미 푼 문제여서 실패~";
-            }
-        } catch (Exception e){
-            log.info(e.getMessage());
-        }
-
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("redirect:/nonodots/").append(userId).append("/").append(nonoId);
-        return msg;
-    }
-    //사용자가 해결중인 문제의 행 설정
-    @RequestMapping("/api/updateSolvingRow/{userId}/{nonoId}/{solvingRow}")
-    @ResponseBody
-    public void updateSolvingRow(UserSolvingRowDTO usrDTO){
-        log.info("updateSolvingRow start !!!");
-        log.info("userSolvingDTO solvingRow : " + usrDTO.getSolvingRow());
-        UserDotDTO udDTO = new UserDotDTO();
-        udDTO.setUserId(usrDTO.getUserId());
-        udDTO.setNonoId(usrDTO.getNonoId());
-        log.info("풀고있는 행 변경 : UserId : " + usrDTO.getUserId());
-        log.info("풀고있는 행 변경 : nonoId : " + udDTO.getNonoId());
-        Integer sovingRow = mainService.selectUserSolvingRow(udDTO);
-        if(sovingRow != null){
-            mainService.updateUserSolvingRow(usrDTO);
-        }else {
-            mainService.insertUserSolvingRow(usrDTO);
-        }
-
-
-
-    }
-    //사용자가 현재 풀고있는 행 조회. 나중에 /nonodots랑 합쳐야 될 듯.
-    @RequestMapping("/api/selectSolvingRow/{userId}/{nonoId}")
-    @ResponseBody
-    public int selectSolvingRow(UserDotDTO udDTO){
-        log.info("selectSolvingRow start!!");
-        int result = 0;
-
-        Integer rowNullCheck = mainService.selectUserSolvingRow(udDTO);
-        if(rowNullCheck != null){
-            result = rowNullCheck;
-        }else{
-            log.info("풀고있는 줄 없음");
-        }
-        return result;
-    }
-
-    //사용자가 푼 dot들의 List 반환. / 색칠해주려고 사용.
-    @RequestMapping(value = ("/api/selectSolvedDotId/{userId}/{nonoId}"))
-    @ResponseBody
-    public List<Long> selectSolvedDotId(UserDotDTO udDTO){
-        List<Long> udDTOList = new ArrayList<>();
-        udDTOList = mainService.selectSolvedDotId(udDTO);
-
-        return udDTOList;
-    }
-
-    @RequestMapping(value = ("/api/updateIsSolved/{userId}/{nonoId}"))
-    @ResponseBody
-    public String updateIsSolved(UserNonoDTO unDTO){
-        log.info(getClass().getName() + ": updateIsSolved start!!!!!");
-        log.info(String.valueOf(unDTO.getNonoId()));
-        log.info(String.valueOf(unDTO.getUserId()));
-
-        String msg ="";
-        mainService.updateUserNonoIsSolved(unDTO);
-        msg = "성공";
-        return msg;
-    }
-
-    @GetMapping("/nonobox")
-    public String getIngUserNono(Model model, HttpSession session) {
-        String redirectLogin = mainService.isUserIdNullthenRedirect(session);
-        if(!redirectLogin.equals("")) {
-            return redirectLogin;
-        }
-        List<NonoResponseDTO> NonoReslist = mainService.selectAllNoNo();
-        model.addAttribute("nonoList", NonoReslist);
-        model.addAttribute("nav", "nonobox" );
-
-        return "/nonobox";
-    }
-    @GetMapping(value = "/nonobox/{levelType}")
-    public String getIngUserNono(@PathVariable(value = "levelType")int levelType, Model model) {
-        List<NonoResponseDTO> NonoReslist = mainService.selectNonoByLevel(levelType);
-        log.info(NonoReslist.get(0).toString());
-        model.addAttribute("nonoList", NonoReslist);
-
-        return "/nonobox";
     }
 
     @GetMapping("/missionListbuny")
@@ -353,7 +341,6 @@ public class MainController {
 
         return sb.toString();
     }
-    ////////////////////////////////DB 노노 데이터 저장 함수들/////////////////////////////////////
     @GetMapping("/missionListBronze")
     @ResponseBody
     public String missionList(){
@@ -417,6 +404,42 @@ public class MainController {
 
         return sb.toString();
     }
+    /*// 문제번호 가져오기. Deprecated
+    @RequestMapping("/api/geturls/{nonoId}")
+    @ResponseBody
+    public void geturls(@PathVariable("nonoId")int nonoId){
+        String allUrls = mainService.selectallProblemToStr(nonoId);
+        String [] urlAry = allUrls.split(",");
+
+        for (int i=0; i< urlAry.length; i++){
+            System.out.println(urlAry[i]);
+        }
+    }*/
+
+/*    //사용자 검색해서 푼 문제수 출력 Deprecated
+    @RequestMapping("/api/solvednum")
+    @ResponseBody
+    public void solvednum() throws IOException {
+        AsyncHttpClient client = new DefaultAsyncHttpClient();
+        String[] responseBody = new String[1];
+        client.prepare("GET", "https://solved.ac/api/v3/user/show?handle=tjdtndlwkd")
+                .setHeader("Accept", "application/json")
+                .execute()
+                .toCompletableFuture()
+                .thenAccept(response -> {
+                    responseBody[0] = response.getResponseBody();
+                    //System.out.println(responseBody[0]);
+                })
+                .join();
+        client.close();
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(responseBody[0]);
+
+        System.out.println(jsonNode.get("solvedCount"));  // 출력: John
+        System.out.println(jsonNode.get("handle"));
+
+    }*/
 
 
 

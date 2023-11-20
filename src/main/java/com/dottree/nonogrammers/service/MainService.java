@@ -58,7 +58,7 @@ public class MainService {
      * @param unDTO
      * @return
      */
-    public int selectUserFromUserNono(UserNonoDTO unDTO){
+    public int getUserFromUserNono(UserNonoDTO unDTO){
         log.info("selectUserFromUserNono start !!!!!");
         Integer num = unRepository.countByUser_UserIdAndNono_NonoId(unDTO.getUserId(),unDTO.getNonoId());
         return num;
@@ -68,10 +68,11 @@ public class MainService {
      * @param udDTO
      * @return
      */
-    public Integer selectUserSolvedCount(UserDotDTO udDTO){
-        log.info("selectUserSolvedCount start !!!!!");
+    public Integer getUserSolvedCount(UserDotDTO udDTO){
+        log.info("getUserSolvedCount start !!!!!");
         UserSolvedCount userSolvedCount = uscRepository.findById(udDTO.getUserId()).get();
-        log.info(" 푼 문제수 : " + userSolvedCount);
+
+        log.info(" 푼 문제수 : " + userSolvedCount.getSolvedCount());
         return userSolvedCount.getSolvedCount();
     }
 
@@ -80,8 +81,8 @@ public class MainService {
      * @param nonoId
      * @return
      */
-    public List<Dot> selectAllDot(int nonoId){
-        log.info("selectAllDot start !!!!!");
+    public List<Dot> getAllDot(int nonoId){
+        log.info("getAllDot start !!!!!");
         return dRepository.findAllByNono_NonoId(nonoId);
     }
 
@@ -97,35 +98,37 @@ public class MainService {
         return nono.getAllProblemToStr();
     }
 
-    public Long selectAllDotCount(int nonoId){
+    public Long getAllDotCount(int nonoId){
         log.info("selectAllDotCount start !!!!!");
         return dRepository.countByNono_NonoId(nonoId);
     }
 
-    public Long selectSolvedNumber(UserDotDTO udDTO){
+    public Long getSolvedNumber(UserDotDTO udDTO){
         log.info("selectSolvedNumber start !!!!!");
         return udRepository.countUserDotByUserIdAndNonoId(udDTO.getUserId(),udDTO.getNonoId());
     }
 
-    public List<Long> selectSolvedDotId(UserDotDTO udDTO){
+    public List<Long> getSolvedDotId(UserDotDTO udDTO){
         log.info("selectSolvedDotId start !!!!!");
-        return udRepository.selectSolvedDotId(udDTO.getUserId(),udDTO.getNonoId());
+        List<Long> dotIdList = udRepository.selectSolvedDotId(udDTO.getUserId(),udDTO.getNonoId());
+
+        return dotIdList;
     }
 
-    public Integer selectUserSolvingRow(UserDotDTO udDTO){
+    public Integer getUserSolvingRow(UserDotDTO udDTO){
         log.info("selectUserSolvingRow start !!!!!");
         Integer num = usrRepository.selectUserSolvingRow(udDTO);
-        log.info(" 갱신된 문제 수 : "+num);
+        log.info(" 갱신된 행 : "+num);
         return num;
     }
 
-    public Integer selectIsDotsSolved(UserDotDTO udDTO){
+    public Integer getIsDotsSolved(UserDotDTO udDTO){
         log.info("selectIsDotsSolved start !!!!!");
         Integer num = udRepository.selectIsDotsSolved(udDTO);
         return num;
     }
 
-    public List<NonoResponseDTO> selectAllNoNo(){
+    public List<NonoResponseDTO> getAllNoNo(){
         List<Nono> nonoList = nRepository.findAll();
         List<NonoResponseDTO> nrd = new ArrayList<>();
         for(Nono elem : nonoList){
@@ -135,7 +138,7 @@ public class MainService {
         return nrd;
     }
 
-    public List<NonoResponseDTO> selectNonoByLevel(int levelType){
+    public List<NonoResponseDTO> getNonoByLevel(int levelType){
         List<Nono> nonoList = nRepository.findByLevelType(levelType);
         List<NonoResponseDTO> nrd = new ArrayList<>();
         for(Nono elem : nonoList){
@@ -171,7 +174,7 @@ public class MainService {
     @Transactional
     public void updateUserNonoIsSolved(UserNonoDTO unDTO){
         log.info("updateUserNonoIsSolved start !!!!!");
-        Optional<UserNono> userNono = unRepository.findByUser_UserIdAndNono_NonoId(unDTO.getUserId(), unDTO.getNonoId());
+        Optional<UserNono> userNono = Optional.ofNullable(unRepository.findByUser_UserIdAndNono_NonoId(unDTO.getUserId(), unDTO.getNonoId()).orElseThrow(() -> new IllegalArgumentException()));
         userNono.get().update(2);
     }
     @Transactional
@@ -215,17 +218,16 @@ public class MainService {
     }
 
     @Transactional
-    public void insertUserDot(UserDotDTO udDTO, String jsonString) throws JsonProcessingException {
+    public void insertUserDot(UserDotDTO udDTO) throws JsonProcessingException {
         log.info("insertUserDot start !!!!!");
-        ObjectMapper getNumMapper = new ObjectMapper();
-        JsonNode getNumJsonNode = getNumMapper.readTree(jsonString);
-        User user = uRepository.findById(udDTO.getUserId()).orElseThrow(() -> new IllegalArgumentException());
-        Nono nono = nRepository.findById(udDTO.getNonoId()).orElseThrow(() -> new IllegalArgumentException());
+        int firstDotNum = udDTO.getDotId();
+        User user = uRepository.findById(udDTO.getUserId()).orElseThrow(() -> new IllegalArgumentException("없는 사용자입니다."));
+        Nono nono = nRepository.findById(udDTO.getNonoId()).orElseThrow(() -> new IllegalArgumentException("없는 노노입니다."));
         log.info("insertUserDot 받은 userId : "+user.toBuilder().build().getUserId());
         log.info("insertUserDot 받은 nonoId : "+nono.toBuilder().build().getNonoId());
 
-        for (int i = 0; i < getNumJsonNode.size(); i++) {
-            Dot dot = dRepository.findById(getNumJsonNode.get(i).get("dotId").asInt()).orElseThrow(() -> new IllegalArgumentException());
+        for (int i = firstDotNum; i < firstDotNum+32; i++) {
+            Dot dot = dRepository.findById(i).orElseThrow(() -> new IllegalArgumentException());
             UserDot userDot = UserDot.builder()
                     .userId(user.toBuilder().build().getUserId())
                     .nonoId(nono.toBuilder().build().getNonoId())
@@ -299,7 +301,7 @@ public class MainService {
      * @return
      */
     public int getUserBaekData(String baekjoonId) {
-        log.info(getClass().getName() + "getUserBackData start!!!!!!!");
+        log.info(" getUserBackData start!!!!!!!");
         StringBuilder url = new StringBuilder();
 
         url.append("https://www.acmicpc.net/user/");
@@ -326,7 +328,7 @@ public class MainService {
         Iterator<Element> ie1 = element.select("a").iterator();
         log.info("---맞힌 개수 : "+element.select("a").size());
         while (ie1.hasNext()) {
-            System.out.println(ie1.next().text());
+            log.info(ie1.next().text());
         }
         return element.select("a").size();
     }
