@@ -1,6 +1,7 @@
 package com.dottree.nonogrammers.dao;
 
 import com.dottree.nonogrammers.domain.PostDTO;
+import com.dottree.nonogrammers.domain.PostDTO.PostDTOBuilder;
 import com.dottree.nonogrammers.entity.Board;
 import com.dottree.nonogrammers.entity.Post;
 import com.dottree.nonogrammers.entity.User;
@@ -8,7 +9,7 @@ import javax.annotation.processing.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-11-20T09:40:01+0900",
+    date = "2023-11-20T20:47:53+0900",
     comments = "version: 1.4.2.Final, compiler: javac, environment: Java 17.0.8 (Oracle Corporation)"
 )
 public class PostMapperImpl implements PostMapper {
@@ -19,24 +20,24 @@ public class PostMapperImpl implements PostMapper {
             return null;
         }
 
-        PostDTO postDTO = new PostDTO();
+        PostDTOBuilder postDTO = PostDTO.builder();
 
-        postDTO.setNickName( postUserNickNameNickName( post ) );
-        postDTO.setImgSrc( postUserImgSrcProfileImgUrl( post ) );
-        postDTO.setBoardTypeStr( postBoardBoardName( post ) );
-        postDTO.setPostId( post.getPostId() );
-        postDTO.setBoardType( post.getBoardType() );
-        postDTO.setTitle( post.getTitle() );
-        postDTO.setContent( post.getContent() );
-        postDTO.setUserId( post.getUserId() );
-        postDTO.setCreatedAt( post.getCreatedAt() );
-        postDTO.setUpdatedAt( post.getUpdatedAt() );
-        postDTO.setViewCount( post.getViewCount() );
+        postDTO.nickName( postUserNickNameNickName( post ) );
+        postDTO.imgSrc( postUserImgSrcProfileImgUrl( post ) );
+        postDTO.boardTypeStr( postBoardBoardName( post ) );
+        postDTO.postId( post.getPostId() );
+        postDTO.boardType( post.getBoardType() );
+        postDTO.title( post.getTitle() );
+        postDTO.content( post.getContent() );
+        postDTO.userId( post.getUserId() );
+        postDTO.createdAt( post.getCreatedAt() );
+        postDTO.updatedAt( post.getUpdatedAt() );
+        postDTO.viewCount( post.getViewCount() );
 
-        postDTO.setCommentCount( getCommentCount(post) );
-        postDTO.setLikeCount( getLikeCount(post) );
+        postDTO.commentCount( getCommentCount(post) );
+        postDTO.likeCount( getLikeCount(post) );
 
-        return postDTO;
+        return postDTO.build();
     }
 
     private String postUserNickNameNickName(Post post) {
