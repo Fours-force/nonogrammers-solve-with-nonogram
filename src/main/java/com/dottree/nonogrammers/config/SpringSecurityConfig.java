@@ -36,6 +36,13 @@ public class SpringSecurityConfig {
     @Autowired
     private JwtProperties jwtProperties;
 
+
+    @Bean
+    public WebSecurityCustomizer configure() {
+        return (web) -> web.ignoring()
+                .requestMatchers("/images/**");
+    }
+
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
@@ -65,7 +72,9 @@ public class SpringSecurityConfig {
                 .addFilter(jwtAuthorizationFilter())
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(
-                                "/api/v1/auth/join", "/api/v1/auth/login",
+                                "/api/v1/auth/join", "/api/v1/auth/login", "/api/v1/auth/reset-password",
+                                "api/v1/auth/check-nickname", "api/v1/auth/check-baekjoon",
+                                "/api/v1/auth/email-verification", "/api/v1/auth/verify-code",
                                 "/post", "/post/free", "/post/qa", "/post/nono", "/post/notice",
                                 "/search", "/detail").permitAll()
                         .anyRequest().authenticated()
