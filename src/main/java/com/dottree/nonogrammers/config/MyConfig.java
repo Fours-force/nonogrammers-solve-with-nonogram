@@ -12,6 +12,7 @@ import java.util.List;
 @Slf4j
 public class MyConfig implements WebMvcConfigurer {
     String currentDirectory = System.getProperty("user.dir");
+
     String location = "file:" + currentDirectory + "/src/main/resources/static/images/";
 
     @Override

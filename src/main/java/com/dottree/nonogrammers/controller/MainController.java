@@ -2,17 +2,12 @@ package com.dottree.nonogrammers.controller;
 
 import com.dottree.nonogrammers.domain.*;
 import com.dottree.nonogrammers.entity.Dot;
-import com.dottree.nonogrammers.entity.Nono;
 import com.dottree.nonogrammers.service.MainService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
-
-import org.apache.ibatis.binding.BindingException;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -76,7 +71,7 @@ public class MainController {
 
     @RequestMapping("/nonodots/{userId}/{nonoId}/{baekjoonId}")
     @ResponseBody
-    public NonoDotResponseDTO nonodots(UserNonoDTO unDTO, @PathVariable("baekjoonId")String beakjoonId, HttpSession session, Model model){
+    public NonoDotResponseDTO nonodots(UserNonoDTO unDTO, @PathVariable("baekjoonId")String beakjoonId){
         log.info("nonodots start!!!!!!!!");
       /*  String redirectLogin = mainService.isUserIdNullthenRedirect(session);
         if(!redirectLogin.equals("")) {
@@ -93,7 +88,7 @@ public class MainController {
             mainService.insertUserNono(unDTO);
         }
         if(mainService.getUserSolvedCount(udDTO) == null){
-            mainService.insertUserSolvedCount(unDTO.getUserId(),mainService. getUserBaekData(beakjoonId)); // 백준 회원가입이 되어있어야함
+            mainService.insertUserSolvedCount(unDTO.getUserId(),mainService.getUserBaekData(beakjoonId)); // 백준 회원가입이 되어있어야함
         }
 
         log.info("nonoId : " + unDTO.getNonoId());
@@ -194,11 +189,13 @@ public class MainController {
         JsonNode getNumJsonNode = getNumMapper.readTree(jsonString);
         int solvingRow = getNumJsonNode.get("solvingRow").asInt();
         log.info(" 파싱한 solvongRow : "+solvingRow);
-        int problemNumber = 0;
-        if(solvingRow != 0){
-            problemNumber = solvingRow*32 - 1;
+        if(solvingRow == 2){
+            solvingRow = 33 ;
+        }else if(solvingRow>2){
+            solvingRow = solvingRow*32 + 1;
         }
-        udDTO.setDotId(problemNumber);
+
+        udDTO.setDotId(solvingRow);
         udDTO.setUserId(userId);
         udDTO.setNonoId(nonoId);
         log.info(String.valueOf(udDTO.getDotId()));
@@ -255,7 +252,7 @@ public class MainController {
             return ResponseEntity.ok(rowNullCheck);
         }else{
             log.info("풀고있는 줄 없음");
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(0);
         }
     }
 
@@ -289,26 +286,46 @@ public class MainController {
 
     @GetMapping("/nonobox")
     @ResponseBody
-    public List<NonoResponseDTO> getIngUserNono(Model model, HttpSession session) {
+    public ResponseEntity<List<NonoResponseDTO>> getIngUserNono(Model model, HttpSession session) {
         List<NonoResponseDTO> NonoReslist = new ArrayList<>();
         try {
             NonoReslist = mainService.getAllNoNo();
             model.addAttribute("nonoList", NonoReslist);
-//            return  ResponseEntity.ok(NonoReslist);
+//
         }catch (Exception e){
-//            return ResponseEntity.badRequest().build();
+//          return ResponseEntity.badRequest().build();
         }
-
-        return NonoReslist;
+        return  ResponseEntity.ok(NonoReslist);
     }
     @GetMapping(value = "/nonobox/{levelType}")
-    public String getIngUserNono(@PathVariable(value = "levelType")int levelType, Model model) {
-
+    @ResponseBody
+    public ResponseEntity<List<NonoResponseDTO>> getIngUserNono(@PathVariable(value = "levelType")int levelType, Model model) {
+        log.info("레벨 :"+levelType);
         List<NonoResponseDTO> NonoReslist = mainService.getNonoByLevel(levelType);
+        for(NonoResponseDTO dd : NonoReslist){
+            log.info(dd.getNonoImgUrl());
+        }
         log.info(NonoReslist.get(0).toString());
         model.addAttribute("nonoList", NonoReslist);
 
-        return "/nonobox";
+        return ResponseEntity.ok(NonoReslist);
+    }
+
+    @PostMapping(value = "/getUserIdAndBaekjoonId", produces = "application/json; charset=utf-8")
+    @ResponseBody
+    public ResponseEntity<UserIdAndBeakjoonIdResponseDTO> getUserIdAndBaekjoonId(@RequestBody String jsonString) throws JsonProcessingException {
+        log.info(jsonString);
+        ObjectMapper getNumMapper = new ObjectMapper();
+        JsonNode getNumJsonNode = getNumMapper.readTree(jsonString);
+        String userNickname = getNumJsonNode.get("userNickname").asText();
+
+        UserIdAndBeakjoonIdResponseDTO ubresDTO = new UserIdAndBeakjoonIdResponseDTO();
+        try {
+            ubresDTO = mainService.getUserIdAndBaekjoonId(userNickname);
+        }catch (Exception e){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(ubresDTO);
     }
 
     ////////////////////////////////DB 노노 데이터 저장 함수들/////////////////////////////////////
