@@ -189,11 +189,13 @@ public class MainController {
         JsonNode getNumJsonNode = getNumMapper.readTree(jsonString);
         int solvingRow = getNumJsonNode.get("solvingRow").asInt();
         log.info(" 파싱한 solvongRow : "+solvingRow);
-        int problemNumber = 0;
-        if(solvingRow != 0){
-            problemNumber = solvingRow*32 - 1;
+        if(solvingRow == 2){
+            solvingRow = 33 ;
+        }else if(solvingRow>2){
+            solvingRow = solvingRow*32 + 1;
         }
-        udDTO.setDotId(problemNumber);
+
+        udDTO.setDotId(solvingRow);
         udDTO.setUserId(userId);
         udDTO.setNonoId(nonoId);
         log.info(String.valueOf(udDTO.getDotId()));

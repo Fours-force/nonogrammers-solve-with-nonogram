@@ -128,6 +128,9 @@ public class MainService {
 
     public Integer getIsDotsSolved(UserDotDTO udDTO){
         log.info("selectIsDotsSolved start !!!!!");
+        log.info("userId : "+udDTO.getUserId());
+        log.info("nonoId : "+ udDTO.getNonoId());
+
         Integer num = udRepository.selectIsDotsSolved(udDTO);
         return num;
     }
