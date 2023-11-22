@@ -30,7 +30,7 @@ public class Post {
     @UpdateTimestamp
     private LocalDate updatedAt;
     private int viewCount;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "postId")
     private List<Comment> comment;
     @OneToMany
@@ -45,6 +45,8 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "boardType", insertable = false, updatable = false)
     private Board board;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<File> files;
 
     public void changeTitleAndContentAndUpdatedAt(String title, String content, LocalDate updatedAt){
         this.title = title;

@@ -4,7 +4,9 @@ import com.dottree.nonogrammers.domain.*;
 import com.dottree.nonogrammers.entity.Comment;
 import com.dottree.nonogrammers.entity.Post;
 import com.dottree.nonogrammers.service.CommentService;
+import com.dottree.nonogrammers.service.FileService;
 import com.dottree.nonogrammers.service.PostService;
+import com.dottree.nonogrammers.service.UserGetService;
 import jakarta.servlet.http.HttpSession;
 import lombok.*;
 import org.apache.ibatis.annotations.Param;
@@ -21,15 +23,21 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import com.dottree.nonogrammers.repository.PostRepository;
 import com.dottree.nonogrammers.repository.CommentRepository;
+
+//import static java.time.LocalDateTime.now;
+
 @RestController
 //@Controller
 //@RequiredArgsConstructor
@@ -41,12 +49,16 @@ public class PostController {
 //    private final CommentRepository repositoryC;
     private final PostService postService;
     private final CommentService commentService;
+    private final FileService fileService;
+    private final UserGetService userGetService;
 
-    public PostController(PostService postService, CommentService commentService) {
+    public PostController(PostService postService, CommentService commentService,FileService fileService,UserGetService userGetService) {
         this.postService = postService;
         this.commentService = commentService;
+        this.fileService = fileService;
+        this.userGetService= userGetService;
     }
-
+    private static final Logger log = LoggerFactory.getLogger(PostController.class);
     @Getter
     @Setter
     @AllArgsConstructor
@@ -156,10 +168,12 @@ public class PostController {
         PostDTO postDTO = postService.ShowDetailPost(postId);
         List<CommentDTO> list = commentService.CommentList(postId);
         List<Integer> counts = commentService.CountByPostId(postId);
+        List<FileDTO> files = fileService.ListImage(postId);
         Map<String, Object> response = new HashMap<>();
         response.put("postDTO", postDTO);
         response.put("comments", list);
         response.put("counts", counts);
+        response.put("files", files);
         return ResponseEntity.ok(response);
     }
 //    @RequestMapping("/detail")
@@ -226,6 +240,12 @@ public class PostController {
         response.put("postDTO", postDTO);
         response.put("comments", list);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<UserDTO> editComment(@RequestParam("nickName") String nickName){
+        UserDTO userDTOtoFindUserId = userGetService.FindByNickName(nickName);
+        return ResponseEntity.ok(userDTOtoFindUserId);
     }
 //    @PostMapping("/editComment")
 //    @Transactional
@@ -341,15 +361,41 @@ public class PostController {
         model.addAttribute("ref", referer);
         return "write";
     }
-////    @RequestMapping("/editing")
-////    @Transactional
-////    public ModelAndView editing(Post pd){
-////        ModelAndView mav=new ModelAndView();
-////        PostDTO pos= repositoryP.showDetailPost(pd.getPostId());
-////        mav.addObject("pos", pos);
-////        mav.setViewName("editWrite");
-////        return mav;
-////    }
+//    @RequestMapping("/detail")
+//    public ResponseEntity<Map<String, Object>> detail(@RequestParam("postId") int postId) {
+//        postService.incrementViewCount(postId);
+//        PostDTO postDTO = postService.ShowDetailPost(postId);
+//        List<CommentDTO> list = commentService.CommentList(postId);
+//        List<Integer> counts = commentService.CountByPostId(postId);
+//        List<FileDTO> files = fileService.ListImage(postId);
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("postDTO", postDTO);
+//        response.put("comments", list);
+//        response.put("counts", counts);
+//        response.put("files", files);
+//        return ResponseEntity.ok(response);
+//    }
+    @GetMapping("/post/write")
+//    @Transactional
+    public ResponseEntity<Map<String, Object>> editing(@RequestParam("postId") String postId){
+//        ModelAndView mav=new ModelAndView();
+        PostDTO postDTO= postService.ShowDetailPost(Integer.parseInt(postId));
+        Map<String, Object> response = new HashMap<>();
+        response.put("postDTO", postDTO);
+//        response.put("comments", list);
+//        mav.addObject("pos", pos);
+//        mav.setViewName("editWrite");
+        return ResponseEntity.ok(response);
+    }
+//    @RequestMapping("/editing")
+//    @Transactional
+//    public ModelAndView editing(Post pd){
+//        ModelAndView mav=new ModelAndView();
+//        PostDTO pos= repositoryP.showDetailPost(pd.getPostId());
+//        mav.addObject("pos", pos);
+//        mav.setViewName("editWrite");
+//        return mav;
+//    }
 //////    @PostMapping("/editPosts")
 //////    public String editPosts(@RequestParam String postId,PostDTO pd){
 //////        boolean result= dao.editPost(pd);
@@ -411,23 +457,37 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
     @PostMapping(value = "/post/write",consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Transactional
+//    @Transactional
     public ResponseEntity<Void> writePost(@RequestPart PostDTO postDTO,
-                                          @RequestPart UploadImageVO vo,
+                                          @RequestPart(required = false) MultipartFile[] vo,
                                           @RequestPart FileDTO fileDTO,
-                                          @RequestParam("category") String category) {
+                                          @RequestPart String category) {
+        LocalDateTime now = LocalDateTime.now();
 //        try{
         postDTO.setBoardType(postService.GetBoardType(category));
-        postService.InsertPost(postDTO.getBoardType(), postDTO.getUserId(), postDTO.getTitle(), postDTO.getContent());
-        MultipartFile[] uploadImageFiles = vo.getUploadImageFiles();
+        postDTO.setCreatedAt(LocalDate.from(now));
+        System.out.println("INSERT 실행합니다!");
+//        System.out.println(now);
+        Post result = postService.InsertPost(postDTO);
+        System.out.println("insert 완료");
+        System.out.println(result.getTitle());
+        System.out.println("insertPostId : " + result.getPostId());
 
-            if ((!uploadImageFiles[0].isEmpty())) {
+//        postService.savePost(p); // savePost 메서드는 Post 엔터티를 데이터베이스에 저장하는 메서드입니다.
+//        System.out.println(postDTO);
+//
+//        log.info(String.valueOf(postDTO));
+//        System.out.println(isInsert);
+//        log.info(String.valueOf(isInsert));
+//        postService.find
+        if ((!vo[0].isEmpty())) {
                 String path = System.getProperty("user.dir") + "/src/main/resources/static/images/post/";
-                fileDTO.setPostId(postDTO.getPostId());
-
-                for (MultipartFile mfile : uploadImageFiles) {
+                System.out.println("postID : --------------- " + postDTO.getPostId());
+                fileDTO.setPostId(result.getPostId());
+            System.out.println("fileDTO.getPostId() : "+fileDTO.getPostId());
+                for (MultipartFile mfile : vo) {
                     String filename = UUID.randomUUID().toString();
-                    System.out.println(mfile);
+                    System.out.println("filename : "+filename);
                     try {
                         // 파일 정보
                         String originalFilename = mfile.getOriginalFilename();
@@ -442,7 +502,9 @@ public class PostController {
                         fileDTO.setFilename(originalFilename.substring(0, originalFilename.indexOf("."))); // 클라이언트가 제공한 파일명
                         fileDTO.setFileExtension(fileExtension);
                         fileDTO.setFileUrl("/images/post/" + filename + fileExtension);
-                        postService.InsertUploadImage(fileDTO.getPostId(), fileDTO.getFilename(), fileDTO.getFileExtension(), fileDTO.getFileUrl());
+                        fileDTO.setStatusCode(1);
+                        com.dottree.nonogrammers.entity.File resultFile = fileService.InsertFile(fileDTO,result);
+//                        postService.InsertUploadImage(fileDTO.getPostId(), fileDTO.getFilename(), fileDTO.getFileExtension(), fileDTO.getFileUrl());
 
                     } catch (IOException ioe) {
                         ioe.printStackTrace();
@@ -453,6 +515,66 @@ public class PostController {
 //            e.printStackTrace();
 //        }
     //        return "redirect:/post";
+        return ResponseEntity.ok().build();
+    }
+    @PostMapping(value = "/post/edit",consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<Void> editPost(@RequestPart PostDTO postDTO,
+                                          @RequestPart(required = false) MultipartFile[] vo,
+                                          @RequestPart FileDTO fileDTO,
+                                          @RequestPart String category) {
+        LocalDateTime now = LocalDateTime.now();
+//        try{
+        postDTO.setBoardType(postService.GetBoardType(category));
+        postDTO.setCreatedAt(LocalDate.from(now));
+        System.out.println("INSERT 실행합니다!");
+//        System.out.println(now);
+        postService.EditPost(postDTO.getTitle(),postDTO.getContent(),LocalDate.now(),postDTO.getBoardType(),postDTO.getPostId(),postDTO.getUserId());
+        System.out.println("insert 완료");
+
+//        postService.savePost(p); // savePost 메서드는 Post 엔터티를 데이터베이스에 저장하는 메서드입니다.
+//        System.out.println(postDTO);
+//
+//        log.info(String.valueOf(postDTO));
+//        System.out.println(isInsert);
+//        log.info(String.valueOf(isInsert));
+//        postService.find
+        if ((!vo[0].isEmpty())) {
+            String path = System.getProperty("user.dir") + "/src/main/resources/static/images/post/";
+            System.out.println("postID : --------------- " + postDTO.getPostId());
+            fileDTO.setPostId(postDTO.getPostId());
+            System.out.println("fileDTO.getPostId() : "+fileDTO.getPostId());
+            for (MultipartFile mfile : vo) {
+                String filename = UUID.randomUUID().toString();
+                System.out.println("filename : "+filename);
+                try {
+                    // 파일 정보
+                    String originalFilename = mfile.getOriginalFilename();
+                    String contentType = mfile.getContentType(); // MIME ex) image/jpeg, image/png,
+                    String fileExtension = "." + (contentType.substring(contentType.indexOf("/") + 1));
+
+                    // 파일 저장
+                    File filepath = new File(path + filename + fileExtension);
+                    mfile.transferTo(filepath);
+
+                    // Insert - 파일 테이블
+                    fileDTO.setFilename(originalFilename.substring(0, originalFilename.indexOf("."))); // 클라이언트가 제공한 파일명
+                    fileDTO.setFileExtension(fileExtension);
+                    fileDTO.setFileUrl("/images/post/" + filename + fileExtension);
+                    fileDTO.setStatusCode(1);
+                    Post p = postDTO.toEntity();
+                    System.out.println(p);
+                    com.dottree.nonogrammers.entity.File resultFile = fileService.InsertFile(fileDTO,p);
+//                        postService.InsertUploadImage(fileDTO.getPostId(), fileDTO.getFilename(), fileDTO.getFileExtension(), fileDTO.getFileUrl());
+
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }
+            }
+        }
+//        } catch(Exception e){
+//            e.printStackTrace();
+//        }
+        //        return "redirect:/post";
         return ResponseEntity.ok().build();
     }
 //    @PostMapping("/post/write")
