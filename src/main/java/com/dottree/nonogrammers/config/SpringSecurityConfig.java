@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -34,6 +35,13 @@ public class SpringSecurityConfig {
 
     @Autowired
     private JwtProperties jwtProperties;
+
+
+    @Bean
+    public WebSecurityCustomizer configure() {
+        return (web) -> web.ignoring()
+                .requestMatchers("/images/**");
+    }
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -58,7 +66,9 @@ public class SpringSecurityConfig {
                 .addFilter(jwtAuthorizationFilter())
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(
-                                "/api/v1/auth/join", "/api/v1/auth/login",
+                                "/api/v1/auth/join", "/api/v1/auth/login", "/api/v1/auth/reset-password",
+                                "api/v1/auth/check-nickname", "api/v1/auth/check-baekjoon",
+                                "/api/v1/auth/email-verification", "/api/v1/auth/verify-code",
                                 "/post", "/post/free", "/post/qa", "/post/nono", "/post/notice",
                                 "/search", "/detail").permitAll()
                         .anyRequest().authenticated()
