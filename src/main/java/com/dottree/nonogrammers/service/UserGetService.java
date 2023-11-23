@@ -29,4 +29,8 @@ public class UserGetService {
         User user = userGetRepository.findByNickName(nickName);
         return user.toDto();
     }
+    public UserDTO FindByUserId(String userId){
+        User user = userGetRepository.findByUserId(userId);
+        return user.toDto();
+    }
 }

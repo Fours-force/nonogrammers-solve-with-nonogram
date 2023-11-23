@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface UserGetRepository extends JpaRepository<User,Integer> {
     public User findByNickName(String nickName);
+    public User findByUserId(String userId);
 }

@@ -2,11 +2,9 @@ package com.dottree.nonogrammers.controller;
 import com.dottree.nonogrammers.dao.PostMapper;
 import com.dottree.nonogrammers.domain.*;
 import com.dottree.nonogrammers.entity.Comment;
+import com.dottree.nonogrammers.entity.Likes;
 import com.dottree.nonogrammers.entity.Post;
-import com.dottree.nonogrammers.service.CommentService;
-import com.dottree.nonogrammers.service.FileService;
-import com.dottree.nonogrammers.service.PostService;
-import com.dottree.nonogrammers.service.UserGetService;
+import com.dottree.nonogrammers.service.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.*;
 import org.apache.ibatis.annotations.Param;
@@ -29,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -51,12 +50,13 @@ public class PostController {
     private final CommentService commentService;
     private final FileService fileService;
     private final UserGetService userGetService;
-
-    public PostController(PostService postService, CommentService commentService,FileService fileService,UserGetService userGetService) {
+    private final LikesService likesService;
+    public PostController(PostService postService, CommentService commentService,FileService fileService,UserGetService userGetService,LikesService likesService) {
         this.postService = postService;
         this.commentService = commentService;
         this.fileService = fileService;
         this.userGetService= userGetService;
+        this.likesService=likesService;
     }
     private static final Logger log = LoggerFactory.getLogger(PostController.class);
     @Getter
@@ -191,8 +191,11 @@ public class PostController {
     @PostMapping("/detailComment")
     @Transactional
     public ResponseEntity<Map<String, Object>> detailComment(@RequestBody CommentDTO cd) {
-        commentService.InsertComment(cd.getPostId(),cd.getUserId(),cd.getContent());
+//        commentService.InsertComment(cd.getPostId(),cd.getUserId(),cd.getContent());
+//
         PostDTO postDTO= postService.ShowDetailPost(cd.getPostId());
+        cd.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
+        Comment resultComment = commentService.InsertComment(cd,postDTO.toEntity());
         List<CommentDTO> list= commentService.CommentList(cd.getPostId());
         Map<String, Object> response = new HashMap<>();
         response.put("postDTO", postDTO);
@@ -349,18 +352,18 @@ public class PostController {
 ////        System.out.println(postId);
 ////        return "redirect:/detail?postId=" + postId;
 ////    }
-    @RequestMapping("/posting")
-    @Transactional
-    public String posting(Model model,
-                          @RequestHeader String referer,
-                          HttpSession session){
-        String redirectLogin = isUserIdNullthenRedirect(session);
-        if(!redirectLogin.equals("")) {
-            return redirectLogin;
-        }
-        model.addAttribute("ref", referer);
-        return "write";
-    }
+//    @RequestMapping("/posting")
+//    @Transactional
+//    public String posting(Model model,
+//                          @RequestHeader String referer,
+//                          HttpSession session){
+//        String redirectLogin = isUserIdNullthenRedirect(session);
+//        if(!redirectLogin.equals("")) {
+//            return redirectLogin;
+//        }
+//        model.addAttribute("ref", referer);
+//        return "write";
+//    }
 //    @RequestMapping("/detail")
 //    public ResponseEntity<Map<String, Object>> detail(@RequestParam("postId") int postId) {
 //        postService.incrementViewCount(postId);
@@ -450,10 +453,11 @@ public class PostController {
 //        postService.DeletePost(postId);
 //        return "redirect:/post";
 //    }
-    @PostMapping("/postDelete")
+    @GetMapping("/postDelete")
     @Transactional
-    public ResponseEntity<Void> postDelete(@RequestBody Comment cd) {
-        postService.DeletePost(cd.getPostId());
+    public ResponseEntity<Void> postDelete(@RequestParam int postId) {
+        System.out.println(postId);
+        postService.DeletePost(postId);
         return ResponseEntity.ok().build();
     }
     @PostMapping(value = "/post/write",consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -668,48 +672,62 @@ public class PostController {
 //        return "redirect:/post";
 //    }
 ////
-////    @RequestMapping(value = "/post/like", produces = "application/json; charset=utf-8", method = RequestMethod.POST)
-////    @ResponseBody
-////    @Transactional
-////    public ResponseModel postLike(LikeDTO dto){
-////
-////        ResponseModel response = new ResponseModel();
-////        int isLike = dao.getUserPostLike(dto); // 해당 유저가 해당 게시글을 좋아요 했는지 여부 조회
-////
-////        if (isLike == 0){ // 0이면, 이제 좋아요를 누른 것이므로 좋아요 등록
-////            boolean result = dao.addPostLike(dto);
-////            if (result){
-////                response.setStatusCode(201);
-////            }
-////            else {
-////                response.setStatusCode(500);
-////            }
-////        }
-////        else { // 1이면, 이미 좋아요를 누른 것이므로 좋아요 취소
-////            boolean result = dao.delPostLike(dto);
-////            if (result){
-////                response.setStatusCode(204);
-////            }
-////            else {
-////                response.setStatusCode(500);
-////            }
-////        }
-////        // 해당 게시글의 좋아요 수
-////        int getPostLike = dao.getPostLike(dto.getPostId());
-////        HashMap<String, Object> mapData = new HashMap<>();
-////        mapData.put("data", getPostLike);
-////
-////        response.setTitle("Like");
-////        response.setMapData(mapData);
-////        return response;
-////    }
-////
-    public String isUserIdNullthenRedirect(HttpSession session) {
-        if(session.getAttribute("value") == null) {
-            System.out.println("************ userId is NULL ************");
-            return "redirect:/login";
+    @PostMapping("/post/like")
+    @Transactional
+    public ResponseEntity<Integer> postLike(@RequestBody LikeDTO likeDTO){
+        int isLike = likesService.CountByUserIdAndPostId(likeDTO.getUserId(),likeDTO.getPostId());
+        UserDTO userDTO = userGetService.FindByUserId(String.valueOf(likeDTO.getUserId()));
+        PostDTO postDTO = postService.ShowDetailPost(likeDTO.getPostId());
+        if (isLike == 0) {
+            Likes likes = likesService.addPostLike(likeDTO,userDTO.toEntity(),postDTO.toEntity());
         } else {
-            return "";
+            likesService.DeleteByPostId(likeDTO.getPostId());
         }
+        int count = likesService.CountByPostId(likeDTO.getPostId());
+        return ResponseEntity.ok(count);
     }
+//    @RequestMapping(value = "/post/like", produces = "application/json; charset=utf-8", method = RequestMethod.POST)
+//    @ResponseBody
+//    @Transactional
+//    public ResponseModel postLike(LikeDTO dto){
+//
+//        ResponseModel response = new ResponseModel();
+//        int isLike = dao.getUserPostLike(dto); // 해당 유저가 해당 게시글을 좋아요 했는지 여부 조회
+//
+//        if (isLike == 0){ // 0이면, 이제 좋아요를 누른 것이므로 좋아요 등록
+//            boolean result = dao.addPostLike(dto);
+//            if (result){
+//                response.setStatusCode(201);
+//            }
+//            else {
+//                response.setStatusCode(500);
+//            }
+//        }
+//        else { // 1이면, 이미 좋아요를 누른 것이므로 좋아요 취소
+//            boolean result = dao.delPostLike(dto);
+//            if (result){
+//                response.setStatusCode(204);
+//            }
+//            else {
+//                response.setStatusCode(500);
+//            }
+//        }
+//        // 해당 게시글의 좋아요 수
+//        int getPostLike = dao.getPostLike(dto.getPostId());
+//        HashMap<String, Object> mapData = new HashMap<>();
+//        mapData.put("data", getPostLike);
+//
+//        response.setTitle("Like");
+//        response.setMapData(mapData);
+//        return response;
+//    }
+
+//    public String isUserIdNullthenRedirect(HttpSession session) {
+//        if(session.getAttribute("value") == null) {
+//            System.out.println("************ userId is NULL ************");
+//            return "redirect:/login";
+//        } else {
+//            return "";
+//        }
+//    }
 }

@@ -1,5 +1,8 @@
 package com.dottree.nonogrammers.domain;
 
+import com.dottree.nonogrammers.entity.Comment;
+import com.dottree.nonogrammers.entity.File;
+import com.dottree.nonogrammers.entity.Post;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -24,4 +27,14 @@ public class CommentDTO {
 //        this.userId=userId;
 //        this.content=content;
 //    }
+    public Comment toEntity(Post post) {
+        return Comment.builder()
+                .commentId(commentId)
+                .post(post)
+                .userId(userId)
+                .content(content)
+                .createdAt(createdAt)
+                .updatedAt(updatedAt)
+                .build();
+    }
 }

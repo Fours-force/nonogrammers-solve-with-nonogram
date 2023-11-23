@@ -30,8 +30,8 @@ public class Post {
     @UpdateTimestamp
     private LocalDate updatedAt;
     private int viewCount;
-    @OneToMany(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "postId")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+//    @JoinColumn(name = "postId")
     private List<Comment> comment;
     @OneToMany
     @JoinColumn(name = "postId")
