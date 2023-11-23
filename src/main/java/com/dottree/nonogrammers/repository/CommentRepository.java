@@ -12,11 +12,11 @@ import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment,Integer> {
 //    @Query("SELECT count(*) as countC FROM comment c WHERE c.postId =:postId GROUP BY c.postId")
-    public List<Integer> countByPostId(@Param("postId") int postId); //counting
-    @Transactional
-    @Modifying
-    @Query("insert into Comment (postId,userId,content) values (:postId,:userId,:content)")
-    public void insertComment(@Param("postId") int postId, @Param("userId") int userId, @Param("content") String content); //insertComm
+    public List<Integer> countByPost_PostId(@Param("postId") int postId); //counting
+//    @Transactional
+//    @Modifying
+//    @Query("insert into Comment (postId,userId,content) values (:postId,:userId,:content)")
+//    public void insertComment(@Param("postId") int postId, @Param("userId") int userId, @Param("content") String content); //insertComm
 //    @Transactional
 //    @Modifying
 //    @Query("DELETE FROM Comment c WHERE c.commentId = :commentId")
@@ -30,7 +30,7 @@ public interface CommentRepository extends JpaRepository<Comment,Integer> {
 //            "JOIN User u ON c.userId = u.userId " +
 //            "WHERE c.postId = :postId")
 //    List<CommentDTO> commentList(@Param("postId") int postId);
-    List<Comment> findByPostIdOrderByCreatedAt(int postId);
+    List<Comment> findByPost_PostIdOrderByCreatedAt(int postId);
 
     public void deleteByCommentId(int commentId);
 }

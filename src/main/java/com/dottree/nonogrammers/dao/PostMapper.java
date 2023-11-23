@@ -26,12 +26,12 @@ public interface PostMapper {
     PostDTO postToPostDTO(Post post);
     default long getCommentCount(Post post) {
         return post.getComment().stream()
-                .filter(comment -> comment.getPostId() == post.getPostId())
+                .filter(comment -> comment.getPost().getPostId() == post.getPostId())
                 .count();
     }
     default long getLikeCount(Post post) {
         return post.getLikes().stream()
-                .filter(likes -> likes.getPostId() == post.getPostId())
+                .filter(likes -> likes.getPost().getPostId() == post.getPostId())
                 .count();
     }
 //    @Select("SELECT p.postId, p.boardType, p.title, p.content, p.userId, p.createdAt, (SELECT COUNT(*) FROM comment AS c WHERE c.postId = p.postId) AS commentCount,(SELECT COUNT(*) FROM likes AS l WHERE l.postId = p.postId) AS likeCount, p.viewCount, u.nickName as nickName, u.profileImgUrl as imgSrc,(SELECT GROUP_CONCAT(fileUrl) FROM file AS f WHERE f.postId = p.postId) AS fileUrls FROM post AS p INNER JOIN user AS u ON p.userId = u.userId ORDER BY p.createdAt DESC")

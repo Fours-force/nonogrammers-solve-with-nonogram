@@ -2,12 +2,13 @@ package com.dottree.nonogrammers.dao;
 
 import com.dottree.nonogrammers.domain.CommentDTO;
 import com.dottree.nonogrammers.entity.Comment;
+import com.dottree.nonogrammers.entity.Post;
 import com.dottree.nonogrammers.entity.User;
 import javax.annotation.processing.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-11-21T18:50:16+0900",
+    date = "2023-11-23T01:38:12+0900",
     comments = "version: 1.4.2.Final, compiler: javac, environment: Java 17.0.8 (Oracle Corporation)"
 )
 public class CommentMapperImpl implements CommentMapper {
@@ -20,16 +21,28 @@ public class CommentMapperImpl implements CommentMapper {
 
         CommentDTO commentDTO = new CommentDTO();
 
+        commentDTO.setPostId( commentPostPostId( comment ) );
         commentDTO.setNickName( commentUserNickNameNickName( comment ) );
         commentDTO.setImgSrc( commentUserImgSrcProfileImgUrl( comment ) );
         commentDTO.setCommentId( comment.getCommentId() );
-        commentDTO.setPostId( comment.getPostId() );
         commentDTO.setUserId( comment.getUserId() );
         commentDTO.setContent( comment.getContent() );
         commentDTO.setCreatedAt( comment.getCreatedAt() );
         commentDTO.setUpdatedAt( comment.getUpdatedAt() );
 
         return commentDTO;
+    }
+
+    private int commentPostPostId(Comment comment) {
+        if ( comment == null ) {
+            return 0;
+        }
+        Post post = comment.getPost();
+        if ( post == null ) {
+            return 0;
+        }
+        int postId = post.getPostId();
+        return postId;
     }
 
     private String commentUserNickNameNickName(Comment comment) {
