@@ -36,13 +36,6 @@ public class SpringSecurityConfig {
     @Autowired
     private JwtProperties jwtProperties;
 
-
-    @Bean
-    public WebSecurityCustomizer configure() {
-        return (web) -> web.ignoring()
-                .requestMatchers("/images/**");
-    }
-
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
