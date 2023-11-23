@@ -50,6 +50,11 @@ public class SpringSecurityConfig {
     }
 
     @Bean
+    public WebSecurityCustomizer configure() {
+        return (web) -> web.ignoring()
+                .requestMatchers("/images/**");
+    }
+    @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
@@ -76,7 +81,7 @@ public class SpringSecurityConfig {
                                 "api/v1/auth/check-nickname", "api/v1/auth/check-baekjoon",
                                 "/api/v1/auth/email-verification", "/api/v1/auth/verify-code",
                                 "/post", "/post/free", "/post/qa", "/post/nono", "/post/notice",
-                                "/search", "/detail").permitAll()
+                                "/search", "/detail", "/post/all","/post/write").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();

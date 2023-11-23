@@ -17,7 +17,7 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int commentId;
-    private int postId;
+//    private int postId;
     private int userId;
     private String content;
     private Timestamp createdAt;
@@ -28,4 +28,10 @@ public class Comment {
     @OneToOne
     @JoinColumn(name = "userId", insertable = false, updatable = false)
     private User userImgSrc;
+    @ManyToOne
+    @JoinColumn(name = "postId")
+    private Post post;
+    public int getPostId() {
+        return post != null ? post.getPostId() : 0; // 적절한 기본값 사용
+    }
 }
