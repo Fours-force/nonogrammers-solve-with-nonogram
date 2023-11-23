@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,6 +39,7 @@ public interface PostRepository extends JpaRepository<Post,Integer> {
 
     Page<Post> findByTitleContainingOrderByCreatedAtDesc(String keyword,Pageable pageable);
     Optional<Post> findByPostId(int postId);
+//    public Optional<Post> findByNickName(String nickName);
 //
 //    @Query("SELECT new com.dottree.nonogrammers.domain.PostDTO(p.postId AS postId, p.boardType as boardType, p.title AS title, p.content AS content, p.userId AS userId, p.createdAt AS createdAt, " +
 //            "(SELECT COUNT(c) FROM Comment c WHERE c.postId = p.postId) AS commentCount, " +
@@ -151,9 +153,10 @@ public interface PostRepository extends JpaRepository<Post,Integer> {
 //
 ////    @Query("UPDATE comment SET content = :content, updatedAt = now() WHERE commentId = :commentId")
 ////    public boolean editComment(CommentDTO cd); //editComm
-//
-////    @Query("update post set title = :title, content = :content, updatedAt = now(),boardType = :boardType where postId = :postId and userId = :userId")
-////    public boolean editPost(Post pd); //editPost
+    @Transactional
+    @Modifying
+    @Query("update Post p set title = :title, content = :content, updatedAt = :updatedAt, boardType = :boardType where postId = :postId and userId = :userId")
+    public void editPost(@Param("title") String title, @Param("content") String content, @Param("updatedAt") LocalDate updatedAt,@Param("boardType") int boardType, @Param("postId") int postId, @Param("userId") int userId); //editPost
     @Modifying
 //    @Transactional
     @Query("UPDATE Post p SET p.viewCount = p.viewCount + 1 WHERE p.postId = :postId")
@@ -166,14 +169,13 @@ public interface PostRepository extends JpaRepository<Post,Integer> {
     @Transactional
     @Query("insert into Post (boardType, userId, title, content) values (:boardType, :userId, :title, :content)")
     @Options(useGeneratedKeys = true, keyProperty = "id")
-    @Modifying
+//    @Modifying
     public void insertPost(@Param("boardType") int boardType,@Param("userId") int userId,@Param("title") String title,@Param("content") String content);
 
-    @Modifying
-    @Transactional
-    // 업로드된 이미지 정보 작성
-    @Query("insert into File (postId, filename, fileExtension, fileUrl) values(:postId, :filename,:fileExtension, :fileUrl)")
-    public void insertUploadImage(@Param("postId") int postId,@Param("filename") String filename,@Param("fileExtension") String fileExtension,@Param("fileUrl") String fileUrl);
+//    @Modifying
+//    @Transactional
+//    @Query("insert into File (postId, filename, fileExtension, fileUrl) values (:postId, :filename, :fileExtension, :fileUrl)")
+//    public void insertUploadImage(@Param("postId") int postId, @Param("filename") String filename, @Param("fileExtension") String fileExtension, @Param("fileUrl") String fileUrl);
 
     public Optional<List<Post>> findAllByUserId(Integer userId);
 
