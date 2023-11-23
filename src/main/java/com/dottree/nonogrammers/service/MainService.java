@@ -1,9 +1,6 @@
 package com.dottree.nonogrammers.service;
 
-import com.dottree.nonogrammers.domain.NonoResponseDTO;
-import com.dottree.nonogrammers.domain.UserDotDTO;
-import com.dottree.nonogrammers.domain.UserNonoDTO;
-import com.dottree.nonogrammers.domain.UserSolvingRowDTO;
+import com.dottree.nonogrammers.domain.*;
 import com.dottree.nonogrammers.entity.*;
 import com.dottree.nonogrammers.repository.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -70,10 +67,17 @@ public class MainService {
      */
     public Integer getUserSolvedCount(UserDotDTO udDTO){
         log.info("getUserSolvedCount start !!!!!");
-        UserSolvedCount userSolvedCount = uscRepository.findById(udDTO.getUserId()).get();
-
+        UserSolvedCount userSolvedCount = new UserSolvedCount();
+        Integer result = 0;
+        try {
+            userSolvedCount = uscRepository.findById(udDTO.getUserId()).get();
+            result = userSolvedCount.getSolvedCount();
+        }catch (Exception e) {
+            result = null;
+        }
         log.info(" 푼 문제수 : " + userSolvedCount.getSolvedCount());
-        return userSolvedCount.getSolvedCount();
+
+        return result;
     }
 
     /**
@@ -124,6 +128,9 @@ public class MainService {
 
     public Integer getIsDotsSolved(UserDotDTO udDTO){
         log.info("selectIsDotsSolved start !!!!!");
+        log.info("userId : "+udDTO.getUserId());
+        log.info("nonoId : "+ udDTO.getNonoId());
+
         Integer num = udRepository.selectIsDotsSolved(udDTO);
         return num;
     }
@@ -146,6 +153,12 @@ public class MainService {
             nrd.add(nonoResponseDTO);
         }
         return nrd;
+    }
+
+    public UserIdAndBeakjoonIdResponseDTO getUserIdAndBaekjoonId(String nickname){
+        User user = uRepository.findByNickName(nickname).orElseThrow(() -> new IllegalArgumentException("MainService : 해당 nickname을 찾을 수 없습니다."));;
+        UserIdAndBeakjoonIdResponseDTO ubresDTO = new UserIdAndBeakjoonIdResponseDTO(user);
+        return ubresDTO;
     }
 
 
@@ -181,9 +194,9 @@ public class MainService {
     public void insertUserSolvedCount(int userId, int baekjoonSolvedCnt){
         log.info("insertUserSolvedCount start !!!!!!");
         User user = uRepository.findById(userId).get();
+        log.info(String.valueOf(user.getUserId()));
 
         UserSolvedCount userSolvedCount = UserSolvedCount.builder().
-                userId(userId).
                 user(user).
                 solvedCount(baekjoonSolvedCnt).
                 build();

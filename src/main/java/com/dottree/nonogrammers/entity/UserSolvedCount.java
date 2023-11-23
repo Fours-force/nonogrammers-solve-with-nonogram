@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 @Getter
+
 @ToString
 @Builder(toBuilder = true)
 @AllArgsConstructor
@@ -15,9 +16,11 @@ import lombok.ToString;
 public class UserSolvedCount {
     @Id
     @Column(name = "userId")
-    private int userId;
+    private Integer userId;
+
     @OneToOne
-    @PrimaryKeyJoinColumn(name = "userId", referencedColumnName = "userId")
+    @JoinColumn(name = "userId", referencedColumnName = "userId")
+    @MapsId
     private User user;
     private int solvedCount;
 
@@ -28,10 +31,11 @@ public class UserSolvedCount {
     public void update(int solvedCount){
         this.solvedCount = solvedCount;
     }
- /*   @Builder
+
+    @Builder
     public UserSolvedCount(int solvedCount, int userId, User user){
         this.userId = userId;
         this.user = user;
         this.solvedCount = solvedCount;
-    }*/
+    }
 }

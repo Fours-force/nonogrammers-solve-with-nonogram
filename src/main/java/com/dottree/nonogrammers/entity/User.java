@@ -67,8 +67,8 @@ public class User implements UserDetails {
 
     private String roles;
 
-    public List<String> getRoleList(){
-        if(!this.roles.isEmpty()){
+    public List<String> getRoleList() {
+        if (!this.roles.isEmpty()) {
             return Arrays.asList(this.roles.split(","));
         }
         return new ArrayList<>();
@@ -109,19 +109,26 @@ public class User implements UserDetails {
         Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
         getRoleList().forEach(r -> {
             System.out.println("role : " + r);
-            authorities.add(()->{ return r ;});
+            authorities.add(() -> {
+                return r;
+            });
         });
         return authorities;
     }
 
-    public void changeNickName(String nickName){
+    public void changeNickName(String nickName) {
         this.nickName = nickName;
     }
-    public void changeStatusCode(int statusCode){
-        if(this.statusCode == 0)
+
+    public void changeStatusCode(int statusCode) {
+        if (this.statusCode == 0)
             //todo 이미 탈퇴하면 처리
             return;
         this.statusCode = statusCode;
+    }
+
+    public void changePassword(String password) {
+        this.password = password;
     }
 
     public void changeProfileImgUrl(String profileImgUrl) {
