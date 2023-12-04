@@ -1,306 +1,211 @@
 package com.dottree.nonogrammers.controller;
 
-import com.dottree.nonogrammers.dao.MainMapper;
-import com.dottree.nonogrammers.dao.PostMapper;
-import com.dottree.nonogrammers.dao.UserMapper;
 import com.dottree.nonogrammers.domain.*;
+import com.dottree.nonogrammers.entity.User;
+import com.dottree.nonogrammers.entity.UserNono;
+import com.dottree.nonogrammers.repository.MyPageRepository;
+import com.dottree.nonogrammers.service.MyPageService;
+import com.dottree.nonogrammers.service.PostService;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.NotFound;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
+import java.net.URI;
 import java.util.List;
-import java.util.UUID;
 
-@Controller
+@RestController
+@Slf4j
+@CrossOrigin(origins = "*")
 public class MyPageController {
-    private final PostMapper postMapper;
-    private final UserMapper userMapper;
 
-    private final MainMapper mainMapper;
-    public MyPageController(PostMapper postMapper, UserMapper userMapper, MainMapper mainMapper) {
-        this.postMapper = postMapper;
-        this.userMapper = userMapper;
-        this.mainMapper = mainMapper;
+    private final MyPageService myPageService;
+
+    private final PostService postService;
+
+    public MyPageController(MyPageService myPageService, PostService postService) {
+        this.myPageService = myPageService;
+        this.postService = postService;
     }
 
     /**
      * 유저의 작성한 글 페이지를 보여줍니다.
-     * @param userPostVO
      * @param userId
      * @return mypostView
      */
-    @GetMapping("/mypost/{userId}")
-    public String userPostView(@ModelAttribute("userPostVO") UserPostVO userPostVO,
-                               @PathVariable("userId") Integer userId,
-                               HttpSession session) {
-        UserDTO userDTO = userMapper.selectUserByUserId(userId);
-        String redirectLogin = isUserIdNullthenRedirect(session);
-        if(!redirectLogin.equals("")) {
-            return redirectLogin;
+    @GetMapping("/post/{userId}")
+    public ResponseEntity userPostList(@PathVariable("userId") Integer userId) {
+        try {
+            return ResponseEntity.ok(postService.getUserPostList(userId));
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 유저의 게시물을 조회하는데 실패하였습니다.");
         }
-//        isUserIdNullthenRedirect(userId);
-        List<PostDTO> postDtoList = postMapper.selectPostList(userId);
-        userPostVO.setUserDTO(userDTO);
-        userPostVO.setUserId(userId);
-        userPostVO.setUserPostList(postDtoList);
-        return "mypost";
     }
 
-    @PutMapping(value = "/api/modify/{userId}/{postId}")
-//    @ResponseBody
-    public String modifyUserPost(@ModelAttribute("userPostVO") UserPostVO userPostVO,
-                                  @ModelAttribute PostDTO postDTO,
-                                  Model model,
-                                  @PathVariable("postId") Integer postId,
-                                  @PathVariable("userId") Integer userId) {
-
-//        isUserIdNullthenRedirect(userId);
-        boolean result = postMapper.updatePostByPostIdAndUserId(postDTO.getTitle(), postDTO.getContent(), postId, userId);
-//        postDTO = postMapper.detailss(String.valueOf(postId));
-        UserDTO userDTO = userMapper.selectUserByUserId(userId);
-        List<PostDTO> postDtoList = postMapper.selectPostList(userId);
-        userPostVO.setUserPostList(postDtoList);
-        userPostVO.setUserDTO(userDTO);
-        userPostVO.setUserId(userId);
-        if(result) {
-            model.addAttribute("msg", "게시글이 수정되었습니다.");
-            model.addAttribute(userPostVO);
-        } else {
-            model.addAttribute("msg", "게시글 수정이 실패했습니다.");
+    /**
+     * 유저의 게시물을 수정합니다.
+     * @param postId
+     * @param userId
+     * @param postDTO
+     * @return ResponseEntity
+     */
+    @PatchMapping(value = "/post/{userId}/{postId}")
+    public ResponseEntity userPostModify(@PathVariable("postId") Integer postId,
+                                         @PathVariable("userId") Integer userId,
+                                         @RequestBody PostDTO postDTO) {
+        try {
+            postService.changeUserPost(postDTO.getTitle(), postDTO.getContent(), postId, userId);
+            // TODO: 11/14/23 - 수정 후 리턴 할 객체 무엇 다시 Post 조회 후 list 반환? 아니면 변경된 Post만 반환?
+            return ResponseEntity.created(URI.create("/post/"+ userId)).body("게시물 수정에 성공하였습니다.");
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("게시물 수정에 실패하였습니다.");
         }
-
-        return "mypost";
 
     }
 
     /**
      * 유저의 계정관리 페이지를 보여줍니다.
-     * @param userId
-     * @param model
-     * @return accountmanageView
+     * @param nickName
+     * @return ResponseEntity
      */
-    @GetMapping("/user/{userId}")
-    public String userAccountManageView(@PathVariable("userId") Integer userId,
-                                        Model model,
-                                        HttpSession session) {
-        String redirectLogin = isUserIdNullthenRedirect(session);
-        if(!redirectLogin.equals("")) {
-            return redirectLogin;
+    @GetMapping("/user/{nickName}")
+    public ResponseEntity userAccountManageView(@PathVariable("nickName") String nickName) {
+        try {
+            return ResponseEntity.ok(myPageService.getUser(nickName));
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 유저를 찾는데 실패하였습니다.");
         }
+    }
 
-        UserDTO userDTO = userMapper.selectUserByUserId(userId);
-        model.addAttribute(userDTO);
-
-        return "accountmanage";
+    /**
+     * 유저의 닉네임 중복여부를 확인합니다.
+     * @param userDTO
+     * @return ResponseEntity
+     */
+    @PostMapping(value = "/user/nickname/isduplicated")
+    public ResponseEntity isDuplicatedNickName(@RequestBody UserDTO userDTO) {
+        try {
+            User user = myPageService.isDuplicatedNickName(userDTO.getNickName());
+            if (user == null) {
+                return ResponseEntity.ok(userDTO.getNickName());
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("닉네임 중복검사에 실패하였습니다.");
+            }
+        } catch (IllegalArgumentException e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("닉네임 중복검사에 실패하였습니다.");
+        }
     }
 
     /**
      * 유저의 닉네임을 수정합니다.
      * @param userId
      * @param userDTO
-     * @return accountmanageView
+     * @return ResponseEntity
      */
-    @PutMapping(value = "/api/reset-nickname/{userId}", produces = "application/json; charset=utf-8")
-    @ResponseBody
-    public HashMap<String, Object> changeUserNickname(@PathVariable("userId") Integer userId,
-                                                      @RequestBody UserDTO userDTO) {
-
-        HashMap<String, Object> map = new HashMap<>();
-//        UserDTO user = userMapper.selectUserByUserId(1); // session.getUserId()
-        UserDTO user = userMapper.selectUserByUserId(userId); // session.getUserId()
-        System.out.println(user.getUserId());
-        if(user != null) {
-            user.setNickName(userDTO.getNickName());
-            userMapper.resetNickname(user.getEmail(), user.getNickName());
-            user = userMapper.selectUserByUserId(user.getUserId());
-            map.put("result", 200);
-            map.put("obj", user);
-        } else {
-            map.put("result", 404);
-            map.put("msg", "유저 정보를 찾을 수 없습니다.");
-        }
-
-        return map;
-    }
-
-    @PutMapping(value = "/api/withdraw-user/{userId}", produces = "application/json; charset=utf-8")
-    @ResponseBody
-    public HashMap<String, Object> withDrawUser(@PathVariable("userId") Integer userId,
-                                                HttpSession session) {
-
-        HashMap<String, Object> map = new HashMap<>();
-        //session에 로그인되어 있는 사용자로 select 해오고
-        UserDTO user = userMapper.selectUserByUserId(userId); // session.getUserId()
-        //사용자가 입력한 email과 같으면 delete
-        UserDTO inputUser = userMapper.selectUserByUserId(user.getUserId());
-        if(user != null && user.getEmail().equals(inputUser.getEmail())) {
-            userMapper.updateStatusCode(user.getEmail(), 0);
-            //session.removeAttribute();
-            map.put("result", 200);
-            map.put("msg", "탈퇴가 정상적으로 처리되었습니다."); //logout처리? session remove처리?
-            session.removeAttribute("value");
-
-        } else {
-            map.put("result", 404);
-            map.put("msg", "유저 정보를 찾을 수 없습니다.");
-        }
-
-        return map;
-    }
-
-    @PostMapping(value = "/api/isduplicated-nickname/{nickName}", produces = "application/json; charset=utf-8")
-    @ResponseBody
-    public HashMap<String, Object> isDuplicatedNickName(@PathVariable("nickName") String nickName,
-                                                        @RequestBody UserDTO userDTO) {
-        HashMap<String, Object> map = new HashMap<>();
-        int checkedVal = userMapper.getExists("nickName", userDTO.getNickName());
-
-        if(checkedVal < 1 && !userDTO.getNickName().equals("null")) {
-            map.put("result", 200);
-            map.put("msg", "사용가능한 닉네임입니다.");
-        } else {
-            map.put("result", 404);
-            map.put("msg", "이미 있는 닉네임입니다.");
-        }
-
-        return map;
-    }
-
-    @RequestMapping(value = "/api/change-profileimgurl/{userId}", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE, consumes = "multipart/form-data")
-    @ResponseBody
-    public HashMap<String, Object> changeProfileImgUrl(@RequestParam("profileImg") MultipartFile imgFile,
-                                                        @PathVariable Integer userId) {
-        HashMap<String, Object> map = new HashMap<>();
-        UserDTO user = userMapper.selectUserByUserId(userId);
-        if(user == null) {
-
-        }
-        byte[] content = null;
-        String fileName =  imgFile.getOriginalFilename();
+    @PatchMapping(value = "/user/nickname/{userId}")
+    public ResponseEntity changeUserNickname(@PathVariable("userId") Integer userId,
+                                                     @RequestBody UserDTO userDTO) {
+        System.out.println(userId + " , " + userDTO.getNickName());
         try {
-            content = imgFile.getBytes();
-            Path directoryPath = Paths.get("/Users/jasonmilian/Downloads/nonogrammers/src/main/resources/static/images/profile/"+userId);
-            try {
-                // 디렉토리 생성
-                Files.createDirectory(directoryPath);
-            } catch (FileAlreadyExistsException e) {
-                System.out.println("디렉토리가 이미 존재합니다");
-            }
-            UUID uuid = UUID.randomUUID();
-            System.out.println(fileName);
-            String ext = fileName.split("\\.")[1];
-            fileName = uuid.toString() + "_" + user.getNickName() + "." + ext;
-            File f = null;
-            f = new File("/Users/jasonmilian/Downloads/nonogrammers/src/main/resources/static/images/profile/"+userId+"/"+fileName);
+            myPageService.updateNickName(userId, userDTO);
+            return ResponseEntity.created(URI.create("/user/" + userId)).body(myPageService.user(userId));
 
-            if ( f.exists() ) {
-                map.put("result", 404);
-                map.put("msg", "같은 프로필 사진입니다. 다른 사진을 선택해주세요.");
-            } else {
-                userMapper.updateProfileImg(user.getEmail(), f.getAbsolutePath().split("static")[1]);
-                userMapper.selectUserByUserId(user.getUserId());
-                //FileOutputStream fos = new FileOutputStream(f);
-//                fos.write(content);
-//                fos.close();
-                Path savePath = Paths.get(f.getAbsolutePath());
-                imgFile.transferTo(savePath);
-                map.put("result", 200);
-                map.put("msg", "프로필 사진이 변경되었습니다.");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            map.put("result", 404);
-            map.put("msg", fileName + " : 파일이 이미 존재해요!!");
+        } catch (Exception e) { // IllegalArgumentException
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("닉네임 수정에 실패하였습니다.");
         }
-        return map;
     }
 
-    @GetMapping("/ingnono/{userId}")
-    public String getIngUserNono(@PathVariable("userId") Integer userId,
-                                 Model model,
-                                 HttpSession session) {
-        String redirectLogin = isUserIdNullthenRedirect(session);
-        if(!redirectLogin.equals("")) {
-            return redirectLogin;
+    /**
+     * 유저의 탈퇴여부 코드를 변경합니다.
+     * @param userId
+     * @param session
+     * @return ResponseEntity
+     */
+    @PatchMapping(value = "/user/status/{userId}")
+    public ResponseEntity<String> withDrawUser(@PathVariable("userId") Integer userId,
+                                               HttpSession session) {
+        try {
+            myPageService.updateStatusCode(userId);
+            session.removeAttribute("value");
+            return ResponseEntity.ok("회원 상태코드 수정에 성공하였습니다.");
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원 상태코드 수정에 실패하였습니다.");
         }
 
-        List<UserNonoVO> userNonnolist = userMapper.selectUserNonoByIsSolved(userId, 1);
-        model.addAttribute("title", "내가 풀고 있는 노노들");
-        model.addAttribute("isSolved", 0);
-        model.addAttribute("nonoList", userNonnolist);
-        return "my-nono";
     }
 
-    @GetMapping("/ingnono/detail/{userId}/{nonoId}")
-    public String getIngUsernono(@PathVariable("userId") Integer userId,
-                                 @PathVariable("nonoId") Integer nonoId,
-                                 Model model,
-                                 HttpSession session) {
-        String redirectLogin = isUserIdNullthenRedirect(session);
-        if(!redirectLogin.equals("")) {
-            return redirectLogin;
-        }
+    /**
+     * 프로필이미지 변경
+     * @param imgFile
+     * @param userId
+     * @return HashMap
+     */
+    @PostMapping(value = "/user/profileimg/{userId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity changeProfileImgUrl(@PathVariable("userId") Integer userId,
+                                              @RequestParam(value="profileImg") MultipartFile imgFile) {
+        File file = null;
+        try {
+            UserDTO userDTO = myPageService.updateProfileImgUrl(userId, imgFile);
+//            System.out.println(file.getAbsolutePath());
+            System.out.println(userDTO.getProfileImgUrl());
+//            return ResponseEntity.ok(file.getAbsolutePath().split("profile")[1]);
+            return ResponseEntity.ok(userDTO);
 
-        UserNonoVO userNonoVO = userMapper.selectIngUserNonoDetail(userId, nonoId);
-        if(userNonoVO == null) {
-            // 유효성검사?
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("프로필 이미지 변경에 실패했습니다.");
         }
-        model.addAttribute("userNono", userNonoVO);
-
-        return "usernono-detail";
     }
 
-    @GetMapping("/solvednono/{userId}")
-    public String getSolvedUserNono(@PathVariable("userId") Integer userId,
-                                    Model model,
-                                    HttpSession session) {
-        String redirectLogin = isUserIdNullthenRedirect(session);
-        if(!redirectLogin.equals("")) {
-            return redirectLogin;
+    /**
+     * 유저의 노노들을 보여줍니다.
+     * @param userId
+     * @param isSolved
+     * @return ResponseEntity
+     */
+    @GetMapping("/nono/{userId}/{isSolved}")
+    public ResponseEntity getIngUserNono(@PathVariable("userId") Integer userId,
+                                         @PathVariable("isSolved") Integer isSolved) {
+        List<UserNono> userNonnolist = null;
+        try {
+            userNonnolist = myPageService.getUserNoNoList(userId, isSolved);
+            return ResponseEntity.ok(userNonnolist);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저의 NoNo들을 조회하는데 실패하였습니다.");
         }
-        List<UserNonoVO> userNonnolist = userMapper.selectUserNonoByIsSolved(userId, 2);
-        model.addAttribute("title", "내가 푼 노노들");
-        model.addAttribute("isSolved", 1);
-        model.addAttribute("nonoList", userNonnolist);
-//        System.out.println(userNonnolist.size());
-        return "my-nono";
     }
 
-    @GetMapping("/solvednono/detail/{userId}/{nonoId}")
-    public String getSolvedUsernono(@PathVariable("userId") Integer userId,
-                                    @PathVariable("nonoId") Integer nonoId,
-                                    Model model,
-                                    HttpSession session) {
-        String redirectLogin = isUserIdNullthenRedirect(session);
-        if(!redirectLogin.equals("")) {
-            return redirectLogin;
-        }
-        UserNonoVO userNonoVO = userMapper.selectSolvedUserNonoDetail(userId, nonoId);
-        if(userNonoVO == null) {
-            // 유효성검사?
-        }
-        model.addAttribute("userNono", userNonoVO);
-
-        return "usernono-detail";
-    }
-
-    public String isUserIdNullthenRedirect(HttpSession session) {
-        if(session.getAttribute("value") == null) {
-            System.out.println("************ userId is NULL ************");
-            return "redirect:/login";
-        } else {
-            return "";
+    /**
+     * 유저가 클릭한 노노를 보여줍니다.
+     * @param userId
+     * @param nonoId
+     * @return ResponseEntity
+     */
+    @GetMapping("/nono/detail/{userId}/{nonoId}/{isSolved}")
+    public ResponseEntity getIngUserNoNoDetail(@PathVariable("userId") Integer userId,
+                                               @PathVariable("nonoId") Integer nonoId,
+                                               @PathVariable("isSolved") Integer isSolved) {
+        UserNono userNono = null;
+        try {
+            userNono = myPageService.getUserNonoDetail(userId, nonoId, isSolved);
+            return ResponseEntity.ok(userNono);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저의 NoNo를 조회하는데 실패하였습니다.");
         }
     }
 }
